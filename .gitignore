@@ -41,6 +41,7 @@ htmlcov/
 .coverage
 .coverage.*
 .cache
+
 nosetests.xml
 coverage.xml
 *.cover
@@ -101,4 +102,7 @@ venv.bak/
 /site
 
 # mypy
-.mypy_cache/
+.mypy_cache
+
+# jetbrain
+.idea/
