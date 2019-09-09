@@ -103,6 +103,6 @@ venv.bak/
 
 # mypy
 .mypy_cache
-
+*.mp4
 # jetbrain
 .idea/

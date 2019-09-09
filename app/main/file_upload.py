@@ -14,8 +14,8 @@ def settings():
         audio = request.files.get('audio')
         # TODO // 对图像的后缀以及名字的合法性进行鉴定
         avter = request.form.get('desc')
-        print avter
-        print audio.filename
+        print(avter)
+        print(audio.filename)
         audio.save(Config.UPLOAD_PATH + audio.filename)
 
         return redirect(url_for('.asr', audio=Config.UPLOAD_PATH + audio.filename))

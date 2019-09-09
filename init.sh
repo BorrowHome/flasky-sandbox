@@ -1,9 +1,7 @@
 #!/bin/bash
 
-echo 'init a python virtual enviroment '
-
-python -m venv venv 
+echo 'init  a development environment '
 
 pip install -r requirments.txt
 
-echo 'create and done '
+echo 'done '
