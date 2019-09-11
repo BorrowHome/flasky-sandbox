@@ -1,3 +1,24 @@
-.li-main-nav {
-    border: 2px solid red;
+.test {
+    background: red;
+}
+
+.video_player {
+    width: 100%;
+    height: 100%;
+    object-fit: fill
+}
+
+body {
+    background-color: lavender;
+}
+
+.li-div {
+    overflow: auto;
+    height: 90vh;
+}
+
+.echart {
+    width: 100%;
+    height: auto;
+
 }
