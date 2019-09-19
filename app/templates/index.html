@@ -32,6 +32,22 @@
             <!-- 视频预览区域 -->
             <div class="video-preview">
 
+                <div>
+                    <span> file upload </span>
+                    <form action="/upload/" method="post" enctype="multipart/form-data">
+                        <table>
+                            <tbody>
+                            <td>视频</td>
+                            <tr></tr>
+                            <td><input type="file" name="video" multiple="multiple"></td>
+
+                            <td><input type="submit" value="提交"></td>
+
+                            </tbody>
+                        </table>
+                    </form>
+
+                </div>
                 <ul>
                     {% for filename in video_names %}
                         <li>{{ filename }}</li>
@@ -46,7 +62,6 @@
                     {% endfor %}
 
                 </ul>
-                <p class=""> info</p>
 
             </div>
 
@@ -63,13 +78,24 @@
             </div>
 
             <div class="sand-line">
+
                 <img src="../static/info.jpg" class="echart">
+
             </div>
+
+
         </div>
         <div class="col-md-2">
             <!-- 按钮以及快捷s键区域 -->
             <button> button</button>
             <h2> 快捷键按扭区</h2>
+            <div class="panel panel-primary">---</div>
+            <div class="panel panel-success">...</div>
+            <div class="panel panel-info">...</div>
+            <div class="panel panel-warning">...</div>
+            <div class="panel panel-danger">...</div>
+
+
         </div>
     </div>
 </div>

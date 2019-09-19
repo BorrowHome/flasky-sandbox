@@ -6,6 +6,7 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 class Config:
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     UPLOAD_PATH = "/home/liliangbin/audio/"  # be care for the path to upload the file ,because we may not have a permission
+    ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
 
     @staticmethod
     def init_app(self):

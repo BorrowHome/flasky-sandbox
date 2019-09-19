@@ -26,6 +26,7 @@ def index():
     return render_template('index.html', video_names=video_names)
 
 
+
 @main.route('/query')
 def query():
     user = User()
