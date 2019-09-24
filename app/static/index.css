@@ -14,7 +14,7 @@ body {
 
 .li-div {
     overflow: auto;
-    height: 90vh;
+    height: 98vh;
 }
 
 .echart {
@@ -22,3 +22,48 @@ body {
     height: auto;
 
 }
+
+ul {
+    margin: 0px;
+    padding: 0px;
+}
+
+li {
+    list-style: none;
+    margin-top: 3px;
+    margin-bottom: 3px;
+
+}
+
+.li_echart {
+    width: auto;
+    height: 280px;
+}
+
+.site_input {
+    border: none;
+}
+
+#site-change {
+    margin-bottom: 8px;
+
+}
+
+.test_border {
+    border: red solid 2px;
+}
+
+.li_container {
+    margin-top: 15px;
+}
+
+.li_col_7 {
+
+    background: rgb(186, 186, 212);
+
+}
+
+#video_player{
+    margin-top: 6px;
+}
+

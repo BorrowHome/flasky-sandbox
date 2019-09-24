@@ -23,8 +23,9 @@ def index():
                 print(dir_file_name)
                 video_names.append(dir_file_name)
 
-    return render_template('index.html', video_names=video_names)
-
+    return render_template('index.html', video_names=video_names, site_left_top='33.33,33.33',
+                           site_left_bottom='33.33,64.39',
+                           site_right_top='78.33,64.39', site_right_bottom='78.33,67.33')
 
 
 @main.route('/query')
