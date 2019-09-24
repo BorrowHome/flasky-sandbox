@@ -14,7 +14,7 @@ body {
 
 .li-div {
     overflow: auto;
-    height: 98vh;
+    height: 94vh;
 }
 
 .echart {
@@ -37,7 +37,7 @@ li {
 
 .li_echart {
     width: auto;
-    height: 280px;
+    height: 300px;
 }
 
 .site_input {
@@ -63,7 +63,12 @@ li {
 
 }
 
-#video_player{
+#video_player {
     margin-top: 6px;
 }
 
+#file_upload {
+    background: rgb(90, 193, 224);
+    padding: 7px;
+    margin-bottom: 0px;
+}
