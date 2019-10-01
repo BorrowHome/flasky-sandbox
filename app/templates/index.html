@@ -17,6 +17,7 @@
     <![endif]-->
 
     <link href="../static/index.css" rel="stylesheet">
+    <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
 
     {#    引入表格的工具#}
     <script src="https://cdn.bootcss.com/echarts/4.3.0-rc.2/echarts-en.common.js"></script>
@@ -75,7 +76,7 @@
         </div>
         <div class="col-md-7 li-div li_col_7 ">
             <!-- 视频播放区域 -->
-            <div class="video" id="video_player">
+            <div class="video">
                 <video id="video_player" controls muted class="video_player">
                     <source src="../static/movie.mp4" type="video/mp4">
                     <source src="movie.ogg" type="video/ogg">
@@ -120,7 +121,7 @@
             <h2> 帧处理</h2>
             <br>
             <div id="site-change">
-                <button type="button" class="btn btn-info">设置背景</button>
+                <button type="button" class="btn btn-info" onclick="getCurrentFrames(this)">设置背景</button>
 
                 <button type="button" class="btn btn-info">选择当前帧</button>
             </div>

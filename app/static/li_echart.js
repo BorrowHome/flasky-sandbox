@@ -62,10 +62,23 @@ option = {
 
 setInterval(function () {
 
+
+    // 调用  index.js  方法来交互  不符合 代码规范
+
+    // echart_data = getCurrentFrames()
+
+    // 当我们的视频播放的时候 才向后台请求数据 播放
+    if (video.paused == false) {
+        console.log(
+            "播放数据  嘻嘻"
+        )
+
+        getCurrentFrames()
+    }
+
     for (var i = 0; i < 5; i++) {
         data.shift();
         li_data = randomData();
-        console.log(li_data)
         data.push(li_data);
     }
 
@@ -74,8 +87,11 @@ setInterval(function () {
             data: data
         }]
     });
+
+
 }, 1000);
 ;
+
 if (option && typeof option === "object") {
     myChart.setOption(option, true);
 }
