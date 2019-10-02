@@ -26,8 +26,6 @@ function getCurrentFrames() {
         .drawImage(video, 0, 0, canvas.width, canvas.height);  //可以只截取一部分图像  。。
     pictureURL = canvas.toDataURL('image/png');
     console.log(pictureURL)
-    /*getCurrentFrames(this) 调用方式
-    * */
 
     uploadPicture(pictureURL)
 
@@ -58,3 +56,16 @@ video.addEventListener('play', function () {
     console.log(' time update')
 });
 */
+
+
+function submitForm() {
+
+    formdata = $("#site_form").serialize()
+    $.post("http://localhost:5000/site/",
+        formdata,
+        function (data) {
+            console.log(data)
+        }
+    )
+    return false
+}

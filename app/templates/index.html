@@ -94,28 +94,29 @@
             <h2> 关键点坐标 </h2>
             <div class="panel panel-primary">
             </div>
-            <div class="panel panel-success">
-                <label> site-left-top: </label>
-                <input type="text" class="site_input" name="sit_left_top" value="{{ site_left_top }}">
-            </div>
-            <div class="panel panel-info">
-                <label> site-left-bottom: </label>
-                <input type="text" class="site_input" name="site_left_bottom" value="{{ site_left_bottom }}">
-            </div>
-            <div class="panel panel-warning">
-                <label> site-right-top: </label>
+            <form action="{{ url_for('.site') }}" method="POST" id="site_form" onsubmit="return submitForm()">
+                <div class="panel panel-success">
+                    <label> site-left-top: </label>
+                    <input type="text" class="site_input" name="site_left_top" value="{{ site_left_top }}">
+                </div>
+                <div class="panel panel-info">
+                    <label> site-left-bottom: </label>
+                    <input type="text" class="site_input" name="site_left_bottom" value="{{ site_left_bottom }}">
+                </div>
+                <div class="panel panel-warning">
+                    <label> site-right-top: </label>
 
-                <input type="text" class="site_input" name="site_right_top" value="{{ site_right_top }}">
-            </div>
-            <div class="panel panel-danger">
-                <label> site-right-bottom: </label>
+                    <input type="text" class="site_input" name="site_right_top" value="{{ site_right_top }}">
+                </div>
+                <div class="panel panel-danger">
+                    <label> site-right-bottom: </label>
 
-                <input type="text" class="site_input" name="site_right_bottom" value="{{ site_right_bottom }}">
-            </div>
-            <div id="site-change">
-                <button type="button" class="btn btn-info">确认修改</button>
-            </div>
-
+                    <input type="text" class="site_input" name="site_right_bottom" value="{{ site_right_bottom }}">
+                </div>
+                <div id="site-change">
+                    <button type="submit" class="btn btn-info" id="site">确认修改</button>
+                </div>
+            </form>
             <div class="panel panel-primary">
             </div>
             <h2> 帧处理</h2>
@@ -138,8 +139,8 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js"></script>
 
 <script src="../static/index.js"></script>
-<script src="../static/echart.js"></script>
 
+<script src="../static/echart.js"></script>
 <script src="../static/li_echart.js">
 </script>
 
