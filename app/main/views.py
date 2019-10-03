@@ -8,7 +8,7 @@ import cv2
 import numpy as np
 from flask import render_template, request
 
-from app.utils.sub import PictureSub
+from app.utils.sublow import PictureSub
 from . import main
 from .. import db
 from ..models import User
@@ -69,16 +69,16 @@ def picture():
         # 生成cv2 需要的数据类型
         img_np = cv2.imdecode(np_array, cv2.IMREAD_COLOR)
 
-        # cv2.imwrite("test2.png", img_np)
+        cv2.imwrite("test2.png", img_np)
         # INFO 2019/10/1 20:16 liliangbin  返回一个给echart 使用的数据类型，这个地方需要再瞅瞅
 
         res = {}
         sub = PictureSub()
 
         # 背景图
-        background = cv2.imread('E:/frame/8214.jpg')
-        # currentFrame = img_np
-        currentFrame = cv2.imread('E:/frame/17316.jpg')
+        background = cv2.imread('E:/frame/back.png')
+        currentFrame = img_np
+        # currentFrame = cv2.imread('E:/frame/17316.jpg')
 
         q = sub.subtract_demo(background, currentFrame)
         s = sub.inverse(q)
