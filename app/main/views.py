@@ -76,7 +76,7 @@ def picture():
         sub = PictureSub()
 
         # 背景图
-        background = cv2.imread('E:/frame/back.png')
+        background = cv2.imread('back.png')
         currentFrame = img_np
         # currentFrame = cv2.imread('E:/frame/17316.jpg')
 
