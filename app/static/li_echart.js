@@ -62,17 +62,13 @@ option = {
 
 setInterval(function () {
 
-    // 调用  index.js  方法来交互  不符合 代码规范
-    // echart_data = getCurrentFrames()
+    /*    if (video.paused == false) {
+            console.log(
+                "播放数据  嘻嘻"
+            )
 
-    // 当我们的视频播放的时候 才向后台请求数据 播放
-    if (video.paused == false) {
-        console.log(
-            "播放数据  嘻嘻"
-        )
-
-        getCurrentFrames()
-    }
+            getCurrentFrames()
+        }*/
 
     for (var i = 0; i < 5; i++) {
         data.shift();

@@ -13,3 +13,5 @@
 #### 运行
 - sh run.sh
 - 默认具体配置可自己手动修改，默认使用debug 模式。
+- git clone --depth 3   url  # 下载文件过大的时候解决
+

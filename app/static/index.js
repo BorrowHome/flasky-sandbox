@@ -9,6 +9,8 @@ function choose_a_video(obj) {
     console.log('click')
     console.log(obj.getAttribute('data'))
     console.log(video.videoWidth, 'innnn')
+    console.log(video.videoHeight, 'innnn')
+
     console.log(obj.currentSrc)
     video.src = obj.currentSrc;
     video.load()
@@ -18,7 +20,7 @@ function choose_a_video(obj) {
 
 function getCurrentFrames() {
 
-    var scale = 0.4
+    var scale = 1
     var canvas = document.createElement("canvas");
     canvas.width = video.videoWidth * scale;
     canvas.height = video.videoHeight * scale;
@@ -33,29 +35,27 @@ function getCurrentFrames() {
 
 function uploadPicture(pictureURL) {
 
-    /* 向服务器上传数据，并把返回的数据给 echart 显示  */
 
     echart_data = ""
     console.log(' upload ')
-    $.post("http://localhost:5000/picture/",
-        {
-            "current_frame": pictureURL
+    $.ajax({
+        url: "http://localhost:5000/picture/",//请求路径
+        data: {current_frame: pictureURL},
+        type: "POST",//GET,
+        async: false,
+        //dataType: "JSON",//需要返回JSON对象(如果Ajax返回的是手动拼接的JSON字符串,需要Key,Value都有引号)
+        success: function (resp) {
+            //处理 resp.responseText;
+            console.log(resp)
+            echart_data = resp
+        },
+        error: function (a, b, c) {
+            //a,b,c三个参数,具体请参考JQuery API
         }
-        , function (data) {
-            console.log(data)
-            echart_data = data
-        });
+    })
 
     return echart_data
 }
-
-/*
-事件被触发的时候启动
-video.addEventListener('play', function () {
-
-    console.log(' time update')
-});
-*/
 
 
 function submitForm() {
