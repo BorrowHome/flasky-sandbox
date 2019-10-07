@@ -6,7 +6,7 @@ import time
 
 import cv2
 import numpy as np
-from flask import render_template, request
+from flask import render_template, request, jsonify
 
 from app.utils.sublow import PictureSub
 from . import main
@@ -58,7 +58,7 @@ def picture():
         str = request.form['current_frame']
         str = str.split(',')[1]
 
-        #  在逗号以后的才是编码数据 前面是协议和格式
+        #  在逗号以后的7才是编码数据 前面是协议和格式
         if (len(str) % 3 == 1):
             str += "=="
         elif (len(str) % 3 == 2):
@@ -71,22 +71,46 @@ def picture():
 
         cv2.imwrite("test2.png", img_np)
         # INFO 2019/10/1 20:16 liliangbin  返回一个给echart 使用的数据类型，这个地方需要再瞅瞅
-
+        # cv2.imwrite("back.png", img_np)
         res = {}
         sub = PictureSub()
 
         # 背景图
         background = cv2.imread('back.png')
+        # background = cv2.imread('8214.jpg')
         currentFrame = img_np
         # currentFrame = cv2.imread('E:/frame/17316.jpg')
 
         q = sub.subtract_demo(background, currentFrame)
         s = sub.inverse(q)
         t = sub.iblack(s, 220)
-        s = sub.isblack(t, 240)
+        # s = sub.isblack(t, 240)
         res = sub.ipaint(s, 50)
 
-        return res
+        return jsonify(res)
+
+@main.route('/background/', methods=['GET', 'POST'])
+def background():
+    if request.method == 'POST':
+        str = request.form['back_frame']
+        str = str.split(',')[1]
+
+        # #  在逗号以后的才是编码数据 前面是协议和格式
+        if (len(str) % 3 == 1):
+            str += "=="
+        elif (len(str) % 3 == 2):
+            str += "="
+
+        image = base64.b64decode(str)
+        np_array = np.fromstring(image, np.uint8)
+        # 生成cv2 需要的数据类型
+        img_np = cv2.imdecode(np_array, cv2.IMREAD_COLOR)
+
+        # cv2.imwrite("test2.png", img_np)
+        # INFO 2019/10/1 20:16 liliangbin  返回一个给echart 使用的数据类型，这个地方需要再瞅瞅
+        cv2.imwrite("back.png", img_np)
+
+        return 'done'
 
 
 @main.route('/site/', methods=['GET', 'POST'])

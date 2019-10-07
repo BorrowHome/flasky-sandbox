@@ -4,7 +4,6 @@ console.log('加载js文件')
 
 var video = document.getElementById("video_player");
 
-
 function choose_a_video(obj) {
     console.log('click')
     console.log(obj.getAttribute('data'))
@@ -13,8 +12,26 @@ function choose_a_video(obj) {
 
     console.log(obj.currentSrc)
     video.src = obj.currentSrc;
+
     video.load()
-    video.play()
+    // video.play()
+    // 默认不让他播放
+}
+
+function setBackground(pictureURL) {
+    $.ajax({
+        url: "http://localhost:5000/background/",//请求路径
+        data: {back_frame: pictureURL},
+        type: "POST",//GET,
+        async: false,
+        success: function (resp) {
+            //处理 resp.responseText;
+            console.log(resp)
+            console.log("设置背景")
+        },
+        error: function (a, b, c) {
+            //a,b,c三个参数,具体请参考JQuery API
+        }    })
 }
 
 
@@ -29,8 +46,7 @@ function getCurrentFrames() {
     pictureURL = canvas.toDataURL('image/png');
     console.log(pictureURL)
 
-    uploadPicture(pictureURL)
-
+    return pictureURL
 }
 
 function uploadPicture(pictureURL) {
@@ -57,7 +73,6 @@ function uploadPicture(pictureURL) {
     return echart_data
 }
 
-
 function submitForm() {
 
     formdata = $("#site_form").serialize()
@@ -68,4 +83,10 @@ function submitForm() {
         }
     )
     return false
+}
+
+function setBackgroundByFrame() {
+
+  var pictureURL = getCurrentFrames()
+  setBackground(pictureURL)
 }
