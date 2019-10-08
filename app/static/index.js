@@ -28,6 +28,7 @@ function setBackground(pictureURL) {
             //处理 resp.responseText;
             console.log(resp)
             console.log("设置背景")
+            alert("设置背景成功")
         },
         error: function (a, b, c) {
             //a,b,c三个参数,具体请参考JQuery API

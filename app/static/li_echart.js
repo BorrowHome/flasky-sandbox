@@ -45,30 +45,30 @@ setInterval(function () {
 
 function setCurrentFrame() {
 
-    if (video.paused == false) {
-        console.log(
-            "播放数据  嘻嘻"
-        )
+    console.log(
+        "播放数据  嘻嘻"
+    )
 
-        var pictureURL = getCurrentFrames()
-        var data = uploadPicture(pictureURL)
+    var pictureURL = getCurrentFrames()
+    var data = uploadPicture(pictureURL)
 
-        for (i=0;i<data["list_y"].length;i++){
+    for (i = 0; i < data["list_y"].length; i++) {
 
-            data["list_y"][i]=244-data["list_y"][i]
-        }
-
-        myChart.setOption({
-            series: [{
-                data: data['list_y']
-            }]
-        });
-        myChart.setOption({
-            xAxis: {
-                data: data['list_x']
-            }
-        })
+        data["list_y"][i] = 244 - data["list_y"][i]
     }
+
+    myChart.setOption({
+        series: [{
+            data: data['list_y']
+        }]
+    });
+    myChart.setOption({
+        xAxis: {
+            data: data['list_x']
+        }
+    })
+
+    alert("处理成功")
 
 }
 
