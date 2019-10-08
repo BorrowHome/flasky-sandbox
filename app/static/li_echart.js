@@ -7,6 +7,7 @@ option = {
         type: 'category',
         data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
     },
+
     yAxis: {
         type: 'value'
     },
@@ -54,7 +55,7 @@ function setCurrentFrame() {
 
         for (i=0;i<data["list_y"].length;i++){
 
-            data["list_y"][i]=850-data["list_y"][i]
+            data["list_y"][i]=244-data["list_y"][i]
         }
 
         myChart.setOption({

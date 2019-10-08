@@ -31,13 +31,14 @@ function setBackground(pictureURL) {
         },
         error: function (a, b, c) {
             //a,b,c三个参数,具体请参考JQuery API
-        }    })
+        }
+    })
 }
 
 
 function getCurrentFrames() {
 
-    var scale = 1
+    var scale = 0.3
     var canvas = document.createElement("canvas");
     canvas.width = video.videoWidth * scale;
     canvas.height = video.videoHeight * scale;
@@ -87,6 +88,6 @@ function submitForm() {
 
 function setBackgroundByFrame() {
 
-  var pictureURL = getCurrentFrames()
-  setBackground(pictureURL)
+    var pictureURL = getCurrentFrames()
+    setBackground(pictureURL)
 }

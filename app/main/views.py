@@ -8,7 +8,7 @@ import cv2
 import numpy as np
 from flask import render_template, request, jsonify
 
-from app.utils.sublow import PictureSub
+from app.utils.subnew import PictureSub
 from . import main
 from .. import db
 from ..models import User
@@ -85,9 +85,12 @@ def picture():
         s = sub.inverse(q)
         t = sub.iblack(s, 220)
         # s = sub.isblack(t, 240)
+
         res = sub.ipaint(s, 50)
+        cv2.imwrite('write.jpg', s)
 
         return jsonify(res)
+
 
 @main.route('/background/', methods=['GET', 'POST'])
 def background():

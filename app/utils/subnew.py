@@ -1,8 +1,7 @@
-"""author: liliangbin create at 2019-10-1 """
-
 import csv
 
 import cv2 as cv
+import numpy as np
 
 
 class PictureSub(object):
@@ -38,36 +37,16 @@ class PictureSub(object):
                 for j in range(shape[1]):
                     if (image[i, j, cn] < k):
                         image[i, j, cn] = 0
-                        if i > 450 or i < 850 or j < 1290 or j > 170:
+                        if i > 120 or i < 248 or j < 430 or j > 48:
                             image[i, j, 0] = 0
                             image[i, j, 1] = 0
                             image[i, j, 2] = 0
-                    if i > 850 or i < 450 or j > 1290 or j < 170:
+                    if i > 244 or i < 160 or j > 430 or j < 48:
                         image[i, j, 0] = 255
                         image[i, j, 1] = 255
                         image[i, j, 2] = 255
 
         return image
-
-    def isblack(self, image, k):
-        shape = image.shape
-        channels = shape[2]
-        for cn in range(channels):
-            """255-原本的颜色就变成了反色"""
-            for i in range(shape[0]):
-                for j in range(shape[1]):
-                    if (image[i, j, cn] < k):
-                        image[i, j, cn] = 0
-                        if i > 450 or i < 960 or j < 1380 or j > 200 or j > 1415:
-                            image[i, j, 0] = 0
-                            image[i, j, 1] = 0
-                            image[i, j, 2] = 0
-                            if i > 960 or i < 500:
-                                image[i, j, 0] = 255
-                                image[i, j, 1] = 255
-                                image[i, j, 2] = 255
-
-                        return image
 
     def ipaint(self, image, k):
         shape = image.shape
@@ -82,9 +61,9 @@ class PictureSub(object):
                     if (image[j, i, 2] < k):
                         # with open(r"E:sand.csv", "w", newline="")as f:
                         #  writer = csv.writer(f)
-                        writer.writerow([i - 170, j - 450])
-                        list1.append(i - 170)
-                        list2.append(j - 450)
+                        writer.writerow([i, j])
+                        list1.append(i)
+                        list2.append(j)
                         # sheet.write(m, 1, j -450)
                         image[j + 1, i, 1] = 255
                         image[j + 2, i, 1] = 255
@@ -96,13 +75,35 @@ class PictureSub(object):
                         image[j + 2, i, 2] = 0
                         image[j + 3, i, 2] = 0
                         # m = m + 1
-                        if (i < 500):
-                            for l in range(j + 4, 850):
+                        if (i < 150):
+                            for l in range(j + 4, 244):
                                 image[l, i, 0] = 0
                                 image[l, i, 1] = 0
                                 image[l, i, 2] = 0
                         break
 
+        # array_list_y = np.array(list2)
+        # array_list_y_fit = signal.medfilt(array_list_y, 3)
+        # list2 = array_list_y_fit.tolist()
+        #
+        with open('test.txt', 'w') as  f:
+            f.write(str(list2))
+
+        head = list1[0]
+        print("head === > ", head)
+        y_zeros = np.ones(head) * 244
+        print(head)
+        list_x_add = range(0, head)
+        print("len  head == > ", list_x_add)
+        print(list_x_add)
+        print("list X ", list_x_add)
+        list1 = list(list_x_add) + list1
+
+        list2 = y_zeros.tolist() + list2
+        print(len(list1), "  == list2 === >", len(list2))
+
+        list1 = list1[50:]
+        list2 = list2[50:]
         res = {
             "list_x": list1,
             "list_y": list2
@@ -117,19 +118,20 @@ class PictureSub(object):
 
 if __name__ == '__main__':
     sub = PictureSub()
-    src1 = cv.imread('E:/frame/back.png')
+    src1 = cv.imread('back.png')
     print(src1.shape)
-    src2 = cv.imread('E:/frame/current.png')
+    src2 = cv.imread('test2.png')
     q = sub.subtract_demo(src1, src2)
     s = sub.inverse(q)
-    t = sub.iblack(s, 230)
+    t = sub.iblack(s, 210)
     # s = sub.isblack(t, 240)
 
     # 把数据给写入到csv文件里面
     sub.ipaint(t, 50)
 
     # m = cv.rectangle(s, (170, 450), (1450, 960), (0, 0, 255), 3)
-    cv.imwrite('E:/back1/21.jpg', s)
+    cv.imwrite('write.jpg', s)
+
     # dirr ='F:/frame/'
     # filelist = os.listdir(dirr)
     # for item in filelist:
