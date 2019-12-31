@@ -5,7 +5,6 @@ i = 1
 j = 1
 img = Image.open("currentframe.png")  # 读取系统的内照片
 print(img.size)  # 打印图片大小
-print(img.getpixel((1253, 477)))
 
 width = img.size[0]  # 长度
 height = img.size[1]  # 宽度
@@ -20,4 +19,5 @@ for i in range(0, width):  # 遍历所有长度的点
             img.putpixel((i, j), (255, 0, 0, 255))  # 则这些像素点的颜色改成大红色
 
 img = img.convert("RGB")  # 把图片强制转成RGB
+
 img.save("firstFrame3.jpg")  # 保存修改像素点后的图片

@@ -109,7 +109,7 @@
                 </div>
                 <div class="panel panel-info">
                     <label> site-left-bottom: </label>
-                        <input type="text" class="site_input" name="site_left_bottom" value="{{ site_left_bottom }}">
+                    <input type="text" class="site_input" name="site_left_bottom" value="{{ site_left_bottom }}">
                 </div>
                 <div class="panel panel-warning">
                     <label> site-right-top: </label>
@@ -121,11 +121,24 @@
 
                     <input type="text" class="site_input" name="site_right_bottom" value="{{ site_right_bottom }}">
                 </div>
+
+                <div class="panel panel-danger">
+                    <label> 边框面积: </label>
+                    <span type="text" class="site_input">面积</span>
+
+                </div>
+                <div class="panel panel-danger">
+                    <label> 沙子体积: </label>
+                    <span type="text" class="site_input">体积<span>
+                </div>
                 <div id="site-change">
-                    <button type="submit" class="btn btn-info" id="site">确认修改</button>
                     <button type="button" id="site-name" class="btn btn-info" onclick=" return frame_seletctiondone()">
                         框选坐标
                     </button>
+                    <button type="button" id="recognize" class="btn btn-info">
+                        识别坐标
+                    </button>
+                    <button type="submit" id="area" class="btn btn-info">计算面积</button>
 
                 </div>
 
@@ -180,7 +193,8 @@
 </script>
 
 <script>
-    var frame_selection = document.getElementById("site-name")
+    var frame_area = document.getElementById("area")
+    var recognize = document.getElementById("recognize")
 
     function frame_seletctiondone() {
         $.post(
@@ -188,10 +202,16 @@
             {current_frame: getCurrentFrames(1)},
             function (data) {
 
-               window.location.href = '{{ url_for('.draw_frame') }}';
+                window.location.href = '{{ url_for('.draw_frame') }}';
 
             }
         )
+    }
+
+    recognize.onclick=function (e) {
+
+        $.post()
+
     }
 </script>
 </body>
