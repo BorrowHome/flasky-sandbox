@@ -16,7 +16,7 @@
       <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
     <![endif]-->
 
-    <link href="../static/index.css" rel="stylesheet">
+    <link href="../static/css/index.css" rel="stylesheet">
     <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
 
     {#    引入表格的工具#}
@@ -69,7 +69,7 @@
                         <li>
                             <video data='inf' class="video_player"
                                    onclick="choose_a_video(this)">
-                                <source src="../static/{{ filename }}" type="video/mp4">
+                                <source src="../static/video/{{ filename }}" type="video/mp4">
                                 <source src="movie.ogg" type="video/ogg">
                                 您的浏览器不支持Video标签。
                             </video>
@@ -86,7 +86,7 @@
             <!-- 视频播放区域 -->
             <div class="video">
                 <video id="video_player" controls muted class="video_player">
-                    <source src="../static/movie.mp4" type="video/mp4">
+                    <source src="../static/video/{{ first }}" type="video/mp4">
                     <source src="movie.ogg" type="video/ogg">
                     您的浏览器不支持Video标签。
                 </video>
@@ -109,7 +109,7 @@
                 </div>
                 <div class="panel panel-info">
                     <label> site-left-bottom: </label>
-                    <input type="text" class="site_input" name="site_left_bottom" value="{{ site_left_bottom }}">
+                        <input type="text" class="site_input" name="site_left_bottom" value="{{ site_left_bottom }}">
                 </div>
                 <div class="panel panel-warning">
                     <label> site-right-top: </label>
@@ -123,21 +123,48 @@
                 </div>
                 <div id="site-change">
                     <button type="submit" class="btn btn-info" id="site">确认修改</button>
+                    <button type="button" id="site-name" class="btn btn-info" onclick=" return frame_seletctiondone()">
+                        框选坐标
+                    </button>
+
                 </div>
+
             </form>
             <div class="panel panel-primary">
             </div>
-            <h2> 帧处理</h2>
+
+            <h2>坐标获取</h2>
             <br>
             <div id="site-change">
                 <button type="button" class="btn btn-info" onclick="setBackgroundByFrame(this)">设置背景</button>
 
                 <button type="button" class="btn btn-info" onclick="setCurrentFrame(this)">选择当前帧</button>
+                <br>
+                <br>
+                <div class="panel panel-primary">
+                </div>
+                <h2>坐标修改</h2>
+                <p id="ds">当前位置 未知</p>
+                <p> 要修改为：
+                    {#                <form method="post" action="http://localhost:5000/change_datas/"  >#}
+                    {#                <input type="text" class="site_input" name="new_data_x" id="new_data_x" value="50" style="height: 20px;width: 40px;text-align:center;">#}
+                    <a type="text" class="site_input" name="new_data_x" id="new_data_x"
+                       style="height: 20px;width: 40px;text-align:center;">50</a>
+                    ，
+                    <input type="text" class="site_input" name="new_data_y" id="new_data_y" value="50"
+                           style="height: 20px;width: 40px;text-align:center;"></p>
+
+                <p id="newer_data"></p>
+
+                <p><input type="button" class="btn btn-info" value="调整图表" onclick="change_data()"/></p>
+
+                {#                <button type="button" class="btn btn-info" onclick="change_data(this) ">调整图表</button>#}
+                {#                </form>#}
+
             </div>
 
         </div>
     </div>
-
 
 </div>
 
@@ -146,11 +173,26 @@
 <!-- 加载 Bootstrap 的所有 JavaScript 插件。你也可以根据需要只加载单个插件。 -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js"></script>
 
-<script src="../static/index.js"></script>
+<script src="../static/js/index.js"></script>
 
-<script src="../static/echart.js"></script>
-<script src="../static/li_echart.js">
+<script src="../static/js/echart.js"></script>
+<script src="../static/js/li_echart.js">
 </script>
 
+<script>
+    var frame_selection = document.getElementById("site-name")
+
+    function frame_seletctiondone() {
+        $.post(
+            '{{ url_for('.draw_frame') }}',
+            {current_frame: getCurrentFrames(1)},
+            function (data) {
+
+               window.location.href = '{{ url_for('.draw_frame') }}';
+
+            }
+        )
+    }
+</script>
 </body>
 </html>

@@ -4,6 +4,7 @@ console.log('加载js文件')
 
 var video = document.getElementById("video_player");
 
+
 function choose_a_video(obj) {
     console.log('click')
     console.log(obj.getAttribute('data'))
@@ -37,11 +38,12 @@ function setBackground(pictureURL) {
 }
 
 
-function getCurrentFrames() {
+function getCurrentFrames(scale) {
 
-    var scale = 0.3
     var canvas = document.createElement("canvas");
+    console.log(scale)
     canvas.width = video.videoWidth * scale;
+    console.log(video.videoWidth)
     canvas.height = video.videoHeight * scale;
     canvas.getContext('2d')
         .drawImage(video, 0, 0, canvas.width, canvas.height);  //可以只截取一部分图像  。。
@@ -84,11 +86,12 @@ function submitForm() {
             console.log(data)
         }
     )
-    return false
 }
 
 function setBackgroundByFrame() {
-
-    var pictureURL = getCurrentFrames()
+    var scale = 0.3
+    var pictureURL = getCurrentFrames(scale)
     setBackground(pictureURL)
 }
+
+

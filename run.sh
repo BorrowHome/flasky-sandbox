@@ -5,3 +5,5 @@ export FLASK_DEBUG=1
 echo 'run a flask app '
 
 flask run
+
+

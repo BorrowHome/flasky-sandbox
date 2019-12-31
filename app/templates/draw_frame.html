@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>拖拽画直线</title>
+</head>
+<style>
+    body {
+        background: #eeeeee;
+    }
+
+    #controls {
+        position: absolute;
+        left: 25px;
+        top: 25px;
+    }
+
+    #canvas {
+        background: #ffffff;
+        cursor: pointer;
+        margin-left: 10px;
+        margin-top: 10px;
+        box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.5);
+        background: no-repeat;
+        /* background-position: center; */
+    }
+
+    input[type='button'] {
+        background: cornflowerblue;
+        cursor: pointer;
+        border-radius: 10px;
+    }
+</style>
+<body>
+<div id="1">
+
+
+    <div id="controls">
+
+        Stroke Color:<select id="strokeStyleSelect" style="margin-right: 20px">
+        <option value="red">red</option>
+        <option value="green">green</option>
+        <option value="blue">blue</option>
+        <option value="orange">orange</option>
+
+    </select>
+        Guidewires(坐标辅助线):
+        <input type="checkbox" id="guidewireCheckbox" style="margin-right: 20px">
+        矩形选框
+        <input type="checkbox" id="RectangleCheckbox" checked style="margin-right: 20px">
+        <input type="button" id="eraseAllButton" value="清空画布">
+    </div>
+    <div></div>
+    <br>
+    <br>
+    <canvas id="canvas">
+
+    </canvas>
+    <div>
+        <form action="{{ url_for('.site') }}" method="post">
+            <label>locate_x</label> <input name="locate_x" id="locate_x">
+            <label>locate_y</label><input name="locate_y" id="locate_y">
+            <label>move_x</label><input name="move_x" id="move_x">
+            <label>move_y</label><input name="move_y" id="move_y">
+            <button type="submit">提交</button>
+        </form>
+    </div>
+    <div>
+        <p>设置笔触颜色，是否添加辅助线，是否使用矩形选框，然后再画布上绘画。如有需要，使用"清除画布"按钮</p>
+
+    </div>
+</div>
+</body>
+<script>
+
+
+    var locate_x = document.getElementById('locate_x')
+    var locate_y = document.getElementById('locate_y')
+    var move_x = document.getElementById('move_x')
+    var move_y = document.getElementById('move_y')
+
+
+    var canvas = document.getElementById('canvas'),
+        context = canvas.getContext('2d'),
+        eraseAllButton = document.getElementById('eraseAllButton'),
+        guidewireCheckbox = document.getElementById('guidewireCheckbox'),
+        strokeStyleSelect = document.getElementById('strokeStyleSelect'),
+        RectangleCheckbox = document.getElementById('RectangleCheckbox'),
+        drawingSurfaceImageData,
+        mousedown = {},
+        rubberbandRect = {},
+        dragging = false,
+        guidewires = guidewireCheckbox.checked,
+        rectangle = RectangleCheckbox.checked;
+    canvas.width = {{ width }};
+    canvas.height = {{ height }};
+    rubberbandRect.width;
+    rubberbandRect.height;
+
+    console.log({{ width }})
+    var canvasLeft = rubberbandRect.left
+    var canvasTop = rubberbandRect.top;
+    var url_current = '../static/image/' + '{{ currentframe }}'
+
+    console.log(url_current)
+    canvas.style.backgroundImage = 'url("' + url_current + '")';
+
+
+    function windowToCanvas(x, y) {
+        //返回元素的大小以及位置
+        var bbox = canvas.getBoundingClientRect();
+        return {x: x - bbox.left * (canvas.width / bbox.width), y: y - bbox.top * (canvas.height / bbox.height)};
+        //console.log(x)
+    }
+
+    //保存和恢复绘图面板
+    function saveDrawingSurface() {
+        drawingSurfaceImageData = context.getImageData(0, 0, canvas.width, canvas.height);
+    }
+
+    function restoreDrawingSurface() {
+        context.putImageData(drawingSurfaceImageData, 0, 0);
+    }
+
+    //Rubber bands
+    /**
+     * 更新橡皮筋矩形
+     * @param loc
+     */
+    function updateRubberbandRectangle(loc) {
+        rubberbandRect.width = Math.abs(loc.x - mousedown.x);
+        rubberbandRect.height = Math.abs(loc.y - mousedown.y);
+        //从左往右拉，和从右往左拉的两种情况。主要是判断左边的位置
+        //因为从左往右拉的时候，左边x坐标不变
+        //从右往左拉的时候，左边线的x坐标需要跟着鼠标移动
+        if (loc.x > mousedown.x) rubberbandRect.left = mousedown.x;
+        else rubberbandRect.left = loc.x;
+        if (loc.y > mousedown.y) rubberbandRect.top = mousedown.y;
+        else rubberbandRect.top = loc.y;
+        context.save();
+        context.beginPath();
+        context.rect(rubberbandRect.left, rubberbandRect.top, rubberbandRect.width, rubberbandRect.height);
+        context.stroke();
+        context.restore();
+
+        //console.log(loc.x,mousedown.x)
+        //console.log(mousedown.x)
+
+        //console.log(rubberbandRect.width)
+
+    }
+
+    /**
+     * 画可以看得见的线
+     * @param loc
+     */
+    function drawRubberbandShape(loc) {
+        context.beginPath();
+        context.moveTo(mousedown.x, mousedown.y);
+        //context.lineTo(loc.x, loc.y);
+        context.stroke();
+    }
+
+    /**
+     * 更新橡皮筋
+     * @param loc
+     */
+    function updateRubberband(loc) {
+        if (rectangle) {
+            updateRubberbandRectangle(loc);
+        }
+        drawRubberbandShape(loc);
+
+    }
+
+    //Guidewires辅助线
+    /**
+     * 画水平辅助线，占整个宽canvas度
+     * @param y
+     */
+    function drawHorizontalLine(y) {
+        context.beginPath();
+        context.moveTo(0, y + 0.5);
+        context.lineTo(canvas.width, y + 0.5);
+        context.stroke();
+    }
+
+    /**
+     * 画垂直辅助线，占整个canvas高度
+     * @param x
+     */
+    function drawVerticalLine(x) {
+        context.beginPath();
+        context.moveTo(x + 0.5, 0);
+        context.lineTo(x + 0.5, context.canvas.height);
+        context.stroke();
+    }
+
+    /**
+     * 画辅助线，并设置属性
+     * @param x
+     * @param y
+     */
+    function drawGuidewires(x, y) {
+        context.save();
+        context.strokeStyle = 'rgba(0,0,230,0.4)';
+        context.lineWidth = 0.5;
+        drawVerticalLine(x);
+        drawHorizontalLine(y);
+        context.restore();
+    }
+
+    //事件
+    /**
+     * 鼠标按下的时候，记录坐标，并设置为拖拽状态
+     * @param e
+     */
+    canvas.onmousedown = function (e) {
+        var loc = windowToCanvas(e.clientX, e.clientY);
+        e.preventDefault();
+        saveDrawingSurface();
+        mousedown.x = loc.x;
+        mousedown.y = loc.y;
+        dragging = true;
+
+        //console.log(e.clientX,e.clientY)
+        console.log(mousedown.x, mousedown.y)
+        locate_x.value = mousedown.x.toFixed(2)
+        locate_y.value = mousedown.y.toFixed(2)
+        //console.log(rubberbandRect.width);
+        // console.log('5555')
+    }
+    /**
+     * （鼠标按下之后）鼠标移动的时候
+     * 判断拖拽中：更新当前连线的位置
+     * 判断辅助线显示：添加辅助线
+     * @param e
+     */
+    canvas.onmousemove = function (e) {
+        var loc;
+        if (dragging) {
+            e.preventDefault();
+            loc = windowToCanvas(e.clientX, e.clientY);
+            restoreDrawingSurface();
+            updateRubberband(loc);
+            if (guidewires) {
+                drawGuidewires(loc.x, loc.y);
+            }
+        }
+
+    }
+    /**
+     * (拖拽完成后)当鼠标松开时，重新获取本点坐标，清除之前的"跟随鼠标移动的线"，更新连线，取消拖拽状态
+     * @param e
+     */
+    canvas.onmouseup = function (e) {
+        loc = windowToCanvas(e.clientX, e.clientY);
+        restoreDrawingSurface();
+        updateRubberband(loc);
+        dragging = false;
+        //
+        width = loc.x - mousedown.x;
+        height = loc.y - mousedown.y;
+
+        console.log(width, height)
+        move_x.value = width
+        move_y.value = height
+
+    };
+    //控制器的事件
+    /**
+     * 清除所有画布图像
+     * @param ev
+     */
+    eraseAllButton.onclick = function (ev) {
+        context.clearRect(0, 0, canvas.width, canvas.height);
+        drawGrid('lightgray', 10, 10);
+        saveDrawingSurface();
+    };
+    strokeStyleSelect.onchange = function (ev) {
+        context.strokeStyle = strokeStyleSelect.value;
+    };
+    guidewireCheckbox.onchange = function (ev) {
+        guidewires = guidewireCheckbox.checked;
+    };
+    RectangleCheckbox.onchange = function (ev) {
+        rectangle = RectangleCheckbox.checked;
+    };
+    //init
+    context.strokeStyle = strokeStyleSelect.value;
+    // drawGrid('lightgray', 10, 10);
+</script>
+</html>

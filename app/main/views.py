@@ -1,14 +1,16 @@
 # -*- coding: utf-8 -*-
 
 import base64
+import csv
 import os
 import time
 
 import cv2
 import numpy as np
-from flask import render_template, request, jsonify
+from flask import render_template, request, jsonify, redirect, url_for
 
-from app.utils.subnew import PictureSub
+from app.utils.site import Site
+from app.utils.sub import PictureSub
 from . import main
 from .. import db
 from ..models import User
@@ -18,7 +20,7 @@ from ..models import User
 def index():
     # 这里的主入口是我们函数的dir 最好用绝对路径，临时用相对路径
     video_names = []
-    path_in = './app/static'
+    path_in = './app/static/video'
     for dirpath, dirnames, filenames in os.walk(path_in):
         for filename in filenames:
             # dir_file_name = os.path.join(dirpath, filename)
@@ -27,9 +29,24 @@ def index():
                 print(dir_file_name)
                 video_names.append(dir_file_name)
 
-    return render_template('index.html', video_names=video_names, site_left_top='33.33,33.33',
-                           site_left_bottom='33.33,64.39',
-                           site_right_top='78.33,64.39', site_right_bottom='78.33,67.33')
+    with open("site.txt", "r+") as  f:
+        a = f.readlines()
+        print(a)
+        frame_location = Site(a[0], a[1], a[2], a[3])
+
+    site_left_top = str(frame_location.locate_x) + ',' + str(frame_location.locate_y)
+    site_left_bottom = str(frame_location.locate_x) + ',' + str(frame_location.locate_y + frame_location.move_y)
+
+    site_right_top = str(frame_location.locate_x + frame_location.move_x) + ',' + str(frame_location.locate_y)
+    site_right_bottom = str(frame_location.locate_x + frame_location.move_x) + ',' + str(
+        frame_location.locate_y + frame_location.move_y)
+    return render_template('index.html',
+                           video_names=video_names,
+                           site_left_top=site_left_top,
+                           site_left_bottom=site_left_bottom,
+                           site_right_top=site_right_top,
+                           site_right_bottom=site_right_bottom,
+                           first=video_names[0])
 
 
 @main.route('/query/')
@@ -92,6 +109,7 @@ def picture():
         return jsonify(res)
 
 
+# INFO 2019/12/25 15:18 liliangbin  背景图片设置
 @main.route('/background/', methods=['GET', 'POST'])
 def background():
     if request.method == 'POST':
@@ -121,13 +139,49 @@ def site():
     if request.method == 'POST':
         print("post")
         print(request.form)
-        left_1 = request.form['site_left_top']
-        left_2 = request.form['site_left_bottom']
-        right_1 = request.form['site_right_top']
-        right_2 = request.form['site_right_bottom']
-        print(left_1, left_2, right_1, right_2)
-        return left_1
+        locate_x = request.form['locate_x']
+        locate_y = request.form['locate_y']
+        move_x = request.form['move_x']
+        move_y = request.form['move_y']
+
+        with open("site.txt", 'w') as f:
+            f.write(str(locate_x) + '\n')
+            f.write(str(locate_y) + '\n')
+            f.write(str(move_x) + '\n')
+            f.write(str(move_y) + '\n')
+
+
     else:
         print("done")
 
-    return "done"
+    return redirect(url_for('main.index'))
+
+
+@main.route('/change_datas/', methods=['GET', 'POST'])
+def change_datas():
+    # TODO 2019/10/1 12:02 liliangbin  当前帧解码 ，并调用图像处理函数  返回一个字符串
+    # 输入的base64编码字符串必须符合base64的padding规则。“当原数据长度不是3的整数倍时, 如果最后剩下两个输入数据，在编码结果后加1个“=”；
+    # 如果最后剩下一个输入数据，编码结果后加2个“=”；如果没有剩下任何数据，就什么都不要加，这样才可以保证资料还原的正确性。”
+    s = []
+
+    if request.method == 'POST':
+        new = eval(request.form.getlist("current_frame")[0])
+        print(type(new), new)
+        # new=[int(new[0]),int(new[1])]
+    with open(r"sand.csv", "r+", encoding="utf-8", newline="")as f:
+        reader = csv.reader(f)
+        # writer = csv.writer(f)
+        print("正在修改csv文件")
+        for i in reader:
+            s.append(i)
+        for i in s:
+            # print(i)
+            if str(new[0]) == i[0]:
+                s[s.index(i)][1] = str(244 - new[1])
+                break
+    with open(r"sand.csv", "w", newline="")as f:
+        writer = csv.writer(f)
+        for i in s:
+            writer.writerow(i)
+        print("csv文件修改成功")
+        return "true"

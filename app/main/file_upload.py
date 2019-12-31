@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
 
 
-from flask import request, render_template, redirect, url_for,flash
+import os
+
+from flask import request, render_template, redirect, url_for, flash
 
 from config import Config
 from . import main
-import os
+
 
 def allowed_file(filename):
     return '.' in filename and \

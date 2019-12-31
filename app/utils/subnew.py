@@ -41,7 +41,7 @@ class PictureSub(object):
                             image[i, j, 0] = 0
                             image[i, j, 1] = 0
                             image[i, j, 2] = 0
-                    if i > 244 or i < 160 or j > 430 or j < 48:
+                    if i > 244 or i < 160 or j > 375 or j < 48:
                         image[i, j, 0] = 255
                         image[i, j, 1] = 255
                         image[i, j, 2] = 255
@@ -56,6 +56,7 @@ class PictureSub(object):
         list2 = []
         with open("sand.csv", "w", newline="")as f:
             writer = csv.writer(f)
+            # writer.writerow("vdv")
             for i in range(shape[1]):
                 for j in range(shape[0]):
                     if (image[j, i, 2] < k):
@@ -90,17 +91,17 @@ class PictureSub(object):
             f.write(str(list2))
 
         head = list1[0]
-        print("head === > ", head)
+        # print("head === > ", head)
         y_zeros = np.ones(head) * 244
-        print(head)
+        # print(head)
         list_x_add = range(0, head)
-        print("len  head == > ", list_x_add)
-        print(list_x_add)
-        print("list X ", list_x_add)
+        # print("len  head == > ", list_x_add)
+        # print(list_x_add)
+        # print("list X ", list_x_add)
         list1 = list(list_x_add) + list1
 
         list2 = y_zeros.tolist() + list2
-        print(len(list1), "  == list2 === >", len(list2))
+        # print(len(list1), "  == list2 === >", len(list2))
 
         list1 = list1[50:]
         list2 = list2[50:]
@@ -108,8 +109,9 @@ class PictureSub(object):
             "list_x": list1,
             "list_y": list2
         }
-        print(list1)
-        print(list2)
+        print("x轴", list1)
+        print("y轴", list2)
+
         return res
 
     def test_done(self):
