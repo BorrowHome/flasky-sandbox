@@ -1,5 +1,4 @@
 import csv
-import math
 
 from app.utils import areaRect
 from app.utils.sand_area import Helen_formula
@@ -8,18 +7,16 @@ from app.utils.site import Site
 from . import main
 
 
-@main.route("/get_area")
+@main.route("/get_volume", methods=['POST', 'GET'])
 def get_volume():
-
     with open("site.txt", "r+") as  f:
         a = f.readlines()
         print(a)
-        frame_location = Site(a[0], a[1], a[2], a[3])
-
+        frame_location = Site(int(a[0]), int(a[1]), int(a[2]), int(a[3]))
     frame_area = areaRect.get_frame_area(frame_location.locate_x,
-                                         frame_location.move_x,
                                          frame_location.locate_y,
-                                         frame_location.move_y)
+                                         frame_location.locate_x + frame_location.move_x,
+                                         frame_location.locate_y + frame_location.move_y)
 
     helen = Helen_formula()
     # 沙子坐标
@@ -29,8 +26,7 @@ def get_volume():
     # 回路
     sum = 0
     for volume in sand_coordinate:
-        print(volume[0])
-        points.append(Point(volume[0], volume[1]))
+        points.append(Point(int(volume[0]), int(volume[1])))
         sum = sum + 1
 
     for tmp in range(sum, 0, -1):
@@ -39,6 +35,5 @@ def get_volume():
 
     return {
         "frame_area": frame_area,
-        "sand_area": math.ceil(sand_area)
+        "sand_area": sand_area
     }
-

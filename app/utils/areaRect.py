@@ -3,14 +3,14 @@
 
 # from PIL import Image
 
-area = 0
-
 
 #################################3矩形框像素统计
-def get_frame_area(locate_x, locate_y, move_x, move_y):
-    global area
-    for i in range(locate_x, move_x):
-        for j in range(locate_y, move_y):
-            area += 1
+def get_frame_area(locate_x, locate_y, end_x, end_y):
+    area = 0
+    print(locate_y,end_y)
+    for i in range(locate_x, end_x, 1):
+        for j in range(locate_y, end_y, 1):
+            print("doone")
+            area = area + 1
     print(area)
     return area

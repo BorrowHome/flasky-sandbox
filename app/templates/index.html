@@ -105,31 +105,34 @@
             <form action="{{ url_for('.site') }}" method="POST" id="site_form" onsubmit="return submitForm()">
                 <div class="panel panel-success">
                     <label> site-left-top: </label>
-                    <input type="text" class="site_input" name="site_left_top" value="{{ site_left_top }}">
+                    <input type="text" class="site_input" id="site_left_top" name="site_left_top"
+                           value="{{ site_left_top }}">
                 </div>
                 <div class="panel panel-info">
                     <label> site-left-bottom: </label>
-                    <input type="text" class="site_input" name="site_left_bottom" value="{{ site_left_bottom }}">
+                    <input type="text" class="site_input" id="site_left_bottom" name="site_left_bottom"
+                           value="{{ site_left_bottom }}">
                 </div>
                 <div class="panel panel-warning">
                     <label> site-right-top: </label>
 
-                    <input type="text" class="site_input" name="site_right_top" value="{{ site_right_top }}">
+                    <input type="text" class="site_input" id="site_right_top" name="site_right_top"
+                           value="{{ site_right_top }}">
                 </div>
                 <div class="panel panel-danger">
                     <label> site-right-bottom: </label>
 
-                    <input type="text" class="site_input" name="site_right_bottom" value="{{ site_right_bottom }}">
+                    <input type="text" class="site_input" id="site_right_bottom" name="site_right_bottom"
+                           value="{{ site_right_bottom }}">
                 </div>
 
                 <div class="panel panel-danger">
                     <label> 边框面积: </label>
-                    <span type="text" class="site_input">面积</span>
-
+                    <input type="text" id="frame_area" class="site_input">
                 </div>
                 <div class="panel panel-danger">
                     <label> 沙子体积: </label>
-                    <span type="text" class="site_input">体积<span>
+                    <input type="text" id="sand_volume" class="site_input">
                 </div>
                 <div id="site-change">
                     <button type="button" id="site-name" class="btn btn-info" onclick=" return frame_seletctiondone()">
@@ -138,7 +141,7 @@
                     <button type="button" id="recognize" class="btn btn-info">
                         识别坐标
                     </button>
-                    <button type="submit" id="area" class="btn btn-info">计算面积</button>
+                    <button type="button" id="area" class="btn btn-info">计算面积</button>
 
                 </div>
 
@@ -193,7 +196,14 @@
 </script>
 
 <script>
-    var frame_area = document.getElementById("area")
+    var site_left_top = document.getElementById("site_left_top")
+    var site_left_bottom = document.getElementById("site_left_bottom")
+    var site_right_top = document.getElementById("site_right_top")
+    var site_right_bottom = document.getElementById("site_right_bottom")
+    var frame_area = document.getElementById("frame_area")
+    var sand_volume = document.getElementById("sand_volume")
+
+    var frame = document.getElementById("area")
     var recognize = document.getElementById("recognize")
 
     function frame_seletctiondone() {
@@ -208,11 +218,46 @@
         )
     }
 
-    recognize.onclick=function (e) {
+    recognize.onclick = function (e) {
 
-        $.post()
+        $.post(
+            '{{ url_for('.recognize') }}',
+            {current_frame: getCurrentFrames(1)},
+            function (data) {
+                console.log(data)
+                console.log(data.locate_x)
+                tmp1 = (data.locate_x + data.move_x)
+                console.log(tmp1)
+                tmp2 = (data.locate_y + data.move_y)
+
+                var a = 2
+                var b = 4
+                console.log(a + b)
+                site_left_top.value = data.locate_x + ',' + data.locate_y
+                site_left_bottom.value = data.locate_x + ',' + tmp2
+                site_right_top.value = tmp1 + ',' + data.locate_y
+                site_right_bottom.value = tmp1 + ',' + tmp2
+                alert("通过后台识别算法识别边框的坐标")
+                {#    js 的弱类型导致的，因为是弱类型，故和字符串一起运算的时候会自动转化成字符串来进行运算#}
+            }
+        )
 
     }
+
+
+    frame.onclick = function (e) {
+        $.post(
+            '{{ url_for('.get_volume') }}',
+            {},
+            function (data) {
+                console.log(data)
+                frame_area.value = data.frame_area.toFixed(2)
+                sand_volume.value = data.sand_area.toFixed(2)
+                alert("计算面积成功")
+            }
+        )
+    }
+
 </script>
 </body>
 </html>
