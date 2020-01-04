@@ -32,14 +32,15 @@ def index():
     with open("site.txt", "r+") as  f:
         a = f.readlines()
         print(a)
-        frame_location = Site(a[0], a[1], a[2], a[3])
+        frame_location = Site(int(a[0]), int(a[1]), int(a[2]), int(a[3]))
 
+    tmp2 = frame_location.locate_y + frame_location.move_y
+    tmp1 = frame_location.locate_x + frame_location.move_x
     site_left_top = str(frame_location.locate_x) + ',' + str(frame_location.locate_y)
-    site_left_bottom = str(frame_location.locate_x) + ',' + str(frame_location.locate_y + frame_location.move_y)
+    site_left_bottom = str(frame_location.locate_x) + ',' + str(tmp2)
 
-    site_right_top = str(frame_location.locate_x + frame_location.move_x) + ',' + str(frame_location.locate_y)
-    site_right_bottom = str(frame_location.locate_x + frame_location.move_x) + ',' + str(
-        frame_location.locate_y + frame_location.move_y)
+    site_right_top = str(tmp1) + ',' + str(frame_location.locate_y)
+    site_right_bottom = str(tmp1) + ',' + str(tmp2)
     return render_template('index.html',
                            video_names=video_names,
                            site_left_top=site_left_top,
@@ -139,10 +140,12 @@ def site():
     if request.method == 'POST':
         print("post")
         print(request.form)
-        locate_x = request.form['locate_x']
-        locate_y = request.form['locate_y']
-        move_x = request.form['move_x']
-        move_y = request.form['move_y']
+        # 数据识别得的时候最好使用整数实现，int和float的转化有问题，就在计算得时候。脑阔疼
+        # 大坑
+        locate_x = int(float(request.form['locate_x']))
+        locate_y = int(float(request.form['locate_y']))
+        move_x = int(float(request.form['move_x']))
+        move_y = int(float(request.form['move_y']))
 
         with open("site.txt", 'w') as f:
             f.write(str(locate_x) + '\n')

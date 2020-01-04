@@ -9,10 +9,11 @@ from . import main
 
 @main.route("/get_volume", methods=['POST', 'GET'])
 def get_volume():
-    with open("site.txt", "r+") as  f:
+    with open("site.txt", "r+") as f:
         a = f.readlines()
         print(a)
         frame_location = Site(int(a[0]), int(a[1]), int(a[2]), int(a[3]))
+
     frame_area = areaRect.get_frame_area(frame_location.locate_x,
                                          frame_location.locate_y,
                                          frame_location.locate_x + frame_location.move_x,
