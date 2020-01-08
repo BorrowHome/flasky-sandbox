@@ -23,9 +23,11 @@ def ostu(img):
         for j in range(width):
             if th3[i, j] == 0:
                 area += 1
-    print(area)
+    print("done")
     return area
 
 
-src1 = cv2.imread("10.jpg")
-ostu(src1)
+if __name__ == '__main__':
+    src = cv2.imread("chun.png")
+    area = ostu(src)
+    print(area)

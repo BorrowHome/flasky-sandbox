@@ -19,16 +19,18 @@ from ..models import User
 @main.route('/')
 def index():
     # 这里的主入口是我们函数的dir 最好用绝对路径，临时用相对路径
+    # 使用url_for的时候使用的是函数名（路由名和函数名应一样。）
     video_names = []
-    path_in = './app/static/video'
+    path_in = './app/static/video/'
+    path_out = '../static/video/'
     for dirpath, dirnames, filenames in os.walk(path_in):
         for filename in filenames:
             # dir_file_name = os.path.join(dirpath, filename)
             dir_file_name = filename
             if os.path.splitext(dir_file_name)[1] == '.mp4':  # (('./app/static/movie', '.mp4'))
                 print(dir_file_name)
-                video_names.append(dir_file_name)
-
+                video_names.append(path_out + dir_file_name)
+    current_video = video_names[0]
     with open("site.txt", "r+") as  f:
         a = f.readlines()
         print(a)
@@ -47,7 +49,7 @@ def index():
                            site_left_bottom=site_left_bottom,
                            site_right_top=site_right_top,
                            site_right_bottom=site_right_bottom,
-                           first=video_names[0])
+                           current_video=current_video)
 
 
 @main.route('/query/')
@@ -102,11 +104,18 @@ def picture():
         q = sub.subtract_demo(background, currentFrame)
         s = sub.inverse(q)
         t = sub.iblack(s, 220)
+        cv2.imwrite('chun.png', t)
         # s = sub.isblack(t, 240)
 
         res = sub.ipaint(s, 50)
         cv2.imwrite('write.jpg', s)
 
+        with open("site.txt", "r+") as  f:
+            a = f.readlines()
+            print(a)
+            frame_location = Site(int(a[0]), int(a[1]), int(a[2]), int(a[3]))
+        res['max'] = frame_location.locate_y + frame_location.move_y
+        # 变化得y轴
         return jsonify(res)
 
 
@@ -135,6 +144,7 @@ def background():
         return 'done'
 
 
+# TODO 2020/1/4 15:13 liliangbin 返回的地址应该是画框的位置（视频名字和时间位置）
 @main.route('/site/', methods=['GET', 'POST'])
 def site():
     if request.method == 'POST':

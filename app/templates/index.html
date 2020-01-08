@@ -69,7 +69,7 @@
                         <li>
                             <video data='inf' class="video_player"
                                    onclick="choose_a_video(this)">
-                                <source src="../static/video/{{ filename }}" type="video/mp4">
+                                <source src="{{ filename }}" type="video/mp4">
                                 <source src="movie.ogg" type="video/ogg">
                                 您的浏览器不支持Video标签。
                             </video>
@@ -86,7 +86,7 @@
             <!-- 视频播放区域 -->
             <div class="video">
                 <video id="video_player" controls muted class="video_player">
-                    <source src="../static/video/{{ first }}" type="video/mp4">
+                    <source src="{{ current_video }}" type="video/mp4">
                     <source src="movie.ogg" type="video/ogg">
                     您的浏览器不支持Video标签。
                 </video>

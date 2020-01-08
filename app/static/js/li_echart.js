@@ -67,6 +67,10 @@ setInterval(function () {
                 })*/
     }
 
+    //html我们可以通过属性得到他们的当前位置。
+    // video.currentTime = 1577
+    console.log(video.currentTime)
+
 
 }, 2000);
 ;
@@ -76,12 +80,12 @@ function setCurrentFrame() {
     console.log(
         "播放数据  嘻嘻"
     )
-    var scale = 0.3
+    var scale = 1
     var pictureURL = getCurrentFrames(scale)
     data = uploadPicture(pictureURL)
     for (i = 0; i < data["list_y"].length; i++) {
 
-        data["list_y"][i] = 244 - data["list_y"][i]
+        data["list_y"][i] = data["max"] - data["list_y"][i]
     }
 
     myChart.setOption({

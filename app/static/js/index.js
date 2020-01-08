@@ -89,7 +89,7 @@ function submitForm() {
 }
 
 function setBackgroundByFrame() {
-    var scale = 0.3
+    var scale = 1
     var pictureURL = getCurrentFrames(scale)
     setBackground(pictureURL)
 }
