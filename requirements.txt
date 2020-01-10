@@ -4,7 +4,6 @@ Flask-Migrate
 Flask-SQLAlchemy
 Jinja2
 numpy
-scipy
 SQLAlchemy
 opencv-python
 pillow

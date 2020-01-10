@@ -1,8 +1,8 @@
-FROM python:3.7-alpine
+FROM python:3.7-alpine3.9
 WORKDIR /Project/flasky
 
 RUN apk add --no-cache --update \
-    python3 python3-dev gcc \
+    python3 python3-dev g++ \
     gfortran musl-dev \
     libffi-dev openssl-dev
 

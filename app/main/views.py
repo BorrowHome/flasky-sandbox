@@ -7,7 +7,7 @@ import time
 
 import cv2
 import numpy as np
-from flask import render_template, request, jsonify, redirect, url_for
+from flask import render_template, request, redirect, url_for
 
 from app.utils.site import Site
 from app.utils.sub import PictureSub
@@ -117,7 +117,15 @@ def picture():
             frame_location = Site(int(a[0]), int(a[1]), int(a[2]), int(a[3]))
         res['max'] = frame_location.locate_y + frame_location.move_y
         # 变化得y轴
-        return jsonify(res)
+        list_y = np.array(res['list_y'])
+
+        data_total = res['max'] - list_y
+        max_index = max(data_total.tolist())
+
+        res['list_y'] = data_total.tolist()
+        res['max'] = max_index + 20
+        # 以前使用的是jsonify===> 前端使用 data["list_y"]==>有什么区别
+        return res
 
 
 # INFO 2019/12/25 15:18 liliangbin  背景图片设置
