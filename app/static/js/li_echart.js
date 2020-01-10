@@ -69,7 +69,7 @@ setInterval(function () {
 
     //html我们可以通过属性得到他们的当前位置。
     // video.currentTime = 1577
-    console.log(video.currentTime)
+    //console.log(video.currentTime)
 
 
 }, 2000);

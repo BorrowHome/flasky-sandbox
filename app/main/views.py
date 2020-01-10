@@ -23,6 +23,7 @@ def index():
     video_names = []
     path_in = './app/static/video/'
     path_out = '../static/video/'
+
     for dirpath, dirnames, filenames in os.walk(path_in):
         for filename in filenames:
             # dir_file_name = os.path.join(dirpath, filename)
@@ -30,12 +31,11 @@ def index():
             if os.path.splitext(dir_file_name)[1] == '.mp4':  # (('./app/static/movie', '.mp4'))
                 print(dir_file_name)
                 video_names.append(path_out + dir_file_name)
-    current_video = video_names[0]
     with open("site.txt", "r+") as  f:
         a = f.readlines()
         print(a)
         frame_location = Site(int(a[0]), int(a[1]), int(a[2]), int(a[3]))
-
+    video_src = video_names[0]
     tmp2 = frame_location.locate_y + frame_location.move_y
     tmp1 = frame_location.locate_x + frame_location.move_x
     site_left_top = str(frame_location.locate_x) + ',' + str(frame_location.locate_y)
@@ -49,7 +49,8 @@ def index():
                            site_left_bottom=site_left_bottom,
                            site_right_top=site_right_top,
                            site_right_bottom=site_right_bottom,
-                           current_video=current_video)
+                           video_src=video_src,
+                           )
 
 
 @main.route('/query/')
@@ -198,3 +199,17 @@ def change_datas():
             writer.writerow(i)
         print("csv文件修改成功")
         return "true"
+
+
+@main.route("/test")
+def test():
+    try:
+        info = request.args.get("test")
+        print(info)
+    except Exception as e:
+        print(e.args)
+
+    new = request.args.get("i")
+    if new == None:
+        print("done")
+    return "done"

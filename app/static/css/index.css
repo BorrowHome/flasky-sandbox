@@ -72,3 +72,11 @@ li {
     padding: 7px;
     margin-bottom: 0px;
 }
+
+.site-center {
+    text-align: center;
+}
+
+.site-in {
+    display: inline;
+}

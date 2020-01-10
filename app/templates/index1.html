@@ -1,10 +1,25 @@
-
 <html>
-  <head>
+<head>
     <title>Video Streaming Demonstration</title>
-  </head>
-  <body>
-    <h1>Video Streaming Demonstration</h1>
-    <img src="{{ url_for('video_feed') }}">
-  </body>
+    <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+
+</head>
+<body>
+<h1>Video Streaming Demonstration</h1>
+<label>info</label>
+<input id="yes">
+<button type="button" id="no"></button>
+<img src="{{ url_for('video_feed') }}">
+<script>
+
+    var input_info = document.getElementById("yes")
+    var but = document.getElementById("no")
+    but.onclick = function (e) {
+        $.ajax(
+        )
+
+    }
+</script>
+</body>
+
 </html>

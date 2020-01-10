@@ -37,8 +37,11 @@ def get_volume():
     sand_area = 0
     img = cv2.imread("./chun.png")
     sand_area = ostu(img)
-
+    sand_frame_scale = float(sand_area) / float(frame_area)
+    print(sand_frame_scale)
+    print("sand_frame_scale")
     return {
         "frame_area": frame_area,
-        "sand_area": sand_area
+        "sand_area": sand_area,
+        "sand_frame_scale": sand_frame_scale
     }

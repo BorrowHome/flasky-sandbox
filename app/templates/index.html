@@ -86,7 +86,7 @@
             <!-- 视频播放区域 -->
             <div class="video">
                 <video id="video_player" controls muted class="video_player">
-                    <source src="{{ current_video }}" type="video/mp4">
+                    <source src="{{ video_src }}" type="video/mp4">
                     <source src="movie.ogg" type="video/ogg">
                     您的浏览器不支持Video标签。
                 </video>
@@ -99,43 +99,32 @@
 
         </div>
         <div class="col-md-2">
-            <h2> 关键点坐标 </h2>
+            <h2> 关键点坐标/面积 </h2>
             <div class="panel panel-primary">
             </div>
             <form action="{{ url_for('.site') }}" method="POST" id="site_form" onsubmit="return submitForm()">
                 <div class="panel panel-success">
-                    <label> site-left-top: </label>
-                    <input type="text" class="site_input" id="site_left_top" name="site_left_top"
-                           value="{{ site_left_top }}">
-                </div>
-                <div class="panel panel-info">
-                    <label> site-left-bottom: </label>
-                    <input type="text" class="site_input" id="site_left_bottom" name="site_left_bottom"
-                           value="{{ site_left_bottom }}">
-                </div>
-                <div class="panel panel-warning">
-                    <label> site-right-top: </label>
-
-                    <input type="text" class="site_input" id="site_right_top" name="site_right_top"
-                           value="{{ site_right_top }}">
-                </div>
-                <div class="panel panel-danger">
-                    <label> site-right-bottom: </label>
-
-                    <input type="text" class="site_input" id="site_right_bottom" name="site_right_bottom"
-                           value="{{ site_right_bottom }}">
+                    <p class="site-center" id="site_left_top">({{ site_left_top }})</p>
+                    <p class="site-center" id="site_left_bottom">({{ site_left_bottom }})</p>
+                    <p class="site-center" id="site_right_top">({{ site_right_top }})</p>
+                    <p class="site-center" id="site_right_bottom">({{ site_right_bottom }})</p>
                 </div>
 
                 <div class="panel panel-danger">
-                    <label> 边框面积: </label>
-                    <input type="text" id="frame_area" class="site_input">
+                    <label class="site-center"> 边框面积: </label>
+                    <p type="text" id="frame_area" class="site_input site-center site-in"></p>
                 </div>
                 <div class="panel panel-danger">
                     <label> 沙子体积: </label>
-                    <input type="text" id="sand_volume" class="site_input">
+                    <p type="text" id="sand_volume" class="site_input site-center site-in"></p>
                 </div>
+                <div class="panel panel-danger">
+                    <label>面积比例:</label>
+                    <p id="sand_frame_scale" class="site-center site-in"></p>
+                </div>
+
                 <div id="site-change">
-                    <button type="button" id="site-name" class="btn btn-info" onclick=" return frame_seletctiondone()">
+                    <button type="button" id="site_name" class="btn btn-info">
                         框选坐标
                     </button>
                     <button type="button" id="recognize" class="btn btn-info">
@@ -202,17 +191,24 @@
     var site_right_bottom = document.getElementById("site_right_bottom")
     var frame_area = document.getElementById("frame_area")
     var sand_volume = document.getElementById("sand_volume")
-
+    var draw_frame = document.getElementById("site_name")
     var frame = document.getElementById("area")
     var recognize = document.getElementById("recognize")
+    var sand_frame_scale = document.getElementById("sand_frame_scale")
+    recognize.style.display = 'none'
 
-    function frame_seletctiondone() {
+    draw_frame.onclick = function (e) {
+
         $.post(
             '{{ url_for('.draw_frame') }}',
             {current_frame: getCurrentFrames(1)},
             function (data) {
 
-                window.location.href = '{{ url_for('.draw_frame') }}';
+                video_src = video.src
+                v_time = video.currentTime.toFixed(0)
+                localStorage.setItem("video_src", video_src)
+                localStorage.setItem("video_time", v_time)
+                window.location.href = '{{ url_for('.draw_frame',video_time=v_time)}}';
 
             }
         )
@@ -229,14 +225,10 @@
                 tmp1 = (data.locate_x + data.move_x)
                 console.log(tmp1)
                 tmp2 = (data.locate_y + data.move_y)
-
-                var a = 2
-                var b = 4
-                console.log(a + b)
-                site_left_top.value = data.locate_x + ',' + data.locate_y
-                site_left_bottom.value = data.locate_x + ',' + tmp2
-                site_right_top.value = tmp1 + ',' + data.locate_y
-                site_right_bottom.value = tmp1 + ',' + tmp2
+                site_left_top.value = '(' + data.locate_x + ',' + data.locate_y + ')'
+                site_left_bottom.value = '(' + data.locate_x + ',' + tmp2 + ')'
+                site_right_top.value = '(' + tmp1 + ',' + data.locate_y + ')'
+                site_right_bottom.value = '(' + tmp1 + ',' + tmp2 + ')'
                 alert("通过后台识别算法识别边框的坐标")
                 {#    js 的弱类型导致的，因为是弱类型，故和字符串一起运算的时候会自动转化成字符串来进行运算#}
             }
@@ -250,14 +242,33 @@
             '{{ url_for('.get_volume') }}',
             {},
             function (data) {
-                console.log(data)
-                frame_area.value = data.frame_area.toFixed(2)
-                sand_volume.value = data.sand_area.toFixed(2)
+                console.log(data.frame_area.toFixed(2))
+                frame_area.innerText = data.frame_area.toFixed(2)
+                sand_volume.innerText = data.sand_area.toFixed(2)
+                sand_frame_scale.innerText = data.sand_frame_scale.toFixed(2)
                 alert("计算面积成功")
             }
         )
     }
+    {#从上次结束的地方开始#}
+    window.onload = function (e) {
 
+        video_time = localStorage.getItem("video_time")
+        if (video_time == null) {
+            video_time = 0
+        }
+        video_src = localStorage.getItem("video_src")
+        if (video_src == null) {
+            video_src = '{{ video_src }}'
+
+        } else {
+            video.currentTime = video_time
+            video.src = video_src
+        }
+        console.log(video_src)
+        console.log(video_time)
+        console.log("页面加载的时候加载")
+    }
 </script>
 </body>
 </html>

@@ -33,7 +33,6 @@ def draw_frame():
         print(img_np.shape)
     else:
         img_np = cv2.imread(image_path + "/currentframe.png")
-        print(img_np.shape)
     return render_template("draw_frame.html", currentframe="currentframe.png", width=img_np.shape[1],
                            height=img_np.shape[0])
 
