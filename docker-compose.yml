@@ -9,4 +9,6 @@ services:
     ports:
       - "8080:8080"
     volumes:
-      - /root/video:/flask-sandbox/app/static/video
+      - /root/static/video:/flask-sandbox/app/static/video
+      - /root/static/image:/flask-sandbox/app/static/image
+      - /root/static/document:/flask-sandbox/app/static/document
