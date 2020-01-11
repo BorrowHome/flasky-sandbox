@@ -71,7 +71,6 @@ setInterval(function () {
     // video.currentTime = 1577
     //console.log(video.currentTime)
 
-
 }, 2000);
 ;
 

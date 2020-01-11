@@ -9,23 +9,27 @@
 
 <div class="video">
     <video id="video_player" controls muted class="video_player" style=" width: 400px">
-        <source src="../static/info.avi" type="video/avi">
+        <source src="../static/video/视频3.mp4" type="video/mp4">
         <source src="movie.ogg" type="video/ogg">
         您的浏览器不支持Video标签。
     </video>
 </div>
 <div id="output" style="width: 500px"></div>
 <div id="canvasDiv" style="width: 400px"></div>
-<button onclick="done(this)"> button</button>
+<img src="../static/image/firstFrame4.jpg" id="img-li">
+<button id="run"> button</button>
 <script>
+    var run = document.getElementById("run")
+    var img = document.getElementById("img-li")
+    console.log(img.src)
+
     console.log("done")
     var video = document.getElementById("video_player")
     video.play()
     console.log("done2 ")
-    video.pause()
     console.log(video.currentSrc)
-
     {#
+
 
         $(function () {
             var cDiv = convertImageToCanvas(video);
@@ -62,16 +66,31 @@
         });
     #}
 
-    function done() {
+    function getinfo(video_tmp, scale) {
         var canvas = document.createElement("canvas");
-        canvas.width = video.videoWidth * 0.4;
-        canvas.height = video.videoHeight * 0.4;
-        //坐标(0,0)表示从此处开始绘制,相当于偏移
-        console.log(video.videoWidth)
-        canvas.getContext("2d").drawImage(video, 0, 0, canvas.width, canvas.height);
+        console.log(video_tmp.currentTime, "currentTime")
 
-        console.log(canvas.toDataURL("image/png"));
+        canvas.width = video.videoWidth * scale;
+        canvas.height = video.videoHeight * scale;
+        canvas.getContext("2d").drawImage(video_tmp, 0, 0, canvas.width, canvas.height);
+        var img_src = canvas.toDataURL("image/png")
+
+        return img_src
     }
+
+    run.onclick = function () {
+        var temp1 = video.currentTime.toFixed(0)
+        video.currentTime = 20
+        {#顺序执行，但是js是异步得执行，故可能并没有得到结果#}
+        var img_src1 = getinfo(video, 1)
+
+        img.src = img_src1
+        {#
+                video.currentTime = temp1
+                var img_src2 = getinfo(video, 1)
+                console.log(img_src2)#}
+    }
+
 
 </script>
 

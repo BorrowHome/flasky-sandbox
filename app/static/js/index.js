@@ -1,23 +1,5 @@
-console.log('message')
-
-console.log('加载js文件')
-
 var video = document.getElementById("video_player");
 
-
-function choose_a_video(obj) {
-    console.log('click')
-    console.log(obj.getAttribute('data'))
-    console.log(video.videoWidth, 'innnn')
-    console.log(video.videoHeight, 'innnn')
-
-    console.log(obj.currentSrc)
-    video.src = obj.currentSrc;
-
-    video.load()
-    // video.play()
-    // 默认不让他播放
-}
 
 function setBackground(pictureURL) {
     $.ajax({
@@ -29,7 +11,6 @@ function setBackground(pictureURL) {
             //处理 resp.responseText;
             console.log(resp)
             console.log("设置背景")
-            alert("设置背景成功")
         },
         error: function (a, b, c) {
             //a,b,c三个参数,具体请参考JQuery API
@@ -40,9 +21,11 @@ function setBackground(pictureURL) {
 
 function getCurrentFrames(scale) {
 
+
     var canvas = document.createElement("canvas");
     console.log(scale)
     canvas.width = video.videoWidth * scale;
+
     console.log(video.videoWidth)
     canvas.height = video.videoHeight * scale;
     canvas.getContext('2d')
@@ -54,7 +37,6 @@ function getCurrentFrames(scale) {
 }
 
 function uploadPicture(pictureURL) {
-
 
     echart_data = ""
     console.log(' upload ')
@@ -89,10 +71,30 @@ function submitForm() {
 }
 
 function setBackgroundByFrame() {
+    console.log("set  background")
     var scale = 1
     var pictureURL = getCurrentFrames(scale)
     setBackground(pictureURL)
 }
 
+function getinfo(video_tmp, scale) {
+    var canvas = document.createElement("canvas");
+    canvas.width = video_tmp.videoWidth * scale;
+    canvas.height = video_tmp.videoHeight * scale;
+    canvas.getContext("2d").drawImage(video_tmp, 0, 0, canvas.width, canvas.height);
+    var img_src = canvas.toDataURL("image/png")
+    return img_src
+}
 
+function choose_a_video(obj) {
+    console.log('click')
+    console.log(obj.getAttribute('data'))
+    console.log(video.videoWidth, 'innnn')
+    console.log(video.videoHeight, 'innnn')
+    console.log(obj.currentSrc)
+    video.src = obj.currentSrc;
+    video.load()
 
+    var imgsrx = getinfo(obj, 1)
+    setBackground(imgsrx)
+}
