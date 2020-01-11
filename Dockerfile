@@ -2,7 +2,6 @@ FROM ubuntu:16.04
 
 MAINTAINER AUTHOR liliangbin
 ENV DEBIAN_FRONTEND noninteractive
-RUN apt-get install apt-transport-https
 ADD sources.list /etc/apt/
 
 USER root
