@@ -3,6 +3,9 @@ import csv
 
 import cv2 as cv
 
+from config import Config
+
+
 class PictureSub(object):
     def __init__(self):
         pass
@@ -13,7 +16,7 @@ class PictureSub(object):
 
     #     get the video first frames
 
-    def subtract_demo(self,m1, m2):  # 像素的减运算
+    def subtract_demo(self, m1, m2):  # 像素的减运算
         dst = cv.subtract(m1, m2)
         # cv.imshow("subtract_demo", dst)
         return dst
@@ -27,7 +30,7 @@ class PictureSub(object):
         # cv.imshow("imshow_inverse", image)
         return image
 
-    def iblack(self,image, k):
+    def iblack(self, image, k):
         shape = image.shape
         channels = shape[2]
         for cn in range(channels):
@@ -37,17 +40,17 @@ class PictureSub(object):
                     if (image[i, j, cn] < k):
                         image[i, j, cn] = 0
 
-
-
         return image
 
-    def ipaint( self,image, k):
+    def ipaint(self, image, k):
+        image_path = Config.UPLOAD_IMAGE_PATH
+        document_path = Config.SAVE_DOCUMENT_PATH
         shape = image.shape
         print(shape[0])
         print(shape[1])
         list1 = []
         list2 = []
-        with open("sand.csv", "w", newline="")as f:
+        with open(document_path + "sand.csv", "w", newline="")as f:
             writer = csv.writer(f)
             for i in range(shape[1]):
                 for j in range(shape[0]):
@@ -79,38 +82,6 @@ class PictureSub(object):
         print(list2)
         return res
 
-        def test_done(self):
-          print(" done ")
 
 if __name__ == '__main__':
- sub = PictureSub()
- src1 = cv.imread('E:firstFrame5.jpg')
- src2 = cv.imread('E:/back3/888.jpg')
- q = sub.subtract_demo(src1, src2)
- cv.imwrite('E:/back4/666.jpg', q)
- s = sub.inverse(q)
- cv.imwrite('E:/back4/777.jpg', s)
- t =sub.iblack(s, 210)
- # s = sub.isblack(t, 240)
- cv.imwrite('E:/back4/8.jpg', t)
- # 把数据给写入到csv文件里面
- sub.ipaint(t, 50)
-
-# m = cv.rectangle(s, (170, 450), (1450, 960), (0, 0, 255), 3)
- cv.imwrite('E:/back4/9.jpg', s)
-    # dirr ='F:/frame/'
-    # filelist = os.listdir(dirr)
-    # for item in filelist:
-    #     src2 = cv.imread(dirr+item)
-    #     q=subtract_demo(src1, src2)
-    #     s =inverse(q)
-    #     t=iblack(q,20)
-    #     #cv.GaussianBlur(t, (3, 3), 0)
-    #     iblack(t,220)
-    #    # cv.cvtColor(t, cv.COLOR_BGR2GRAY)
-    #     m = cv.rectangle(t,(170,450),(1450,960),(0,0,255),3)
-    #     # name = 'pic/'+'00'+str(i)+'.jpg'
-    #     cv.imwrite('E:/frame10/'+item, m)
-    # cv.imshow("subtract_demo", q)
-
-cv.destroyAllWindows()
+    pass

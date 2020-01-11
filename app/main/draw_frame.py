@@ -29,16 +29,18 @@ def draw_frame():
         np_array = np.fromstring(image, np.uint8)
         # 生成cv2 需要的数据类型
         img_np = cv2.imdecode(np_array, cv2.IMREAD_COLOR)
-        cv2.imwrite(image_path + "/currentframe.png", img_np)
+        cv2.imwrite(image_path + "currentframe.png", img_np)
         print(img_np.shape)
     else:
-        img_np = cv2.imread(image_path + "/currentframe.png")
+        img_np = cv2.imread(image_path + "currentframe.png")
     return render_template("draw_frame.html", currentframe="currentframe.png", width=img_np.shape[1],
                            height=img_np.shape[0])
 
 
 @main.route("/recognize/", methods=['POST', 'GET'])
 def recognize():
+    image_path = Config.UPLOAD_IMAGE_PATH
+    document_path = Config.SAVE_DOCUMENT_PATH
     if request.method == 'POST':
         str1 = request.form['current_frame']
         str1 = str1.split(',')[1]
@@ -53,8 +55,8 @@ def recognize():
         np_array = np.fromstring(image, np.uint8)
         # 生成cv2 需要的数据类型
         img_np = cv2.imdecode(np_array, cv2.IMREAD_COLOR)
-        cv2.imwrite("origin.png", img_np)
-        red_png = pic_to_red("origin.png")
+        cv2.imwrite(image_path + "origin.png", img_np)
+        red_png = pic_to_red(image_path + "origin.png")
         picture_sub = PictureSub()
         src1 = cv2.imread(red_png)
         locate = picture_sub.left_up(src1)
@@ -62,7 +64,7 @@ def recognize():
         move_x = locate_remote['list_x'] - locate['list_x']
         move_y = locate_remote['list_y'] - locate['list_y']
         print(locate['list_x'], locate['list_y'], move_x, move_y)
-        with open("site.txt", 'w') as f:
+        with open(document_path + "site.txt", 'w') as f:
             f.write(str(locate['list_x']) + '\n')
             f.write(str(locate['list_y']) + '\n')
             f.write(str(move_x) + '\n')

@@ -3,6 +3,8 @@ import csv
 import cv2 as cv
 import numpy as np
 
+from config import Config
+
 
 class PictureSub(object):
     def __init__(self):
@@ -49,12 +51,14 @@ class PictureSub(object):
         return image
 
     def ipaint(self, image, k):
+        image_path = Config.UPLOAD_IMAGE_PATH
+        document_path = Config.SAVE_DOCUMENT_PATH
         shape = image.shape
         print(shape[0])
         print(shape[1])
         list1 = []
         list2 = []
-        with open("sand.csv", "w", newline="")as f:
+        with open(document_path + "sand.csv", "w", newline="")as f:
             writer = csv.writer(f)
             # writer.writerow("vdv")
             for i in range(shape[1]):
@@ -87,7 +91,7 @@ class PictureSub(object):
         # array_list_y_fit = signal.medfilt(array_list_y, 3)
         # list2 = array_list_y_fit.tolist()
         #
-        with open('test.txt', 'w') as  f:
+        with open(document_path + 'test.txt', 'w') as  f:
             f.write(str(list2))
 
         head = list1[0]
@@ -119,34 +123,4 @@ class PictureSub(object):
 
 
 if __name__ == '__main__':
-    sub = PictureSub()
-    src1 = cv.imread('back.png')
-    print(src1.shape)
-    src2 = cv.imread('test2.png')
-    q = sub.subtract_demo(src1, src2)
-    s = sub.inverse(q)
-    t = sub.iblack(s, 210)
-    # s = sub.isblack(t, 240)
-
-    # 把数据给写入到csv文件里面
-    sub.ipaint(t, 50)
-
-    # m = cv.rectangle(s, (170, 450), (1450, 960), (0, 0, 255), 3)
-    cv.imwrite('write.jpg', s)
-
-    # dirr ='F:/frame/'
-    # filelist = os.listdir(dirr)
-    # for item in filelist:
-    #     src2 = cv.imread(dirr+item)
-    #     q=subtract_demo(src1, src2)
-    #     s =inverse(q)
-    #     t=iblack(q,20)
-    #     #cv.GaussianBlur(t, (3, 3), 0)
-    #     iblack(t,220)
-    #    # cv.cvtColor(t, cv.COLOR_BGR2GRAY)
-    #     m = cv.rectangle(t,(170,450),(1450,960),(0,0,255),3)
-    #     # name = 'pic/'+'00'+str(i)+'.jpg'
-    #     cv.imwrite('E:/frame10/'+item, m)
-    # cv.imshow("subtract_demo", q)
-
-    cv.destroyAllWindows()
+    pass

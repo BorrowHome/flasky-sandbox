@@ -3,12 +3,15 @@ import cv2
 from app.utils import areaRect
 from app.utils.areaS import ostu
 from app.utils.site import Site
+from config import Config
 from . import main
 
 
 @main.route("/get_volume", methods=['POST', 'GET'])
 def get_volume():
-    with open("site.txt", "r+") as f:
+    image_path = Config.UPLOAD_IMAGE_PATH
+    document_path = Config.SAVE_DOCUMENT_PATH
+    with open(document_path + "site.txt", "r+") as f:
         a = f.readlines()
         print(a)
         frame_location = Site(int(a[0]), int(a[1]), int(a[2]), int(a[3]))
@@ -35,7 +38,7 @@ def get_volume():
     #     points.append(Point(points[tmp - 1].x, temp))
     #     sand_area = helen.get_area_of_poly_gon(points)
     sand_area = 0
-    img = cv2.imread("./chun.png")
+    img = cv2.imread(image_path + "chun.png")
     sand_area = ostu(img)
     sand_frame_scale = float(sand_area) / float(frame_area)
     print(sand_frame_scale)

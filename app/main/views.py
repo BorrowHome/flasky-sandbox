@@ -11,6 +11,7 @@ from flask import render_template, request, redirect, url_for
 
 from app.utils.site import Site
 from app.utils.sub import PictureSub
+from config import Config
 from . import main
 from .. import db
 from ..models import User
@@ -23,7 +24,8 @@ def index():
     video_names = []
     path_in = './app/static/video/'
     path_out = '../static/video/'
-
+    image_path = Config.UPLOAD_IMAGE_PATH
+    document_path = Config.SAVE_DOCUMENT_PATH
     for dirpath, dirnames, filenames in os.walk(path_in):
         for filename in filenames:
             # dir_file_name = os.path.join(dirpath, filename)
@@ -31,7 +33,7 @@ def index():
             if os.path.splitext(dir_file_name)[1] == '.mp4':  # (('./app/static/movie', '.mp4'))
                 print(dir_file_name)
                 video_names.append(path_out + dir_file_name)
-    with open("site.txt", "r+") as  f:
+    with open(document_path + "site.txt", "r+") as  f:
         a = f.readlines()
         print(a)
         frame_location = Site(int(a[0]), int(a[1]), int(a[2]), int(a[3]))
@@ -74,7 +76,8 @@ def picture():
     # 输入的base64编码字符串必须符合base64的padding规则。“当原数据长度不是3的整数倍时, 如果最后剩下两个输入数据，在编码结果后加1个“=”；
     # 如果最后剩下一个输入数据，编码结果后加2个“=”；如果没有剩下任何数据，就什么都不要加，这样才可以保证资料还原的正确性。”
     #
-
+    image_path = Config.UPLOAD_IMAGE_PATH
+    document_path = Config.SAVE_DOCUMENT_PATH
     if request.method == 'POST':
         str = request.form['current_frame']
         str = str.split(',')[1]
@@ -90,14 +93,14 @@ def picture():
         # 生成cv2 需要的数据类型
         img_np = cv2.imdecode(np_array, cv2.IMREAD_COLOR)
 
-        cv2.imwrite("test2.png", img_np)
+        cv2.imwrite(image_path + "test2.png", img_np)
         # INFO 2019/10/1 20:16 liliangbin  返回一个给echart 使用的数据类型，这个地方需要再瞅瞅
         # cv2.imwrite("back.png", img_np)
         res = {}
         sub = PictureSub()
 
         # 背景图
-        background = cv2.imread('back.png')
+        background = cv2.imread(image_path + 'back.png')
         # background = cv2.imread('8214.jpg')
         currentFrame = img_np
         # currentFrame = cv2.imread('E:/frame/17316.jpg')
@@ -105,13 +108,13 @@ def picture():
         q = sub.subtract_demo(background, currentFrame)
         s = sub.inverse(q)
         t = sub.iblack(s, 220)
-        cv2.imwrite('chun.png', t)
+        cv2.imwrite(image_path + 'chun.png', t)
         # s = sub.isblack(t, 240)
 
         res = sub.ipaint(s, 50)
-        cv2.imwrite('write.jpg', s)
+        cv2.imwrite(image_path + 'write.jpg', s)
 
-        with open("site.txt", "r+") as  f:
+        with open(document_path + "site.txt", "r+") as  f:
             a = f.readlines()
             print(a)
             frame_location = Site(int(a[0]), int(a[1]), int(a[2]), int(a[3]))
@@ -131,6 +134,8 @@ def picture():
 # INFO 2019/12/25 15:18 liliangbin  背景图片设置
 @main.route('/background/', methods=['GET', 'POST'])
 def background():
+    image_path = Config.UPLOAD_IMAGE_PATH
+    document_path = Config.SAVE_DOCUMENT_PATH
     if request.method == 'POST':
         str = request.form['back_frame']
         str = str.split(',')[1]
@@ -148,7 +153,7 @@ def background():
 
         # cv2.imwrite("test2.png", img_np)
         # INFO 2019/10/1 20:16 liliangbin  返回一个给echart 使用的数据类型，这个地方需要再瞅瞅
-        cv2.imwrite("back.png", img_np)
+        cv2.imwrite(image_path + "back.png", img_np)
 
         return 'done'
 
@@ -156,6 +161,8 @@ def background():
 # TODO 2020/1/4 15:13 liliangbin 返回的地址应该是画框的位置（视频名字和时间位置）
 @main.route('/site/', methods=['GET', 'POST'])
 def site():
+    image_path = Config.UPLOAD_IMAGE_PATH
+    document_path = Config.SAVE_DOCUMENT_PATH
     if request.method == 'POST':
         print("post")
         print(request.form)
@@ -166,7 +173,7 @@ def site():
         move_x = int(float(request.form['move_x']))
         move_y = int(float(request.form['move_y']))
 
-        with open("site.txt", 'w') as f:
+        with open(document_path + "site.txt", 'w') as f:
             f.write(str(locate_x) + '\n')
             f.write(str(locate_y) + '\n')
             f.write(str(move_x) + '\n')
@@ -185,12 +192,13 @@ def change_datas():
     # 输入的base64编码字符串必须符合base64的padding规则。“当原数据长度不是3的整数倍时, 如果最后剩下两个输入数据，在编码结果后加1个“=”；
     # 如果最后剩下一个输入数据，编码结果后加2个“=”；如果没有剩下任何数据，就什么都不要加，这样才可以保证资料还原的正确性。”
     s = []
-
+    image_path = Config.UPLOAD_IMAGE_PATH
+    document_path = Config.SAVE_DOCUMENT_PATH
     if request.method == 'POST':
         new = eval(request.form.getlist("current_frame")[0])
         print(type(new), new)
         # new=[int(new[0]),int(new[1])]
-    with open(r"sand.csv", "r+", encoding="utf-8", newline="")as f:
+    with open(document_path + "sand.csv", "r+", encoding="utf-8", newline="")as f:
         reader = csv.reader(f)
         # writer = csv.writer(f)
         print("正在修改csv文件")
@@ -201,7 +209,7 @@ def change_datas():
             if str(new[0]) == i[0]:
                 s[s.index(i)][1] = str(244 - new[1])
                 break
-    with open(r"sand.csv", "w", newline="")as f:
+    with open(document_path + "sand.csv", "w", newline="")as f:
         writer = csv.writer(f)
         for i in s:
             writer.writerow(i)
