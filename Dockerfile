@@ -2,21 +2,15 @@ FROM ubuntu:16.04
 
 MAINTAINER AUTHOR liliangbin
 ENV DEBIAN_FRONTEND noninteractive
+ADD sources.list /etc/apt/
 
 USER root
 
 # Modify apt-get to aliyun mirror
-RUN sed -i 's/archive.ubuntu/mirrors.aliyun/g' /etc/apt/sources.list
-RUN apt-get update
-RUN apt-get -y upgrade
-RUN apt-get -y install wget
+RUN apt-get update && apt-get install -y
 
-RUN wget https://www.python.org/ftp/python/3.7.0/Python-3.7.0.tar.xz
-RUN tar -xvJf Python-3.7.0.tar.xz
-# Install necessary library
-RUN apt-get -y install  python3 python3-dev python3-pip
-
-RUN apt-get install -f -y
+RUN apt-get -y install g++ \
+    && apt-get install libssl-dev -y && apt-get install python3-pip -y
 
 # Modify timezone to GTM+8
 ENV TZ=Asia/Shanghai
@@ -38,19 +32,30 @@ RUN echo "[global]" > /root/.pip/pip.conf && \
     echo "[install]" >> /root/.pip/pip.conf && \
     echo "trusted-host=mirrors.aliyun.com" >> /root/.pip/pip.conf
 
-RUN pip install --upgrade pip
-RUN python --version
+RUN apt-get -y install wget
+
+RUN wget https://www.python.org/ftp/python/3.7.0/Python-3.7.0.tar.xz
+RUN tar -xvJf Python-3.7.0.tar.xz
+RUN cd Python-3.7.0 \
+    && ./configure prefix=/usr/local/python3 \
+    && make && make install
+
+RUN  ln -s /usr/local/python3/bin/python3 /usr/bin/python3
+
+# Install necessary library
+
+RUN python3 --version
 WORKDIR /flask-sandbox
 
-#RUN  adduser -D flasky
-#USER flasky
-# 添加用户后可能会导致文件目录的访问没有权限
-COPY requirements.txt ./
-
-RUN pip install -r requirements.txt
-COPY . .
-
-# CMD ["gunicorn", "start:app", "-c", "./gunicorn.conf.py"]
+##RUN  adduser -D flasky
+##USER flasky
+## 添加用户后可能会导致文件目录的访问没有权限
+#COPY requirements.txt ./
+#
+#RUN pip install -r requirements.txt
+#COPY . .
+#
+## CMD ["gunicorn", "start:app", "-c", "./gunicorn.conf.py"]
 
 EXPOSE 5000
 ENTRYPOINT ["./run.sh"]
