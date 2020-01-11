@@ -2,12 +2,11 @@
 
 version: '2'
 services:
-  opencv-python:
-    image: aggresss/opencv-python
+  web:
+    image: liliangbin/sandbox:v1
     privileged: true
-    command: /run.sh
+    command: ./run.sh
     ports:
-      - "18881:8888"
-      - "60006:6006"
+      - "8080:8080"
     volumes:
-      - /data/volume/opencv_python:/root/volume
+      - /root/video:/flask-sandbox/app/static/video

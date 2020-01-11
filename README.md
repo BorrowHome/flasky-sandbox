@@ -18,6 +18,7 @@
 - 临时安装使用
 
 -  docker build -t liliangbin/sandbox:v1 .
+- docker run -it --rm liliangbin/sandbox:v1 bash
 - mkl-fft  安装不上
 - pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple some-package
 - 发生冲突时  git pull origin master  放弃本地修改，更改到最新的分支
