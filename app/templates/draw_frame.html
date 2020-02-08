@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>拖拽画直线</title>
+    <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+
 </head>
 <style>
     body {
@@ -57,12 +59,12 @@
 
     </canvas>
     <div>
-        <form action="{{ url_for('.site') }}" method="post">
+        <form action="#" method="post">
             <label>locate_x</label> <input name="locate_x" id="locate_x">
             <label>locate_y</label><input name="locate_y" id="locate_y">
             <label>move_x</label><input name="move_x" id="move_x">
             <label>move_y</label><input name="move_y" id="move_y">
-            <button type="submit">提交</button>
+            <button type="button" id="submit">提交</button>
         </form>
     </div>
     <div>
@@ -79,7 +81,28 @@
     var move_x = document.getElementById('move_x')
     var move_y = document.getElementById('move_y')
 
+    var submit_button = document.getElementById("submit")
 
+    submit_button.onclick = function () {
+        {#判断空#}
+        id = isNaN(localStorage.getItem("id")) ? 0 : localStorage.getItem("id")
+        console.log(id)
+
+        $.post('{{ url_for('.site') }}',
+            {
+                locate_x: locate_x.value,
+                locate_y: locate_y.value,
+                move_x: move_x.value,
+                move_y: move_y.value,
+                id: id
+            },
+            function (data) {
+                console.log(data)
+                window.location.href = '{{ url_for('.index')}}';
+
+            }
+        )
+    }
     var canvas = document.getElementById('canvas'),
         context = canvas.getContext('2d'),
         eraseAllButton = document.getElementById('eraseAllButton'),

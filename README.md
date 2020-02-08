@@ -28,6 +28,7 @@
 - 添加边框识别算法的方式
 - PIL使用的是python2 
 - apk is the package manager for Alpine. You're using Ubuntu. You need to use apt-ge
+
 - ```shell
     FROM python:3.7.2-alpine3.9
     RUN apk add --no-cache python3-dev libstdc++ && \
@@ -35,6 +36,7 @@
         ln -s /usr/include/locale.h /usr/include/xlocale.h && \
         pip3 install numpy && \
         pip3 install pandas
-```
-
-- 路由命和函数名必须相同，不然会出现无法找到的形式
+  ```
+ - 视频一起处理的时候，每个视频都需要用每个视频的第一帧么，框选边框的时候边框也需要新的边框么
+ - 每个视频的沙子面积和比例都需要显示出来么。
+ - 那个文档需要录入哪些信息，有没有什么标注的

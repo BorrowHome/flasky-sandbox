@@ -1,0 +1,69 @@
+
+.video_player {
+    width: 100%;
+    height: 100%;
+
+    /*相对于当前容器的的宽度*/
+}
+
+body {
+    background-color: lavender;
+}
+
+.li-div {
+    overflow: auto;
+    height: 94vh;
+}
+
+ul {
+    margin: 0px;
+    padding: 0px;
+}
+
+li {
+    list-style: none;
+    margin-top: 3px;
+    margin-bottom: 3px;
+
+}
+
+.site_input {
+    border: none;
+}
+
+#site-change {
+    margin-bottom: 8px;
+
+}
+
+.test_border {
+    border: red solid 2px;
+}
+
+.li_container {
+    margin-top: 15px;
+}
+
+.echart-back {
+
+    background: rgb(186, 186, 212);
+    height: 40vh;
+    /*需要把高度撑起来*/
+}
+
+.site-center {
+    text-align: center;
+}
+
+.site-in {
+    display: inline;
+}
+
+.middle {
+    align-self: center;
+}
+
+.father-middle {
+    display: flex;
+}
+/*实现video的居中效果*/

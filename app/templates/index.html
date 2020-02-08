@@ -31,7 +31,7 @@
     <!-- 这个地方我们有一个导航栏或是标题什么的 -->
     <div class="row main_row">
 
-        <div class="col-md-3 li-div " id="d1">
+        <div class="col-md-3 col-lg-3 li-div " id="d1">
             <!-- 视频预览区域 -->
             <div class="video-preview">
 
@@ -67,7 +67,7 @@
                     {% for filename in video_names %}
                         <li>{{ filename }}</li>
                         <li>
-                            <video data='inf' class="video_player"
+                            <video data={{ loop.index0 }} class="video_player"
                                    onclick="choose_a_video(this)">
                                 <source src="{{ filename }}" type="video/mp4">
                                 <source src="movie.ogg" type="video/ogg">
@@ -82,7 +82,7 @@
 
             {#   有一个列表的东西来实现它  #}
         </div>
-        <div class="col-md-7 li-div li_col_7 ">
+        <div class="col-md-7 col-lg-7 li-div li_col_7 ">
             <!-- 视频播放区域 -->
             <div class="video">
                 <video id="video_player" controls muted class="video_player">
@@ -98,7 +98,7 @@
 
 
         </div>
-        <div class="col-md-2">
+        <div class="col-md-2 col-lg-2">
             <h2> 关键点坐标/面积 </h2>
             <div class="panel panel-primary">
             </div>
@@ -155,13 +155,14 @@
                     {#                <input type="text" class="site_input" name="new_data_x" id="new_data_x" value="50" style="height: 20px;width: 40px;text-align:center;">#}
                     <a type="text" class="site_input" name="new_data_x" id="new_data_x"
                        style="height: 20px;width: 40px;text-align:center;">50</a>
-                    ，
+
                     <input type="text" class="site_input" name="new_data_y" id="new_data_y" value="50"
                            style="height: 20px;width: 40px;text-align:center;"></p>
 
                 <p id="newer_data"></p>
 
-                <p><input type="button" class="btn btn-info" value="调整图表" onclick="change_data()"/></p>
+                <input type="button" class="btn btn-info" value="调整图表" onclick="change_data()"/>
+                <input type="button" class="btn btn-info" value="保存图表" id="save_image"/>
 
                 {#                <button type="button" class="btn btn-info" onclick="change_data(this) ">调整图表</button>#}
                 {#                </form>#}
@@ -185,24 +186,13 @@
 </script>
 
 <script>
-    var site_left_top = document.getElementById("site_left_top")
-    var site_left_bottom = document.getElementById("site_left_bottom")
-    var site_right_top = document.getElementById("site_right_top")
-    var site_right_bottom = document.getElementById("site_right_bottom")
-    var frame_area = document.getElementById("frame_area")
-    var sand_volume = document.getElementById("sand_volume")
-    var draw_frame = document.getElementById("site_name")
-    var frame = document.getElementById("area")
-    var recognize = document.getElementById("recognize")
-    var sand_frame_scale = document.getElementById("sand_frame_scale")
+
     recognize.style.display = 'none'
     draw_frame.onclick = function (e) {
-
         $.post(
             '{{ url_for('.draw_frame') }}',
             {current_frame: getCurrentFrames(1)},
             function (data) {
-
                 video_src = video.src
                 v_time = video.currentTime.toFixed(0)
                 localStorage.setItem("video_src", video_src)
@@ -237,9 +227,11 @@
 
 
     frame.onclick = function (e) {
+        idx = isNaN(localStorage.getItem("id")) ? 0 : localStorage.getItem("id")
+
         $.post(
             '{{ url_for('.get_volume') }}',
-            {},
+            {id: idx},
             function (data) {
                 console.log(data.frame_area.toFixed(2))
                 frame_area.innerText = data.frame_area.toFixed(2)
@@ -263,16 +255,19 @@
         }
         video.currentTime = video_time
         video.src = video_src
-        console.log(video_src)
-        console.log(video_time)
-        console.log("页面加载的时候加载")
     }
 
 
     function setBackground(pictureURL) {
+        idx = isNaN(localStorage.getItem("id")) ? 0 : localStorage.getItem("id")
+
         $.ajax({
             url: '{{ url_for('.background') }}',//请求路径
-            data: {back_frame: pictureURL},
+            data: {
+                back_frame: pictureURL,
+                id: idx
+
+            },
             type: "POST",//GET,
             async: false,
             success: function (resp) {
@@ -305,12 +300,16 @@
     }
 
     function uploadPicture(pictureURL) {
+        idx = isNaN(localStorage.getItem("id")) ? 0 : localStorage.getItem("id")
 
         echart_data = ""
         console.log(' upload ')
         $.ajax({
             url: '{{ url_for('.picture') }}',//请求路径
-            data: {current_frame: pictureURL},
+            data: {
+                current_frame: pictureURL,
+                id: idx
+            },
             type: "POST",//GET,
             async: false,
             //dataType: "JSON",//需要返回JSON对象(如果Ajax返回的是手动拼接的JSON字符串,需要Key,Value都有引号)
@@ -356,16 +355,44 @@
 
     function choose_a_video(obj) {
         console.log('click')
+        // data 为我新添加的属性，用于记录当前的
         console.log(obj.getAttribute('data'))
-        console.log(video.videoWidth, 'innnn')
-        console.log(video.videoHeight, 'innnn')
-        console.log(obj.currentSrc)
+        id = obj.getAttribute('data')
+        localStorage.setItem("id", id)
+        console.log("data ===>")
         video.src = obj.currentSrc;
         video.load()
 
         var imgsrx = getinfo(obj, 1)
         setBackground(imgsrx)
     }
+
+    save_image.onclick = function () {
+        idx = isNaN(localStorage.getItem("id")) ? 0 : localStorage.getItem("id")
+
+        console.log("save image")
+        var img_base = saveAsImage()
+        console.log(img_base)
+        $.ajax({
+            url: '{{ url_for('.save_image') }}',//请求路径
+            data: {
+                current_frame: img_base,
+                id: idx
+            },
+            type: "POST",//GET,
+            async: false,
+            //dataType: "JSON",//需要返回JSON对象(如果Ajax返回的是手动拼接的JSON字符串,需要Key,Value都有引号)
+            success: function (resp) {
+                //处理 resp.responseText;
+                console.log(resp)
+            },
+            error: function (a, b, c) {
+                //a,b,c三个参数,具体请参考JQuery API
+            }
+        })
+
+    }
+
 
 </script>
 </body>

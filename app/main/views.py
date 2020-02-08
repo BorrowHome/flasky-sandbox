@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 
-import base64
 import csv
 import os
 import time
 
 import cv2
 import numpy as np
-from flask import render_template, request, redirect, url_for
+from flask import render_template, request
 
+from app.utils.frame import base64_to_png
 from app.utils.site import Site
 from app.utils.sub import PictureSub
 from config import Config
@@ -33,7 +33,7 @@ def index():
             if os.path.splitext(dir_file_name)[1] == '.mp4':  # (('./app/static/movie', '.mp4'))
                 print(dir_file_name)
                 video_names.append(path_out + dir_file_name)
-    with open(document_path + "site.txt", "r+") as  f:
+    with open(document_path + "site_0.txt", "r+") as  f:
         a = f.readlines()
         print(a)
         frame_location = Site(int(a[0]), int(a[1]), int(a[2]), int(a[3]))
@@ -80,41 +80,26 @@ def picture():
     document_path = Config.SAVE_DOCUMENT_PATH
     if request.method == 'POST':
         str = request.form['current_frame']
-        str = str.split(',')[1]
+        id = request.form['id']
 
-        #  在逗号以后的7才是编码数据 前面是协议和格式
-        if (len(str) % 3 == 1):
-            str += "=="
-        elif (len(str) % 3 == 2):
-            str += "="
+        img_np = base64_to_png(str)
+        cv2.imwrite(image_path + "current_" + id + ".png", img_np)
 
-        image = base64.b64decode(str)
-        np_array = np.fromstring(image, np.uint8)
-        # 生成cv2 需要的数据类型
-        img_np = cv2.imdecode(np_array, cv2.IMREAD_COLOR)
-
-        cv2.imwrite(image_path + "test2.png", img_np)
-        # INFO 2019/10/1 20:16 liliangbin  返回一个给echart 使用的数据类型，这个地方需要再瞅瞅
-        # cv2.imwrite("back.png", img_np)
         res = {}
         sub = PictureSub()
 
         # 背景图
-        background = cv2.imread(image_path + 'back.png')
-        # background = cv2.imread('8214.jpg')
+        background = cv2.imread(image_path + "back_" + id + ".png")
         currentFrame = img_np
-        # currentFrame = cv2.imread('E:/frame/17316.jpg')
 
         q = sub.subtract_demo(background, currentFrame)
         s = sub.inverse(q)
         t = sub.iblack(s, 220)
-        cv2.imwrite(image_path + 'chun.png', t)
-        # s = sub.isblack(t, 240)
+        cv2.imwrite(image_path + "iblack_" + id + ".png", t)
+        res = sub.ipaint(s, 50, id)
+        cv2.imwrite(image_path + "ipaint_" + id + ".png", s)
 
-        res = sub.ipaint(s, 50)
-        cv2.imwrite(image_path + 'write.jpg', s)
-
-        with open(document_path + "site.txt", "r+") as  f:
+        with open(document_path + "site_" + id + ".txt", "r+") as  f:
             a = f.readlines()
             print(a)
             frame_location = Site(int(a[0]), int(a[1]), int(a[2]), int(a[3]))
@@ -138,22 +123,10 @@ def background():
     document_path = Config.SAVE_DOCUMENT_PATH
     if request.method == 'POST':
         str = request.form['back_frame']
-        str = str.split(',')[1]
-
-        # #  在逗号以后的才是编码数据 前面是协议和格式
-        if (len(str) % 3 == 1):
-            str += "=="
-        elif (len(str) % 3 == 2):
-            str += "="
-
-        image = base64.b64decode(str)
-        np_array = np.fromstring(image, np.uint8)
-        # 生成cv2 需要的数据类型
-        img_np = cv2.imdecode(np_array, cv2.IMREAD_COLOR)
-
-        # cv2.imwrite("test2.png", img_np)
-        # INFO 2019/10/1 20:16 liliangbin  返回一个给echart 使用的数据类型，这个地方需要再瞅瞅
-        cv2.imwrite(image_path + "back.png", img_np)
+        id = request.form['id']
+        print(id)
+        img_np = base64_to_png(str)
+        cv2.imwrite(image_path + "back_" + id + ".png", img_np)
 
         return 'done'
 
@@ -172,18 +145,15 @@ def site():
         locate_y = int(float(request.form['locate_y']))
         move_x = int(float(request.form['move_x']))
         move_y = int(float(request.form['move_y']))
-
-        with open(document_path + "site.txt", 'w') as f:
+        id = request.form['id']
+        print(id, "fdsf")
+        with open(document_path + "site_" + id + ".txt", 'w') as f:
             f.write(str(locate_x) + '\n')
             f.write(str(locate_y) + '\n')
             f.write(str(move_x) + '\n')
             f.write(str(move_y) + '\n')
 
-
-    else:
-        print("done")
-
-    return redirect(url_for('main.index'))
+    return "done"
 
 
 @main.route('/change_datas/', methods=['GET', 'POST'])
@@ -196,9 +166,10 @@ def change_datas():
     document_path = Config.SAVE_DOCUMENT_PATH
     if request.method == 'POST':
         new = eval(request.form.getlist("current_frame")[0])
+        id = request.form['id']
         print(type(new), new)
         # new=[int(new[0]),int(new[1])]
-    with open(document_path + "sand.csv", "r+", encoding="utf-8", newline="")as f:
+    with open(document_path + "sand_" + id + ".csv", "r+", encoding="utf-8", newline="")as f:
         reader = csv.reader(f)
         # writer = csv.writer(f)
         print("正在修改csv文件")
@@ -209,7 +180,7 @@ def change_datas():
             if str(new[0]) == i[0]:
                 s[s.index(i)][1] = str(244 - new[1])
                 break
-    with open(document_path + "sand.csv", "w", newline="")as f:
+    with open(document_path + "sand_" + id + ".csv", "w", newline="")as f:
         writer = csv.writer(f)
         for i in s:
             writer.writerow(i)
@@ -229,3 +200,26 @@ def test():
     if new == None:
         print("done")
     return "done"
+
+
+@main.route("/site_get/", methods=['GET', 'POST'])
+def site_get():
+    document_path = Config.SAVE_DOCUMENT_PATH
+    res = {}
+    if request.method == 'POST':
+        id = request.form["id"]
+        with open(document_path + "site_" + id + ".txt", "r+") as  f:
+            a = f.readlines()
+            print(a)
+            frame_location = Site(int(a[0]), int(a[1]), int(a[2]), int(a[3]))
+        tmp2 = frame_location.locate_y + frame_location.move_y
+        tmp1 = frame_location.locate_x + frame_location.move_x
+        res['site_left_top'] = str(frame_location.locate_x) + ',' + str(frame_location.locate_y)
+        res['site_left_bottom'] = str(frame_location.locate_x) + ',' + str(tmp2)
+
+        res['site_right_top'] = str(tmp1) + ',' + str(frame_location.locate_y)
+        res['site_right_bottom'] = str(tmp1) + ',' + str(tmp2)
+
+        # return redirect(url_for('main.index'))
+
+    return res

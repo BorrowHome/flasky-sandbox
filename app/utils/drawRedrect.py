@@ -1,6 +1,8 @@
 from PIL import Image
 
 #########################################根据视频中的红线重新画红线
+from config import Config
+
 i = 1
 j = 1
 
@@ -8,6 +10,8 @@ j = 1
 def pic_to_red(url):
     i = 1
     j = 1
+    image_path = Config.UPLOAD_IMAGE_PATH
+    document_path = Config.SAVE_DOCUMENT_PATH
     img = Image.open(url)  # 读取系统的内照片
     width = img.size[0]  # 长度
     height = img.size[1]  # 宽度
@@ -23,5 +27,5 @@ def pic_to_red(url):
 
     img = img.convert("RGB")  # 把图片强制转成RGB
 
-    img.save("firstFrame3.jpg")  # 保存修改像素点后的图片
+    img.save(image_path + "firstFrame3.jpg")  # 保存修改像素点后的图片
     return "firstFrame3.jpg"

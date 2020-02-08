@@ -1,9 +1,6 @@
-import numpy as np
+from docxtpl import DocxTemplate
 
-ind = [3, 4, 6, 6, 8]
-print(ind)
-print(max(ind))
-np_arr = np.array(ind)
-test2 = 4 - np_arr
-print(test2)
-print(test2.tolist())
+doc = DocxTemplate("test.docx")
+context = {'col': "World company"}
+doc.render(context)
+doc.save("generated_doc.docx")

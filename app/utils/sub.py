@@ -42,7 +42,7 @@ class PictureSub(object):
 
         return image
 
-    def ipaint(self, image, k):
+    def ipaint(self, image, k, id):
         image_path = Config.UPLOAD_IMAGE_PATH
         document_path = Config.SAVE_DOCUMENT_PATH
         shape = image.shape
@@ -50,7 +50,7 @@ class PictureSub(object):
         print(shape[1])
         list1 = []
         list2 = []
-        with open(document_path + "sand.csv", "w", newline="")as f:
+        with open(document_path + "sand_" + id + ".csv", "w", newline="")as f:
             writer = csv.writer(f)
             for i in range(shape[1]):
                 for j in range(shape[0]):

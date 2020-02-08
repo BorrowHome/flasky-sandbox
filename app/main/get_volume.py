@@ -1,4 +1,5 @@
 import cv2
+from flask import request
 
 from app.utils import areaRect
 from app.utils.areaS import ostu
@@ -11,7 +12,8 @@ from . import main
 def get_volume():
     image_path = Config.UPLOAD_IMAGE_PATH
     document_path = Config.SAVE_DOCUMENT_PATH
-    with open(document_path + "site.txt", "r+") as f:
+    id = request.form['id']
+    with open(document_path + "site_" + id + ".txt", "r+") as f:
         a = f.readlines()
         print(a)
         frame_location = Site(int(a[0]), int(a[1]), int(a[2]), int(a[3]))
@@ -38,7 +40,7 @@ def get_volume():
     #     points.append(Point(points[tmp - 1].x, temp))
     #     sand_area = helen.get_area_of_poly_gon(points)
     sand_area = 0
-    img = cv2.imread(image_path + "chun.png")
+    img = cv2.imread(image_path + "iblack_" + id + ".png")
     sand_area = ostu(img)
     sand_frame_scale = float(sand_area) / float(frame_area)
     print(sand_frame_scale)

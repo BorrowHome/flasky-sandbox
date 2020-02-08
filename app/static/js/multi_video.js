@@ -1,5 +1,25 @@
-var dom = document.getElementById("container");
-var myChart = echarts.init(dom);
+var videos = document.getElementsByClassName("video_player")
+
+var video_run = document.getElementById("multi-video-run")
+var video_stop = document.getElementById("multi-video-stop")
+var set_background = document.getElementById("site-change-set-background")
+var set_currentframe = document.getElementById("site-change-set-currentframe")
+var save_image = document.getElementById("save_image")
+
+var chart = document.getElementById("chart")
+
+var site_left_top = document.getElementById("site_left_top")
+var site_left_bottom = document.getElementById("site_left_bottom")
+var site_right_top = document.getElementById("site_right_top")
+var site_right_bottom = document.getElementById("site_right_bottom")
+
+var doms = document.getElementsByClassName("echart-back");
+var myCharts = []
+for (var e = 0; e < doms.length; e++) {
+    myCharts[e] = echarts.init(doms[e])
+    console.log("hell", e)
+}
+
 var app = {};
 var data = {};
 option = null;
@@ -54,13 +74,57 @@ option = {
         left: '2%',
         right: '2%',
         bottom: '3%',
-        containLabel: true,
-        show:true
-    }
+        containLabel: true
+    },
+    graphic: [
+        {
+            type: 'group',
+            left: '5%',
+            top: '5%',
+            children: [
+                {
+                    type: 'rect',
+                    z: 100,
+                    left: 'center',
+                    top: 'middle',
+                    shape: {
+                        width: 190,
+                        height: 90
+                    },
+                    style: {
+                        fill: '#fff',
+                        stroke: '#555',
+                        lineWidth: 2,
+                        shadowBlur: 8,
+                        shadowOffsetX: 3,
+                        shadowOffsetY: 3,
+                        shadowColor: 'rgba(0,0,0,0.3)'
+                    }
+                },
+                {
+                    id: 'text1',
+                    type: 'text',
+                    z: 100,
+                    left: 'center',
+                    top: 'middle',
+                    style: {
+                        fill: '#333',
+                        text: [
+                            "area:0",
+                            "volume:0",
+                            "scale:0"
+                        ].join('\n'),
+                        font: '14px Microsoft YaHei'
+                    }
+                }
+            ]
+        }
+
+    ]
 
 }
 ;
-myChart.on('click', function (params) {
+myCharts[0].on('click', function (params) {
     older_data1 = x;
     // older_data2=params[0].value;
     older_data2 = y;
@@ -69,41 +133,43 @@ myChart.on('click', function (params) {
     document.getElementById("new_data_x").innerHTML = older_data1;
     document.getElementById("new_data_y").value = older_data2;
 });
-setInterval(function () {
 
-    if (video.paused == false) {
-        console.log(
-            "播放数据  嘻嘻"
-        )
-    }
+setInterval(function () {
+    console.log("intervel")
 }, 2000);
 ;
 
 function setCurrentFrame() {
     var scale = 1
-    var pictureURL = getCurrentFrames(scale)
-    data = uploadPicture(pictureURL)
 
-    myChart.setOption({
-        series: [{
-            data: data.list_y,
-            type: 'line',
-            smooth: true
-        }]
-    });
-    myChart.setOption({
-        xAxis: {
-            data: data.list_x
-        },
-        yAxis: {
-            min: 0,
-            max: data.max,
-            type: 'value'
-        },
-    })
-    ;
+    for (var i = 0; i < videos.length; i++) {
 
-    alert("处理成功")
+        video = videos[i]
+        var pictureURL = getCurrentFrames(scale, video)
+
+        data = uploadPicture(pictureURL, i)
+        myCharts[i].setOption({
+            series: [{
+                data: data.list_y,
+                type: 'line',
+                smooth: true
+            }]
+        });
+        myCharts[i].setOption({
+            xAxis: {
+                data: data.list_x
+            },
+            yAxis: {
+                min: 0,
+                max: data.max,
+                type: 'value'
+            },
+        })
+        ;
+
+
+    }
+
 
 }
 
@@ -136,13 +202,13 @@ function change_data() {
         }
     }
 
-    myChart.setOption({
+    myCharts[0].setOption({
         series: [{
             data: data['list_y']
         }]
     });
 
-    myChart.setOption({
+    myCharts[0].setOption({
         xAxis: {
             data: data['list_x']
         }
@@ -154,7 +220,10 @@ function change_data() {
 }
 
 if (option && typeof option === "object") {
-    myChart.setOption(option, true);
+    for (var i = 0; i < doms.length; i++) {
+        myCharts[i].setOption(option, true);
+
+    }
 }
 
 function base64ToBlob(code) {
@@ -172,7 +241,7 @@ function base64ToBlob(code) {
 }
 
 function saveAsImage() {
-    let content = myChart.getDataURL({
+    let content = myCharts[0].getDataURL({
         pixelRatio: 3,
         backgroundColor: '#fff'
         //    如果不设置背景会出现背景是黑色的现像
@@ -189,3 +258,9 @@ function saveAsImage() {
     return content
 }
 
+
+window.onresize = function () {
+    for (var i = 0; i < doms.length; i++) {
+        myCharts[i].resize()
+    }
+}
