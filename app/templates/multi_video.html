@@ -148,8 +148,26 @@
     save_image.onclick = function () {
         for (var i = 0; i < videos.length; i++) {
             video = videos[i]
-            pictureURL = getCurrentFrames(1, video)
-            setBackground(pictureURL, i)
+            idx = i
+            console.log("save image")
+            var img_base = saveAsImage(idx)
+            console.log(img_base)
+            $.ajax({
+                url: '{{ url_for('.save_image') }}',//请求路径
+                data: {
+                    current_frame: img_base,
+                    id: idx
+                },
+                type: "POST",//GET,
+                success: function (resp) {
+                    //处理 resp.responseText;
+                    console.log(resp)
+                },
+                error: function (a, b, c) {
+                    //a,b,c三个参数,具体请参考JQuery API
+                }
+            })
+
         }
     }
 
@@ -219,6 +237,7 @@
         return pictureURL
     }
 
+    // chart所有的坐标显示
     chart.onclick = function () {
         {# 都是同步和异步的问题 #}
         for (var i = 0; i < videos.length; i++) {
@@ -249,6 +268,7 @@
         }
     }
 
+    // chart 上的面积显示
     function rwar(i, run_text) {
 
         myCharts[i].setOption({
@@ -267,6 +287,7 @@
 
     }
 
+    // 视频点击切换坐标显示
     function choose_a_video(obj) {
         id = obj.getAttribute('data')
         $.post(

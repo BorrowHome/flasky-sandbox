@@ -240,8 +240,8 @@ function base64ToBlob(code) {
     return new Blob([uInt8Array], {type: contentType});
 }
 
-function saveAsImage() {
-    let content = myCharts[0].getDataURL({
+function saveAsImage(id) {
+    let content = myCharts[id].getDataURL({
         pixelRatio: 3,
         backgroundColor: '#fff'
         //    如果不设置背景会出现背景是黑色的现像
@@ -252,7 +252,7 @@ function saveAsImage() {
 
     let evt = document.createEvent("HTMLEvents");
     evt.initEvent("click", true, true);
-    aLink.download = "line.png";
+    aLink.download = 'line_' + id + '.png';
     aLink.href = URL.createObjectURL(blob);
     aLink.dispatchEvent(new MouseEvent('click', {bubbles: true, cancelable: true, view: window}));
     return content

@@ -102,7 +102,7 @@
             <h2> 关键点坐标/面积 </h2>
             <div class="panel panel-primary">
             </div>
-            <form action="{{ url_for('.site') }}" method="POST" id="site_form" onsubmit="return submitForm()">
+            <form id="site_form">
                 <div class="panel panel-success">
                     <p class="site-center" id="site_left_top">({{ site_left_top }})</p>
                     <p class="site-center" id="site_left_bottom">({{ site_left_bottom }})</p>
@@ -151,8 +151,6 @@
                 <h2>坐标修改</h2>
                 <p id="ds">当前位置 未知</p>
                 <p> 要修改为：
-                    {#                <form method="post" action="http://localhost:5000/change_datas/"  >#}
-                    {#                <input type="text" class="site_input" name="new_data_x" id="new_data_x" value="50" style="height: 20px;width: 40px;text-align:center;">#}
                     <a type="text" class="site_input" name="new_data_x" id="new_data_x"
                        style="height: 20px;width: 40px;text-align:center;">50</a>
 
@@ -163,9 +161,6 @@
 
                 <input type="button" class="btn btn-info" value="调整图表" onclick="change_data()"/>
                 <input type="button" class="btn btn-info" value="保存图表" id="save_image"/>
-
-                {#                <button type="button" class="btn btn-info" onclick="change_data(this) ">调整图表</button>#}
-                {#                </form>#}
 
             </div>
 
@@ -255,6 +250,20 @@
         }
         video.currentTime = video_time
         video.src = video_src
+
+        idx = isNaN(localStorage.getItem("id")) ? 0 : localStorage.getItem("id")
+
+        $.post(
+            '{{ url_for('.site_get') }}',
+            {id: idx},
+            function (data) {
+                console.log(data)
+                site_left_top.innerText = '(' + data.site_left_top + ')'
+                site_left_bottom.innerText = '(' + data.site_left_bottom + ')'
+                site_right_top.innerText = '(' + data.site_right_top + ')'
+                site_right_bottom.innerText = '(' + data.site_right_bottom + ')'
+            }
+        )
     }
 
 
@@ -326,6 +335,7 @@
         return echart_data
     }
 
+    // out of date
     function submitForm() {
 
         formdata = $("#site_form").serialize()
@@ -354,17 +364,27 @@
     }
 
     function choose_a_video(obj) {
-        console.log('click')
-        // data 为我新添加的属性，用于记录当前的
-        console.log(obj.getAttribute('data'))
+
         id = obj.getAttribute('data')
+        // 存放 id 数据
         localStorage.setItem("id", id)
-        console.log("data ===>")
         video.src = obj.currentSrc;
         video.load()
 
         var imgsrx = getinfo(obj, 1)
         setBackground(imgsrx)
+
+        $.post(
+            '{{ url_for('.site_get') }}',
+            {id: id},
+            function (data) {
+                console.log(data)
+                site_left_top.innerText = '(' + data.site_left_top + ')'
+                site_left_bottom.innerText = '(' + data.site_left_bottom + ')'
+                site_right_top.innerText = '(' + data.site_right_top + ')'
+                site_right_bottom.innerText = '(' + data.site_right_bottom + ')'
+            }
+        )
     }
 
     save_image.onclick = function () {
@@ -380,14 +400,10 @@
                 id: idx
             },
             type: "POST",//GET,
-            async: false,
-            //dataType: "JSON",//需要返回JSON对象(如果Ajax返回的是手动拼接的JSON字符串,需要Key,Value都有引号)
             success: function (resp) {
-                //处理 resp.responseText;
                 console.log(resp)
             },
             error: function (a, b, c) {
-                //a,b,c三个参数,具体请参考JQuery API
             }
         })
 
