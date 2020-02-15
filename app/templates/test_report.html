@@ -12,12 +12,15 @@
       <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
     <![endif]-->
 
+    <link href="../static/css/test_report.css">
 </head>
 <body>
 
 <div class="container">
+    <div class="page-header">
+        <h1>测试报告</h1>
+    </div>
 
-    <h1>测试报告</h1>
     <h3>基础信息</h3>
     <form class="form-horizontal">
         <div class="form-group">
@@ -60,11 +63,6 @@
             </div>
         </div>
 
-        <div class="form-group">
-            <div class="col-sm-offset-2 col-sm-10">
-                <button type="submit" class="btn btn-default">Sign in</button>
-            </div>
-        </div>
     </form>
     <h3>实验材料信息</h3>
     <form class="form-horizontal">
@@ -108,9 +106,57 @@
             </div>
         </div>
 
+    </form>
+
+    <h3>支撑剂水平运移速度与沉降速度测试</h3>
+    <div class="table-responsive ">
+        <table class="table table-bordered table-hover">
+            <tr>
+                <th>lx(cm)</th>
+                <th>ly(cm)</th>
+                <th>time(s)</th>
+                <th>流速(m/s)</th>
+                <th>砂比(%)</th>
+                <th>支撑剂密度(Kg/m3)</th>
+                <th>流体粘度(mPa.s)</th>
+
+            </tr>
+            <tr class="li-tr">
+                <td><input class="form-control"></td>
+                <td><input class="form-control"></td>
+                <td><input class="form-control"></td>
+                <td><input class="form-control"></td>
+                <td><input class="form-control"></td>
+                <td><input class="form-control"></td>
+                <td><input class="form-control"></td>
+
+            </tr>
+            <tr class="li-tr">
+                <td><input class="form-control"></td>
+                <td><input class="form-control"></td>
+                <td><input class="form-control"></td>
+                <td><input class="form-control"></td>
+                <td><input class="form-control"></td>
+                <td><input class="form-control"></td>
+                <td><input class="form-control"></td>
+
+            </tr>
+            <tr class="li-tr">
+                <td><input class="form-control"></td>
+                <td><input class="form-control"></td>
+                <td><input class="form-control"></td>
+                <td><input class="form-control"></td>
+                <td><input class="form-control"></td>
+                <td><input class="form-control"></td>
+                <td><input class="form-control"></td>
+
+            </tr>
+        </table>
+    </div>
+    <form class="form-horizontal">
         <div class="form-group">
             <div class="col-sm-offset-2 col-sm-10">
-                <button type="submit" class="btn btn-default">Sign in</button>
+                <button type="button" class="btn btn-default">添加数据</button>
             </div>
         </div>
     </form>
