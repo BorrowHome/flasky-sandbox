@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+    <title>Bootstrap 101 Template</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!--[if lt IE 9]>
+      <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+    <![endif]-->
+
+</head>
+<body>
+
+<div class="container">
+
+    <h1>测试报告</h1>
+    <h3>基础信息</h3>
+    <form class="form-horizontal">
+        <div class="form-group">
+            <label for="inputAdvice" class="col-sm-2 control-label">设备名称</label>
+            <div class="col-sm-4">
+                <input type="text" class="form-control" id="inputAdvice" placeholder="设备名称">
+            </div>
+
+            <label for="produceCompany" class="col-sm-2 control-label">生产厂家</label>
+            <div class="col-sm-4">
+                <input type="text" class="form-control" id="produceCompany" placeholder="生产厂家">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="produceTime" class="col-sm-2 control-label">出厂时间</label>
+            <div class="col-sm-4">
+                <input type="text" class="form-control" id="produceTime" placeholder="出厂日期">
+            </div>
+
+            <label for="maintainTime" class="col-sm-2 control-label">保养日期</label>
+            <div class="col-sm-4">
+                <input type="text" class="form-control" id="maintainTime" placeholder="保养日期">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="responsibleMan" class="col-sm-2 control-label">设备责任人</label>
+            <div class="col-sm-4">
+                <input type="text" class="form-control" id="responsibleMan" placeholder="设备责任人">
+            </div>
+
+            <label for="experimenters" class="col-sm-2 control-label">实验人员</label>
+            <div class="col-sm-4">
+                <input type="text" class="form-control" id="experimenters" placeholder="实验人员">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="ownCompany" class="col-sm-2 control-label">单位名称</label>
+            <div class="col-sm-4">
+                <input type="text" class="form-control" id="ownCompany" placeholder="单位名称">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+                <button type="submit" class="btn btn-default">Sign in</button>
+            </div>
+        </div>
+    </form>
+    <h3>实验材料信息</h3>
+    <form class="form-horizontal">
+        <div class="form-group">
+            <label for="fluidType" class="col-sm-2 control-label">压裂液类型</label>
+            <div class="col-sm-4">
+                <input type="text" class="form-control" id="fluidType" placeholder="压裂液类型">
+            </div>
+            <label for="proppantType" class="col-sm-2 control-label">支撑剂类型</label>
+            <div class="col-sm-4">
+                <input type="text" class="form-control" id="proppantType" placeholder="支撑剂类型">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="fluidViscosity" class="col-sm-2 control-label">压裂液粘度（mPa.s）</label>
+            <div class="col-sm-4">
+                <input type="text" class="form-control" id="fluidViscosity" placeholder="压裂液粘度（mPa.s）">
+            </div>
+            <label for="proppantDensity" class="col-sm-2 control-label">支撑剂密度(kg/m3)</label>
+            <div class="col-sm-4">
+                <input type="text" class="form-control" id="proppantDensity" placeholder="支撑剂密度(kg/m3)">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="fluidDensity" class="col-sm-2 control-label">压裂液密度(kg/m3)</label>
+            <div class="col-sm-4">
+                <input type="text" class="form-control" id="fluidDensity" placeholder="压裂液密度(kg/m3)">
+            </div>
+            <label for="proppantAperture" class="col-sm-2 control-label">支撑剂粒径(mm)</label>
+            <div class="col-sm-4">
+                <input type="text" class="form-control" id="proppantAperture" placeholder="支撑剂粒径(mm)">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="fileLocation" class="col-sm-2 control-label">报告存放位置</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" id="fileLocation" placeholder="报告存放位置">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+                <button type="submit" class="btn btn-default">Sign in</button>
+            </div>
+        </div>
+    </form>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js"></script>
+</body>
+</html>

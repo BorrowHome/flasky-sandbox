@@ -55,7 +55,7 @@ option = {
         right: '2%',
         bottom: '3%',
         containLabel: true,
-        show:true
+        show: true
     }
 
 }
@@ -112,39 +112,40 @@ function change_data() {
     data_x = parseInt(document.getElementById("new_data_x").innerHTML);
     data_y = parseInt(document.getElementById("new_data_y").value);
     document.getElementById("newer_data").innerHTML = "修改后的数据(" + data_x + "," + data_y + ")";
+
+    idx = localStorage.getItem("id") == null ? 0 : localStorage.getItem("id")
+
     $.ajax({
-        url: "http://localhost:5000/change_datas/",//请求路径
-        data: {current_frame: JSON.stringify([data_x, data_y])},
+        url: "http://localhost:8080/change_datas/",//请求路径
+        data: {current_frame: JSON.stringify([data_x, data_y]), id: idx},
         type: "POST",//GET,
         async: false,
         traditional: true,
         //dataType: "JSON",//需要返回JSON对象(如果Ajax返回的是手动拼接的JSON字符串,需要Key,Value都有引号)
         success: function (resp) {
-            //处理 resp.responseText;
-            console.log(resp)
-            echart_data = resp
+            console.log("更新已同步到csv文件中")
         },
         error: function (a, b, c) {
             //a,b,c三个参数,具体请参考JQuery API
         }
     })
 
-    for (var i = 0; i < data["list_x"].length; i++) {
-        if (data_x == data["list_x"][i]) {
-            data["list_y"][i] = data_y;
+    for (var i = 0; i < data.list_x.length; i++) {
+        if (data_x == data.list_x[i]) {
+            data.list_y[i] = data_y;
             break;
         }
     }
 
     myChart.setOption({
         series: [{
-            data: data['list_y']
+            data: data.list_y
         }]
     });
 
     myChart.setOption({
         xAxis: {
-            data: data['list_x']
+            data: data.list_x
         }
     })
 

@@ -222,7 +222,7 @@
 
 
     frame.onclick = function (e) {
-        idx = isNaN(localStorage.getItem("id")) ? 0 : localStorage.getItem("id")
+        idx = localStorage.getItem("id") == null ? 0 : localStorage.getItem("id")
 
         $.post(
             '{{ url_for('.get_volume') }}',
@@ -250,9 +250,12 @@
         }
         video.currentTime = video_time
         video.src = video_src
+        idx = localStorage.getItem("id") == null ? 0 : localStorage.getItem("id")
 
-        idx = isNaN(localStorage.getItem("id")) ? 0 : localStorage.getItem("id")
 
+        console.log(idx)
+        console.log("idex===>")
+        console.log(localStorage.getItem("id"))
         $.post(
             '{{ url_for('.site_get') }}',
             {id: idx},
@@ -268,7 +271,7 @@
 
 
     function setBackground(pictureURL) {
-        idx = isNaN(localStorage.getItem("id")) ? 0 : localStorage.getItem("id")
+        idx = localStorage.getItem("id") == null ? 0 : localStorage.getItem("id")
 
         $.ajax({
             url: '{{ url_for('.background') }}',//请求路径
@@ -309,7 +312,7 @@
     }
 
     function uploadPicture(pictureURL) {
-        idx = isNaN(localStorage.getItem("id")) ? 0 : localStorage.getItem("id")
+        idx = localStorage.getItem("id") == null ? 0 : localStorage.getItem("id")
 
         echart_data = ""
         console.log(' upload ')
@@ -388,7 +391,7 @@
     }
 
     save_image.onclick = function () {
-        idx = isNaN(localStorage.getItem("id")) ? 0 : localStorage.getItem("id")
+        idx = localStorage.getItem("id") == null ? 0 : localStorage.getItem("id")
 
         console.log("save image")
         var img_base = saveAsImage()
