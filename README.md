@@ -23,8 +23,7 @@
 - pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple some-package
 - 发生冲突时  git pull origin master  放弃本地修改，更改到最新的分支
 ### todolist 
-- 把以前的算法修改，需要有四个点的坐标。
-- echart 图片的保存
+- echart.js  重构为使用服务端运行pyecharts
 - 添加边框识别算法的方式
 - PIL使用的是python2 
 - apk is the package manager for Alpine. You're using Ubuntu. You need to use apt-ge
@@ -40,3 +39,4 @@
  - 视频一起处理的时候，每个视频都需要用每个视频的第一帧么，框选边框的时候边框也需要新的边框么
  - 每个视频的沙子面积和比例都需要显示出来么。
  - 那个文档需要录入哪些信息，有没有什么标注的
+ - csv 文件需要平滑处理，可能有噪声点

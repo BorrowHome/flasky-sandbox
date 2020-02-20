@@ -51,7 +51,6 @@ def li_liner_regression(x, y, test_x, name, file_location=''):
              linewidth=3)
     file_name = name + '.png'
     plt.title(name)
-
     plt.savefig(file_location + file_name)
     return {'a': a, 'b': b, 'file_name': file_name}
 
@@ -88,7 +87,7 @@ def get_result(ites, file_location=''):
     return result
 
 
-def li_multiple_plot(length, file_location='', title='砂堤变化曲线', ylabel='砂堤高度（mm）', xlabel='平板长度（mm）'):
+def li_multiple_plot(length, file_location=''):
     plt.figure()
     plt.rcParams['font.sans-serif'] = ['SimHei']  # 用来正常显示中文标签
     plt.rcParams['axes.unicode_minus'] = False  # 用来正常显示负号
@@ -101,46 +100,5 @@ def li_multiple_plot(length, file_location='', title='砂堤变化曲线', ylabe
         plt.plot(range(csv_data.shape[0]), csv_data['y'], label='video_' + str(i))
     name = Config.UPLOAD_IMAGE_PATH + 'multiple_lines.png'
     plt.legend()
-    plt.title(title)
-    plt.xlabel(xlabel)
-    plt.ylabel(ylabel)
     plt.savefig(name)
     return name
-
-
-if __name__ == '__main__':
-    sand = pd.read_csv("sand_2.csv", header=None, names=['x', 'y'])
-    x = sand['x']
-
-    y = sand['y']
-    test_li = sand['x']
-
-    test_li = test_li[0:len(test_li):6].values
-    result = li_liner_regression(x, y, test_li, "第二项回归曲线")
-    print(result['a'][0][0])
-
-    ites = [
-        {'lx': 10, 'ly': 5, 'time': 5, 'vx': 4.000, 'vy': 1.000, 'v': 1.2, 'scale': 23, 'density': 1800,
-         'viscosity': 30},
-        {'lx': 10, 'ly': 5, 'time': 5, 'vx': 2.000, 'vy': 1.000, 'v': 1.2, 'scale': 23, 'density': 1800,
-         'viscosity': 30},
-        {'lx': 10, 'ly': 5, 'time': 5, 'vx': 1.000, 'vy': 1.000, 'v': 1.2, 'scale': 23, 'density': 1800,
-         'viscosity': 30},
-        {'lx': 10, 'ly': 5, 'time': 5, 'vx': 0.000, 'vy': 1.000, 'v': 1.2, 'scale': 23, 'density': 1800,
-         'viscosity': 30},
-        {'lx': 10, 'ly': 5, 'time': 5, 'vx': -1.000, 'vy': 1.000, 'v': 1.2, 'scale': 23, 'density': 1800,
-         'viscosity': 30},
-        {'lx': 10, 'ly': 5, 'time': 5, 'vx': -2.000, 'vy': 1.000, 'v': 1.2, 'scale': 23, 'density': 1800,
-         'viscosity': 30}
-
-    ]
-
-    imge_file_location = Config.UPLOAD_IMAGE_PATH
-    document_file_location = Config.SAVE_DOCUMENT_PATH
-    # result=get_result(ites,imge_file_location)
-
-    for i in range(4):
-        print(i)
-    print(result)
-    li = li_multiple_plot(3, document_file_location)
-    print(li)
