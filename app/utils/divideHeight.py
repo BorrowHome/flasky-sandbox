@@ -7,9 +7,10 @@ def divideH(image, locate_x, locate_y, move_x, move_y):
     # shape = image.shape
     left = locate_x
     right = locate_x + move_x
-    down = move_y
+    down = move_y + locate_y
     width = move_x
     height = move_y + locate_y
+    print(left, right, down, height, width)
     list1 = []
     list2 = []
     list3 = []
@@ -74,36 +75,49 @@ def divideH(image, locate_x, locate_y, move_x, move_y):
 
     #####求增幅
     print("#####")
-    first_second = (average2 - average1) / average1
+    if average1 != 0:
+        first_second = (average2 - average1) / average1
+    else:
+        first_second = 0
+
     first_second = "%.2f%%" % (first_second * 100)
     print("first_second:", first_second)
-
-    second_third = (average3 - average2) / average2
+    if average2 != 0:
+        second_third = (average3 - average2) / average2
+    else:
+        second_third = 0
     second_third = "%.2f%%" % (second_third * 100)
     print("second_third:", second_third)
+    if average3 != 0:
 
-    third_forth = (average4 - average3) / average3
+        third_forth = (average4 - average3) / average3
+    else:
+        third_forth = 0
+
     third_forth = "%.2f%%" % (third_forth * 100)
     print("third_forth:", third_forth)
 
     #####求高度平均值
     aveH = (average1 + average2 + average3 + average4) / 4
     aveH = round(aveH, 2)
+
     print("####")
     print("averageHeight:", aveH)
 
     hei = [average1, average2, average3, average4]
     added = [first_second, second_third, third_forth]
-    average = aveH
+    averageHeight = aveH
     return {
-        'height': hei,
+        'heights': hei,
         'added': added,
-        'average': average
+        'averageHeight': averageHeight
     }
 
 
 def ave(list):
     b = len(list)
+    if (b == 0):
+        return 0
     sum = 0
     for i in list:
         sum = sum + i
@@ -114,6 +128,14 @@ def ave(list):
 if __name__ == '__main__':
     file_location = Config.UPLOAD_IMAGE_PATH
     src1 = cv2.imread(file_location + 'iblack_2.png')  ###该图片为经过函数iblack 后的黑白图片
-    result = divideH(src1, 2, 266, 609, 54)
+    result = divideH(src1, 2, 66, 609, 54)
     # 2 66 609  54
     print(result)
+#     161
+# 508
+# 1121
+# 347
+# 58
+# 403
+# 1267
+# 393

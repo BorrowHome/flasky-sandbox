@@ -1,18 +1,22 @@
+import cv2 as cv
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from sklearn import linear_model
 
+from app.utils.divideHeight import divideH
+from app.utils.divideS import ostu
+from app.utils.site import Site
 from config import Config
 
 
 # plt.show()
 
 
-def sand_area_contraction(title, y_axies, file_location, num_list=[20, 20, 40, 50], color='b'):
+def sand_area_contraction(title, y_axies, file_location='', num_list=[20, 20, 40, 50], color='b'):
     name_list = ['第一区', '第二区', '第三区', '第四区']
     num_list = num_list
-
+    plt.figure()
     plt.rcParams['font.sans-serif'] = ['SimHei']  # 用来正常显示中文标签
     plt.rcParams['axes.unicode_minus'] = False  # 用来正常显示负号
     plt.rcParams['figure.figsize'] = (8.0, 5.0)
@@ -20,15 +24,22 @@ def sand_area_contraction(title, y_axies, file_location, num_list=[20, 20, 40, 5
     plt.rcParams['savefig.dpi'] = 200  # 图片像素
     plt.rcParams['figure.dpi'] = 200  # 分辨率
     plt.bar(range(len(num_list)), num_list, tick_label=name_list, color=color)
-    plt.title('测试')
+    plt.title(title)
     plt.ylabel(y_axies)
     # plt.xlabel('X axis')
     plt.grid(axis='y')
     plt.savefig(file_location + title + '.png')
+    plt.close()
+
     return file_location + title + '.png'
 
 
 def li_liner_regression(x, y, test_x, name, file_location=''):
+    print(x)
+    print(test_x)
+    print(y)
+    plt.figure()
+    print('liner_regression')
     x = np.array(x).reshape(-1, 1)
     y = np.array(y).reshape(-1, 1)
     test_x = np.array(test_x).reshape(-1, 1)
@@ -39,6 +50,7 @@ def li_liner_regression(x, y, test_x, name, file_location=''):
     a = regr.coef_
     b = regr.intercept_
     print('Coefficients: B= \n', regr.intercept_)
+
     plt.rcParams['font.sans-serif'] = ['SimHei']  # 用来正常显示中文标签
     plt.rcParams['axes.unicode_minus'] = False  # 用来正常显示负号
     plt.rcParams['figure.figsize'] = (8.0, 5.0)
@@ -49,9 +61,10 @@ def li_liner_regression(x, y, test_x, name, file_location=''):
     plt.scatter(x, y, color='black')
     plt.plot(test_x, regr.predict(test_x), color='blue',
              linewidth=3)
-    file_name = name + '.png'
+    file_name = file_location + name + '.png'
     plt.title(name)
-    plt.savefig(file_location + file_name)
+    plt.savefig(file_name)
+    plt.close()
     return {'a': a, 'b': b, 'file_name': file_name}
 
 
@@ -101,4 +114,35 @@ def li_multiple_plot(length, file_location=''):
     name = Config.UPLOAD_IMAGE_PATH + 'multiple_lines.png'
     plt.legend()
     plt.savefig(name)
+    plt.close()
+
     return name
+
+
+def get_multiple_iback(length):
+    image_locatoion = Config.UPLOAD_IMAGE_PATH
+    document_location = Config.SAVE_DOCUMENT_PATH
+    results = []
+    for id in range(length):
+        with open(document_location + "site_" + str(id) + ".txt", "r+") as  f:
+            a = f.readlines()
+            frame_location = Site(int(a[0]), int(a[1]), int(a[2]), int(a[3]))
+        image_info = cv.imread(image_locatoion + 'iblack_' + str(id) + '.png')
+        result_h = divideH(image_info, frame_location.locate_x, frame_location.locate_y,
+                           frame_location.move_x, frame_location.move_y)
+
+        result_a = ostu(image_info, frame_location.locate_x, frame_location.locate_y,
+                        frame_location.move_x, frame_location.move_y)
+        results.append(
+            {
+                "area": result_a,
+                "height": result_h
+            }
+        )
+    return results
+
+
+
+if __name__ == '__main__':
+    sand_area_contraction('#曲线各部分面积对比', '面积（m^2）', '',
+                          [0, 0, 251, 9780])

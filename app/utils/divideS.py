@@ -62,32 +62,42 @@ def ostu(img, locate_x, locate_y, move_x, move_y):
 
     #####求增幅
     print("#####")
-    first_second = (area2 - area1) / area1
+
+    first_second = li_utils(area1, area2)
     first_second = "%.2f%%" % (first_second * 100)
     print("first_second:", first_second)
 
-    second_third = (area3 - area2) / area2
+    second_third = li_utils(area2, area3)
     second_third = "%.2f%%" % (second_third * 100)
     print("second_third:", second_third)
 
-    third_forth = (area4 - area3) / area3
+    third_forth = li_utils(area3, area4)
     third_forth = "%.2f%%" % (third_forth * 100)
     print("third_forth:", third_forth)
+
 
     averageS = round(averageS, 2)
     print("averageS:", averageS)
     added = [first_second, second_third, third_forth]
-    average = averageS
+    averageArea = averageS
     areas = [area1, area2, area3, area4]
     return {
         'areas': areas,
-        'average': average,
-        'added': added
+        'added': added,
+        'averageArea': averageArea,
     }
+
+
+def li_utils(first, second):
+    if first == 0:
+        return 0
+    else:
+        result = (second - first) / first
+        return result
 
 
 if __name__ == '__main__':
     src1 = cv2.imread(Config.UPLOAD_IMAGE_PATH + "iblack_2.png")  ###该图片为经过函数iblack 后的黑白图片
-    result=ostu(src1, 2, 66, 609, 54)
+    result = ostu(src1, 2, 66, 609, 54)
     print(result)
     #     #2 66 609  54

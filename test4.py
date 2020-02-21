@@ -1,111 +1,10 @@
-import matplotlib.pyplot as plt
-import numpy as np
 import pandas as pd
-from sklearn import linear_model
 
+from app.utils.report_utils import li_liner_regression, li_multiple_plot, get_result, get_multiple_iback, \
+    sand_area_contraction
 from config import Config
 
-
 # plt.show()
-
-
-def sand_area_contraction(title, y_axies, file_location, num_list=[20, 20, 40, 50], color='b'):
-    name_list = ['第一区', '第二区', '第三区', '第四区']
-    num_list = num_list
-
-    plt.rcParams['font.sans-serif'] = ['SimHei']  # 用来正常显示中文标签
-    plt.rcParams['axes.unicode_minus'] = False  # 用来正常显示负号
-    plt.rcParams['figure.figsize'] = (8.0, 5.0)
-
-    plt.rcParams['savefig.dpi'] = 200  # 图片像素
-    plt.rcParams['figure.dpi'] = 200  # 分辨率
-    plt.bar(range(len(num_list)), num_list, tick_label=name_list, color=color)
-    plt.title('测试')
-    plt.ylabel(y_axies)
-    # plt.xlabel('X axis')
-    plt.grid(axis='y')
-    plt.savefig(file_location + title + '.png')
-    return file_location + title + '.png'
-
-
-def li_liner_regression(x, y, test_x, name, file_location=''):
-    x = np.array(x).reshape(-1, 1)
-    y = np.array(y).reshape(-1, 1)
-    test_x = np.array(test_x).reshape(-1, 1)
-
-    regr = linear_model.LinearRegression()
-    regr.fit(x, y)
-    print('Coefficients: A= \n', regr.coef_)
-    a = regr.coef_
-    b = regr.intercept_
-    print('Coefficients: B= \n', regr.intercept_)
-    plt.rcParams['font.sans-serif'] = ['SimHei']  # 用来正常显示中文标签
-    plt.rcParams['axes.unicode_minus'] = False  # 用来正常显示负号
-    plt.rcParams['figure.figsize'] = (8.0, 5.0)
-
-    plt.rcParams['savefig.dpi'] = 200  # 图片像素
-    plt.rcParams['figure.dpi'] = 200  # 分辨率
-
-    plt.scatter(x, y, color='black')
-    plt.plot(test_x, regr.predict(test_x), color='blue',
-             linewidth=3)
-    file_name = name + '.png'
-    plt.title(name)
-
-    plt.savefig(file_location + file_name)
-    return {'a': a, 'b': b, 'file_name': file_name}
-
-
-def get_result(ites, file_location=''):
-    vx = []
-    vy = []
-    scale = []
-    v = []
-    density = []
-    viscosity = []
-    for item in ites:
-        vx.append(item['vx'])
-        vy.append(item['vy'])
-        scale.append(item['scale'])
-        v.append(item['v'])
-        density.append(item['density'])
-        viscosity.append(item['viscosity'])
-    names = ['流速与水平速度关系回归式', '流速与垂直速度关系回归式',
-             '砂比与水平速度关系回归式', '砂比与垂直速度关系回归式',
-             '支撑剂密度与水平速度关系回归式', '支撑剂密度与垂直速度关系回归式',
-             '压裂液粘度与水平速度关系回归式', '压裂液粘度与垂直速度关系回归式']
-
-    result = {}
-    result['v_vx'] = li_liner_regression(v, vx, v[0:len(v):2], names[0], file_location)
-    result['v_vy'] = li_liner_regression(v, vy, v[0:len(v):2], names[1], file_location)
-    result['scale_vx'] = li_liner_regression(scale, vx, scale[0:len(scale):2], names[2], file_location)
-    result['scale_vy'] = li_liner_regression(scale, vy, scale[0:len(scale):2], names[3], file_location)
-    result['density_vx'] = li_liner_regression(density, vx, density[0:len(density):2], names[4], file_location)
-    result['density_vy'] = li_liner_regression(density, vy, density[0:len(density):2], names[5], file_location)
-    result['viscosity_vx'] = li_liner_regression(viscosity, vx, viscosity[0:len(viscosity):2], names[6], file_location)
-    result['viscosity_vy'] = li_liner_regression(viscosity, vy, viscosity[0:len(viscosity):2], names[7], file_location)
-
-    return result
-
-
-def li_multiple_plot(length, file_location='', title='砂堤变化曲线', ylabel='砂堤高度（mm）', xlabel='平板长度（mm）'):
-    plt.figure()
-    plt.rcParams['font.sans-serif'] = ['SimHei']  # 用来正常显示中文标签
-    plt.rcParams['axes.unicode_minus'] = False  # 用来正常显示负号
-    plt.rcParams['figure.figsize'] = (8.0, 5.0)
-
-    plt.rcParams['savefig.dpi'] = 200  # 图片像素
-    plt.rcParams['figure.dpi'] = 200  # 分辨率
-    for i in range(length):
-        csv_data = pd.read_csv(file_location + "sand_" + str(i) + ".csv", header=None, names=['x', 'y'])
-        plt.plot(range(csv_data.shape[0]), csv_data['y'], label='video_' + str(i))
-    name = Config.UPLOAD_IMAGE_PATH + 'multiple_lines.png'
-    plt.legend()
-    plt.title(title)
-    plt.xlabel(xlabel)
-    plt.ylabel(ylabel)
-    plt.savefig(name)
-    return name
 
 
 if __name__ == '__main__':
@@ -120,27 +19,80 @@ if __name__ == '__main__':
     print(result['a'][0][0])
 
     ites = [
-        {'lx': 10, 'ly': 5, 'time': 5, 'vx': 4.000, 'vy': 1.000, 'v': 1.2, 'scale': 23, 'density': 1800,
+        {'lx': 10, 'ly': 5, 'time': 5, 'vx': 4.000, 'vy': 4.000, 'v': 5, 'scale': 23, 'density': 1800,
          'viscosity': 30},
-        {'lx': 10, 'ly': 5, 'time': 5, 'vx': 2.000, 'vy': 1.000, 'v': 1.2, 'scale': 23, 'density': 1800,
+        {'lx': 10, 'ly': 5, 'time': 5, 'vx': 2.000, 'vy': 3.000, 'v': 4, 'scale': 23, 'density': 1800,
          'viscosity': 30},
-        {'lx': 10, 'ly': 5, 'time': 5, 'vx': 1.000, 'vy': 1.000, 'v': 1.2, 'scale': 23, 'density': 1800,
+        {'lx': 10, 'ly': 5, 'time': 5, 'vx': 1.000, 'vy': 2.000, 'v': 3, 'scale': 23, 'density': 1800,
          'viscosity': 30},
-        {'lx': 10, 'ly': 5, 'time': 5, 'vx': 0.000, 'vy': 1.000, 'v': 1.2, 'scale': 23, 'density': 1800,
+        {'lx': 10, 'ly': 5, 'time': 5, 'vx': 0.000, 'vy': 1.000, 'v': 2, 'scale': 23, 'density': 1800,
          'viscosity': 30},
-        {'lx': 10, 'ly': 5, 'time': 5, 'vx': -1.000, 'vy': 1.000, 'v': 1.2, 'scale': 23, 'density': 1800,
+        {'lx': 10, 'ly': 5, 'time': 5, 'vx': -1.000, 'vy': 0.000, 'v': 1.2, 'scale': 23, 'density': 1800,
          'viscosity': 30},
-        {'lx': 10, 'ly': 5, 'time': 5, 'vx': -2.000, 'vy': 1.000, 'v': 1.2, 'scale': 23, 'density': 1800,
+        {'lx': 10, 'ly': 5, 'time': 5, 'vx': -2.000, 'vy': -2.000, 'v': 0, 'scale': 23, 'density': 1800,
          'viscosity': 30}
 
     ]
 
     imge_file_location = Config.UPLOAD_IMAGE_PATH
     document_file_location = Config.SAVE_DOCUMENT_PATH
-    # result=get_result(ites,imge_file_location)
+    result = get_result(ites, imge_file_location)
 
     for i in range(4):
         print(i)
     print(result)
     li = li_multiple_plot(3, document_file_location)
     print(li)
+    li_result = ''
+
+    li_result = get_multiple_iback(3)
+
+    print(li_result)
+
+    test = [
+        {
+            'area':
+                {
+                    'areas': [48800, 73573, 69631, 49901],
+                    'added': ['50.76%', '-5.36%', '-28.34%'],
+                    'averageAreas': 60476.25
+                },
+            'height':
+                {
+                    'height': [191.7, 255.31, 274.12, 186.31], 'added': ['33.18%', '7.37%', '-32.03%'],
+                    'averageHeight': 226.86
+                }
+        },
+        {
+            'area':
+                {
+                    'areas': [0, 0, 251, 9780],
+                    'added': ['0.00%', '0.00%', '3796.41%'],
+                    'averageAreas': 2507.75
+                },
+            'height':
+                {
+                    'height': [0, 0, 393.8, 151.27],
+                    'added': ['0.00%', '0.00%', '-61.59%'],
+                    'averageHeight': 136.27
+                }
+        },
+        {
+            'area':
+                {
+                    'areas': [2588, 2360, 2470, 844], 'added': ['-8.81%', '4.66%', '-65.83%'],
+                    'averageAreas': 2065.5},
+            'height':
+                {'height': [20.98, 20.28, 23.14, 19.08], 'added': ['-3.34%', '14.10%', '-17.55%'],
+                 'averageHeight': 20.87}}
+    ]
+    i = 0
+    for item in li_result:
+        print(item['area']['areas'])
+        item['area_plt'] = sand_area_contraction('曲线各部分面积对比#' + str(i), '面积（m^2）', imge_file_location,
+                                                 item['area']['areas'])
+        item['height_plt'] = sand_area_contraction('各部分高度对比#' + str(i), '高度（m）', imge_file_location,
+                                                   item['height']['heights'])
+        i += 1
+
+    print(li_result)
