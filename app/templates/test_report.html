@@ -214,13 +214,13 @@
             //循环获取每行td的内容
             for (var i = 1; i < $(this).find("tr").length; i++) {
                 map = {}
-                map.lx = $(this).find("tr").eq(i).find("td").eq(0).find("input").val();
-                map.ly = $(this).find("tr").eq(i).find("td").eq(1).find("input").val();
-                map.time = $(this).find("tr").eq(i).find("td").eq(2).find("input").val();
-                map.v = $(this).find("tr").eq(i).find("td").eq(3).find("input").val();
-                map.scale = $(this).find("tr").eq(i).find("td").eq(4).find("input").val();
-                map.density = $(this).find("tr").eq(i).find("td").eq(5).find("input").val();
-                map.viscosity = $(this).find("tr").eq(i).find("td").eq(6).find("input").val();
+                map.lx = parseFloat($(this).find("tr").eq(i).find("td").eq(0).find("input").val());
+                map.ly = parseFloat($(this).find("tr").eq(i).find("td").eq(1).find("input").val());
+                map.time = parseFloat($(this).find("tr").eq(i).find("td").eq(2).find("input").val());
+                map.v = parseFloat($(this).find("tr").eq(i).find("td").eq(3).find("input").val());
+                map.scale = parseFloat($(this).find("tr").eq(i).find("td").eq(4).find("input").val());
+                map.density = parseFloat($(this).find("tr").eq(i).find("td").eq(5).find("input").val());
+                map.viscosity = parseFloat($(this).find("tr").eq(i).find("td").eq(6).find("input").val());
                 temp1 = parseFloat(map.lx) / parseFloat(map.time)
                 temp2 = parseFloat(map.ly) / parseFloat(map.time)
                 console.log(temp1)
@@ -258,7 +258,7 @@
         device.produce_company = $("#produceCompany").val()
         device.produce_time = $("#produceTime").val()
         device.maintain_time = $('#maintainTime').val()
-        device.resposible_man = $('#responsibleMan').val()
+        device.responsible_man = $('#responsibleMan').val()
         device.experimenters = $('#experimenters').val()
         device.own_company = $('#ownCompany').val()
         return device
