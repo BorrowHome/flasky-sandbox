@@ -48,5 +48,6 @@ def get_volume():
     return {
         "frame_area": frame_area,
         "sand_area": sand_area,
-        "sand_frame_scale": sand_frame_scale
+        "sand_frame_scale": sand_frame_scale,
+        "id": id
     }

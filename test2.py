@@ -110,14 +110,15 @@ context = {
     'line_relations': results_frame,
     'multiple_lines': InlineImage(doc, multiplt_lines, Mm(100)),
     'contrast': li_result,
-    'li_test': [0,1,2,3,6]
+    'li_test': [0, 1, 2, 3, 6]
 }
 
-# 记录一个坑，items 是jinjia2的关键字。不能被我们作为变量使用
+
+
+# s 是jinjia2的关键字。不能被我们作为变量使用
 
 
 jinja_env = jinja2.Environment(autoescape=True)
 
 doc.render(context)
 doc.save("generated_doc.docx")
-

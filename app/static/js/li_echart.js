@@ -80,10 +80,12 @@ setInterval(function () {
 ;
 
 function setCurrentFrame() {
-    var scale = 1
-    var pictureURL = getCurrentFrames(scale)
+    var pictureURL = getCurrentFrames()
     data = uploadPicture(pictureURL)
 
+}
+
+function setData(data) {
     myChart.setOption({
         series: [{
             data: data.list_y,
@@ -102,11 +104,7 @@ function setCurrentFrame() {
         },
     })
     ;
-
-    alert("处理成功")
-
 }
-
 
 function change_data() {
     data_x = parseInt(document.getElementById("new_data_x").innerHTML);

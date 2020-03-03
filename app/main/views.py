@@ -112,6 +112,7 @@ def picture():
 
         res['list_y'] = data_total.tolist()
         res['max'] = max_index + 20
+        res['id']=id
         # 以前使用的是jsonify===> 前端使用 data["list_y"]==>有什么区别
         return res
 

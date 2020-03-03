@@ -131,7 +131,7 @@
 
         for (var i = 0; i < videos.length; i++) {
             video = videos[i]
-            pictureURL = getCurrentFrames(1, video)
+            pictureURL = getCurrentFrames(video)
             setBackground(pictureURL, i)
         }
 
@@ -161,6 +161,11 @@
             })
 
         }
+
+        $.get('{{ url_for('.update_report') }}', function (e) {
+            console.log(e)
+            console.log('更新数据成功')
+        })
     }
 
 
@@ -175,13 +180,13 @@
                 id: id
             },
             type: "POST",//GET,
-            async: false,
+            async: true,
             //dataType: "JSON",//需要返回JSON对象(如果Ajax返回的是手动拼接的JSON字符串,需要Key,Value都有引号)
             success: function (resp) {
                 //处理 resp.responseText;
                 console.log(resp)
                 echart_data = resp
-
+                setData(echart_data)
 
             },
             error: function (a, b, c) {
@@ -200,7 +205,7 @@
                 id: id
             },
             type: "POST",//GET,
-            async: false,
+            async: true,
             success: function (resp) {
                 //处理 resp.responseText;
                 console.log(resp)
@@ -212,19 +217,20 @@
         })
     }
 
-    function getCurrentFrames(scale, video) {
+    function getCurrentFrames(video) {
 
 
         var canvas = document.createElement("canvas");
+
+        width = video.videoWidth
+        scale = 640 / parseFloat(width)
         console.log(scale)
         canvas.width = video.videoWidth * scale;
 
-        console.log(video.videoWidth)
         canvas.height = video.videoHeight * scale;
         canvas.getContext('2d')
             .drawImage(video, 0, 0, canvas.width, canvas.height);  //可以只截取一部分图像  。。
         pictureURL = canvas.toDataURL('image/png');
-        console.log(pictureURL)
 
         return pictureURL
     }
@@ -240,7 +246,7 @@
                     },
                     type: "POST",//GET,
                     async:
-                        false,
+                        true,
                     success:
                         function (data) {
                             console.log(data.frame_area.toFixed(2))
@@ -253,7 +259,8 @@
                                 "scale:" + a_v_scale
                             ].join('\n')
                             console.log(run_text)
-                            rwar(i, run_text)
+                            id = data.id
+                            rwar(id, run_text)
                         }
                 }
             )
@@ -261,23 +268,7 @@
     }
 
     // chart 上的面积显示
-    function rwar(i, run_text) {
 
-        myCharts[i].setOption({
-            graphic: [
-                { // 删除上例中定义的 'text1' 元素。
-                    id: 'text1',
-                    $action: 'merge',
-                    style: {
-                        fill: '#333',
-                        text: run_text,
-                        font: '14px Microsoft YaHei'
-                    }
-                }
-            ]
-        })
-
-    }
 
     // 视频点击切换坐标显示
     function choose_a_video(obj) {

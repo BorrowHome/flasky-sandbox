@@ -1,16 +1,17 @@
 import cv2 as cv
-import matplotlib.pyplot as plt
+import matplotlib
 import numpy as np
 import pandas as pd
+
+matplotlib.use('Agg')
+# python – Matplotlib – Tcl_AsyncDelete：错误的线程删除了异步处理程序？
+from matplotlib import pyplot as plt
 from sklearn import linear_model
 
 from app.utils.divideHeight import divideH
 from app.utils.divideS import ostu
 from app.utils.site import Site
 from config import Config
-
-
-# plt.show()
 
 
 def sand_area_contraction(title, y_axies, file_location='', num_list=[20, 20, 40, 50], color='b'):
@@ -140,7 +141,6 @@ def get_multiple_iback(length):
             }
         )
     return results
-
 
 
 if __name__ == '__main__':

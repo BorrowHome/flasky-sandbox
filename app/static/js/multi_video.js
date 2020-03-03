@@ -143,36 +143,36 @@ function setCurrentFrame() {
     var scale = 1
 
     for (var i = 0; i < videos.length; i++) {
-
         video = videos[i]
-        var pictureURL = getCurrentFrames(scale, video)
-
+        var pictureURL = getCurrentFrames(video)
         data = uploadPicture(pictureURL, i)
-        myCharts[i].setOption({
-            series: [{
-                data: data.list_y,
-                type: 'line',
-                smooth: true
-            }]
-        });
-        myCharts[i].setOption({
-            xAxis: {
-                data: data.list_x
-            },
-            yAxis: {
-                min: 0,
-                max: data.max,
-                type: 'value'
-            },
-        })
-        ;
-
-
     }
-
 
 }
 
+function setData(data) {
+    i = data.id
+    myCharts[i].setOption({
+        series: [{
+            data: data.list_y,
+            type: 'line',
+            smooth: true
+        }]
+    });
+    myCharts[i].setOption({
+        xAxis: {
+            data: data.list_x
+        },
+        yAxis: {
+            min: 0,
+            max: data.max,
+            type: 'value'
+        },
+    })
+    ;
+
+
+}
 
 function change_data() {
     data_x = parseInt(document.getElementById("new_data_x").innerHTML);
@@ -263,4 +263,22 @@ window.onresize = function () {
     for (var i = 0; i < doms.length; i++) {
         myCharts[i].resize()
     }
+}
+
+function rwar(i, run_text) {
+
+    myCharts[i].setOption({
+        graphic: [
+            { // 删除上例中定义的 'text1' 元素。
+                id: 'text1',
+                $action: 'merge',
+                style: {
+                    fill: '#333',
+                    text: run_text,
+                    font: '14px Microsoft YaHei'
+                }
+            }
+        ]
+    })
+
 }
