@@ -42,37 +42,32 @@ class PictureSub(object):
 
         return image
 
-    def ipaint(self, image, k, id):
+    def ipaint(self, image, k, id, locate_x, move_x, locate_y, move_y):
         image_path = Config.UPLOAD_IMAGE_PATH
         document_path = Config.SAVE_DOCUMENT_PATH
         shape = image.shape
-        print(shape[0])
-        print(shape[1])
+        print(shape[0]) # 480  高度
+        print(shape[1]) # 640  宽度
         list1 = []
         list2 = []
         with open(document_path + "sand_" + id + ".csv", "w", newline="")as f:
             writer = csv.writer(f)
-            for i in range(shape[1]):
-                for j in range(shape[0]):
+            for i in range(locate_x, locate_x + move_x, 1):
+                flag = True
+                for j in range(locate_y, move_y + locate_y, 1):
                     if (image[j, i, 2] < k):
                         # with open(r"E:sand.csv", "w", newline="")as f:
                         #  writer = csv.writer(f)
                         writer.writerow([i - 0, j - 0])
                         list1.append(i - 0)
                         list2.append(j - 0)
-                        # sheet.write(m, 1, j -450)
-                        image[j + 1, i, 1] = 255
-                        image[j + 2, i, 1] = 255
-                        image[j + 3, i, 1] = 255
-                        image[j + 1, i, 0] = 0
-                        image[j + 2, i, 0] = 0
-                        image[j + 3, i, 1] = 0
-                        image[j + 1, i, 2] = 0
-                        image[j + 2, i, 2] = 0
-                        image[j + 3, i, 2] = 0
-                        # m = m + 1
-
+                        flag = False
                         break
+                    # m = m + 1
+                if flag:
+                    writer.writerow([i, locate_y + move_y])
+                    list1.append(i)
+                    list2.append(locate_y + move_y)
 
         res = {
             "list_x": list1,

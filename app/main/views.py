@@ -96,13 +96,16 @@ def picture():
         s = sub.inverse(q)
         t = sub.iblack(s, 220)
         cv2.imwrite(image_path + "iblack_" + id + ".png", t)
-        res = sub.ipaint(s, 50, id)
         cv2.imwrite(image_path + "ipaint_" + id + ".png", s)
 
         with open(document_path + "site_" + id + ".txt", "r+") as  f:
             a = f.readlines()
             print(a)
             frame_location = Site(int(a[0]), int(a[1]), int(a[2]), int(a[3]))
+
+        res = sub.ipaint(s, 50, id, frame_location.locate_x, frame_location.move_x, frame_location.locate_y,
+                         frame_location.move_y)
+
         res['max'] = frame_location.locate_y + frame_location.move_y
         # 变化得y轴
         list_y = np.array(res['list_y'])
@@ -112,7 +115,7 @@ def picture():
 
         res['list_y'] = data_total.tolist()
         res['max'] = max_index + 20
-        res['id']=id
+        res['id'] = id
         # 以前使用的是jsonify===> 前端使用 data["list_y"]==>有什么区别
         return res
 

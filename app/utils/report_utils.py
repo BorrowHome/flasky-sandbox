@@ -109,9 +109,18 @@ def li_multiple_plot(length, file_location=''):
 
     plt.rcParams['savefig.dpi'] = 200  # 图片像素
     plt.rcParams['figure.dpi'] = 200  # 分辨率
+    document_path = Config.SAVE_DOCUMENT_PATH
+
     for i in range(length):
         csv_data = pd.read_csv(file_location + "sand_" + str(i) + ".csv", header=None, names=['x', 'y'])
-        plt.plot(range(csv_data.shape[0]), csv_data['y'], label='video_' + str(i))
+        with open(document_path + "site_" + str(i) + ".txt", "r+") as  f:
+            a = f.readlines()
+            print(a)
+            frame_location = Site(int(a[0]), int(a[1]), int(a[2]), int(a[3]))
+
+        plt.plot(csv_data['x'], frame_location.locate_y + frame_location.move_y - csv_data['y'],
+                 label='video_' + str(i))
+
     name = Config.UPLOAD_IMAGE_PATH + 'multiple_lines.png'
     plt.legend()
     plt.savefig(name)
@@ -144,5 +153,6 @@ def get_multiple_iback(length):
 
 
 if __name__ == '__main__':
-    sand_area_contraction('#曲线各部分面积对比', '面积（m^2）', '',
-                          [0, 0, 251, 9780])
+    document_path = Config.SAVE_DOCUMENT_PATH
+
+    li_multiple_plot(3, document_path)
