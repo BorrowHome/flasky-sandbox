@@ -25,6 +25,34 @@
 
 
 <body>
+<nav class="navbar navbar-default " style="background: lavender">
+    <div class="container">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="#">沙箱压裂液测试系统</a>
+        </div>
+        <div>
+            <ul class="nav nav-pills">
+                <li role="presentation" class="active li-test-li"><a href="{{ url_for('.index') }}">Home</a></li>
+                <li role="presentation" class="li-test-li"><a
+                        href="{{ url_for('.multi_video') }}"><span>多界面处理</span></a></li>
+                <li role="presentation" class="li-test-li"><a href="{{ url_for('.test_report') }}">测试报告</a></li>
+            </ul>
+        </div>
+
+    </div>
+
+</nav>
+{#<nav class="navbar navbar-default" role="navigation">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="#">菜鸟教程</a>
+        </div>
+        <ul class="nav navbar-nav navbar-right">
+            <li><a href="#"><span class="glyphicon glyphicon-user"></span> 注册</a></li>
+            <li><a href="#"><span class="glyphicon glyphicon-log-in"></span> 登录</a></li>
+        </ul>
+    </div>
+</nav>#}
 
 <div class="container-fluid li_container">
     {#    <h2 style=" text-align: center">SandBox</h2>#}
@@ -44,7 +72,8 @@
                                 <td><label for="exampleInputFile">File input</label></td>
                             </tr>
                             <tr>
-                                <td><input type="file" name="video" multiple="multiple" webkitdirectory directory/></td>
+                                <td><input type="file" name="video" multiple="multiple" webkitdirectory directory/>
+                                </td>
                                 <td><input type="submit" value="提交"></td>
                             </tr>
                             </tr>
@@ -110,15 +139,15 @@
                     <p class="site-center" id="site_right_bottom">({{ site_right_bottom }})</p>
                 </div>
 
-                <div class="panel panel-danger">
+                <div class="panel panel-danger form-control">
                     <label class="site-center"> 边框面积: </label>
-                    <p type="text" id="frame_area" class="site_input site-center site-in"></p>
+                    <p type="text" id="frame_area" class="site_input site-center site-in "></p>
                 </div>
-                <div class="panel panel-danger">
+                <div class="panel panel-danger form-control">
                     <label> 沙子体积: </label>
                     <p type="text" id="sand_volume" class="site_input site-center site-in"></p>
                 </div>
-                <div class="panel panel-danger">
+                <div class="panel panel-danger form-control">
                     <label>面积比例:</label>
                     <p id="sand_frame_scale" class="site-center site-in"></p>
                 </div>
@@ -421,4 +450,5 @@
 
 </script>
 </body>
+
 </html>

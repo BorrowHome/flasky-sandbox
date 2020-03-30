@@ -11,11 +11,26 @@
       <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
     <![endif]-->
-
-    <link href="../static/css/test_report.css">
+    <link href="{{ url_for('static',filename='css/test_report.css') }}" rel="stylesheet">
 </head>
-<body>
+<body style="background: lavender">
+<nav class="navbar navbar-default " style="background: lavender">
+    <div class="container">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="#">沙箱压裂液测试系统</a>
+        </div>
+        <div>
+            <ul class="nav nav-pills">
+                <li role="presentation" class=" li-test-li"><a href="{{ url_for('.index') }}">Home</a></li>
+                <li role="presentation" class="li-test-li"><a
+                        href="{{ url_for('.multi_video') }}"><span>多界面处理</span></a></li>
+                <li role="presentation" class="active li-test-li"><a href="{{ url_for('.test_report') }}">测试报告</a></li>
+            </ul>
+        </div>
 
+    </div>
+
+</nav>
 <div class="container">
     <div class="page-header">
         <h1>测试报告</h1>
@@ -298,7 +313,10 @@
             contentType: 'application/json;charset=UTF-8',
             type: "POST",
             success: function (resp) {
+                alert("报告已生成")
                 console.log(resp)
+            },error:function (resp) {
+                alert("请保证数据不为空")
             }
         })
     })

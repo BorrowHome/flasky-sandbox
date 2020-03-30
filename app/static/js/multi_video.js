@@ -247,6 +247,12 @@ function saveAsImage(id) {
         //    如果不设置背景会出现背景是黑色的现像
     });
 
+    //dowloadPicture(content,id)
+
+    return content
+}
+
+function dowloadPicture(content,id) {
     let aLink = document.createElement('a');
     let blob = this.base64ToBlob(content);
 
@@ -255,9 +261,8 @@ function saveAsImage(id) {
     aLink.download = 'line_' + id + '.png';
     aLink.href = URL.createObjectURL(blob);
     aLink.dispatchEvent(new MouseEvent('click', {bubbles: true, cancelable: true, view: window}));
-    return content
-}
 
+}
 
 window.onresize = function () {
     for (var i = 0; i < doms.length; i++) {

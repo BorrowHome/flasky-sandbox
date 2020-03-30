@@ -155,4 +155,5 @@ def get_multiple_iback(length):
 if __name__ == '__main__':
     document_path = Config.SAVE_DOCUMENT_PATH
 
-    li_multiple_plot(3, document_path)
+    # li_multiple_plot(3, document_path)
+    result = li_liner_regression([1, 2, 3, 4, 5], [5, 8, 11, 14, 17],[2,3,4],"name")

@@ -20,6 +20,22 @@
     <script src="../static/js/echart.js"></script>
 </head>
 <body>
+<nav class="navbar navbar-default " style="background: lavender">
+    <div class="container">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="#">沙箱压裂液测试系统</a>
+        </div>
+        <div>
+            <ul class="nav nav-pills">
+                <li role="presentation" class=" li-test-li"><a href="{{ url_for('.index') }}">Home</a></li>
+                <li role="presentation" class=" active li-test-li"><a href="{{ url_for('.multi_video') }}"><span>多界面处理</span></a></li>
+                <li role="presentation" class="li-test-li"><a href="{{ url_for('.test_report') }}">测试报告</a></li>
+            </ul>
+        </div>
+
+    </div>
+
+</nav>
 
 <div class="container-fluid li_container">
     {#    <h2 style=" text-align: center">SandBox</h2>#}
@@ -138,6 +154,7 @@
     }
 
     save_image.onclick = function () {
+        console.log("saveImage click")
         for (var i = 0; i < videos.length; i++) {
             video = videos[i]
             idx = i

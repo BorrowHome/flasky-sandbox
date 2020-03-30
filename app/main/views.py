@@ -226,3 +226,8 @@ def site_get():
         # return redirect(url_for('main.index'))
 
     return res
+
+
+@main.route("/sur")
+def sur():
+    return render_template("index1.html")

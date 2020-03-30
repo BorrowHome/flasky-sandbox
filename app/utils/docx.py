@@ -64,7 +64,15 @@ def set_sand_docxtpl(dict_data):
     jinja_env = jinja2.Environment(autoescape=True)
 
     doc.render(context)
-    doc.save("generated_doc.docx")
+    file_location = dict_data['experiment']['file_location']
+    print("file location===>"+file_location)
+    if (os.path.exists(file_location)):
+        print("rush")
+        doc.save(file_location + "/generated_doc.docx")
+    else:
+        print("cant")
+        doc.save("generated_doc.docx")
+
 
 def run_name(name_list, tpl, results_frame):
     for name in name_list:
