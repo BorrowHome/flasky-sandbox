@@ -72,6 +72,7 @@ def set_sand_docxtpl(dict_data):
     else:
         print("cant")
         doc.save("generated_doc.docx")
+    doc.save(document_file_location+"generated_doc.docx")
 
 
 def run_name(name_list, tpl, results_frame):

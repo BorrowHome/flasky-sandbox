@@ -11,6 +11,7 @@
       <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
     <![endif]-->
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
     <link href="{{ url_for('static',filename='css/test_report.css') }}" rel="stylesheet">
 </head>
 <body style="background: lavender">
@@ -181,7 +182,8 @@
     <form class="form-horizontal">
         <div class="col-sm-offset-2">
             <button type="button" class="btn btn-default" id="li-submit">提交测试</button>
-
+            <a href="{{ url_for('static',filename="document/generated_doc.docx") }}" download="测试报告.docx"
+               id="site"></a>
         </div>
     </form>
 </div>
@@ -193,6 +195,7 @@
 
     var li_table_add = document.getElementById('li-table-add')
     var li_table = document.getElementById('li-tbody')
+    var dowloadDocx = document.getElementById("site")
     {# 表格添加一行  #}
     strHtml = '                <td><input class="form-control" name="lx"></td>\n' +
         '                <td><input class="form-control" name="ly"></td>\n' +
@@ -213,6 +216,7 @@
 
 
     function getExperimentTestsInfo() {
+        console.log("ang ")
         tests = {}
         samples = []
 
@@ -220,22 +224,33 @@
         vy = 0
         length_table = 0
 
+        console.log("get element rush ")
         $("#li-table").each(function () {
             length_table = $(this).find("tr").length - 1
             {# length  从 th开始算的 #}
             if (length_table == 0 || length_table == null) {
                 return {}
             }
+            console.log("get info ")
             //循环获取每行td的内容
             for (var i = 1; i < $(this).find("tr").length; i++) {
                 map = {}
                 map.lx = parseFloat($(this).find("tr").eq(i).find("td").eq(0).find("input").val());
+                judgeNaN("lx", map.lx)
+                console.log(map.lx + "map.lx")
                 map.ly = parseFloat($(this).find("tr").eq(i).find("td").eq(1).find("input").val());
+                judgeNaN("ly", map.ly)
                 map.time = parseFloat($(this).find("tr").eq(i).find("td").eq(2).find("input").val());
+                judgeNaN('time', map.time)
                 map.v = parseFloat($(this).find("tr").eq(i).find("td").eq(3).find("input").val());
+                judgeNaN('v', map.v)
                 map.scale = parseFloat($(this).find("tr").eq(i).find("td").eq(4).find("input").val());
+                judgeNaN('scale', map.scale)
                 map.density = parseFloat($(this).find("tr").eq(i).find("td").eq(5).find("input").val());
+                judgeNaN('density', map.density)
                 map.viscosity = parseFloat($(this).find("tr").eq(i).find("td").eq(6).find("input").val());
+                judgeNaN('viscosity', map.viscosity)
+
                 temp1 = parseFloat(map.lx) / parseFloat(map.time)
                 temp2 = parseFloat(map.ly) / parseFloat(map.time)
                 console.log(temp1)
@@ -280,6 +295,7 @@
     }
 
     function getExperimentInfo() {
+        console.log("get experiment info ")
         experiment = {}
         fluid = {}
         proppant = {}
@@ -308,18 +324,31 @@
 
         $.ajax({
             url:{{ url_for('.test_report') }},
-            dataType: 'json',
+            dataType: 'text',
             data: JSON.stringify(context),
             contentType: 'application/json;charset=UTF-8',
             type: "POST",
             success: function (resp) {
+                dowloadDocx.click()
                 alert("报告已生成")
                 console.log(resp)
-            },error:function (resp) {
-                alert("请保证数据不为空")
+            },
+            error: function (a, b, c) {
+                console.log("error ")
+                alert("error  occur")
             }
         })
     })
+
+    function judgeNaN(name, element) {
+        console.log("judge  NaN")
+        console.log(isNaN(element))
+        if (isNaN(element)) {
+            alert(name + "不能为空")
+            //停止执行后面得数据
+            throw SyntaxError();
+        }
+    }
 </script>
 
 </body>
