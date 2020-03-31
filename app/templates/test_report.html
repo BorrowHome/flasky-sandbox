@@ -125,8 +125,11 @@
     </form>
 
     <div><h3 style="display: inline-block">支撑剂水平运移速度与沉降速度测试</h3>
-        <button type="button" class="btn btn-default col-sm-offset-4 " id="li-table-add" style="margin-bottom: 6px ">
-            添加一列
+        <button type="button" class="btn btn-default col-sm-offset-2 " id="li-table-add" style="margin-bottom: 6px ">
+            添加一行
+        </button>
+        <button type="button" class="btn btn-default col-sm-offset-2 " id="li-table-delete" style="margin-bottom: 6px ">
+            删除一行
         </button>
     </div>
 
@@ -155,7 +158,7 @@
                 <td><input class="form-control" name="density"></td>
                 <td><input class="form-control" name="viscosity"></td>
             </tr>
-            <tr class="li-tr">
+            {#            <tr class="li-tr">
                 <td><input class="form-control" name="lx"></td>
                 <td><input class="form-control" name="ly"></td>
                 <td><input class="form-control" name="time"></td>
@@ -163,7 +166,7 @@
                 <td><input class="form-control" name="scale"></td>
                 <td><input class="form-control" name="density"></td>
                 <td><input class="form-control" name="viscosity"></td>
-            </tr>
+            </tr>#}
             <tr class="li-tr">
                 <td><input class="form-control" name="lx"></td>
                 <td><input class="form-control" name="ly"></td>
@@ -196,6 +199,7 @@
     var li_table_add = document.getElementById('li-table-add')
     var li_table = document.getElementById('li-tbody')
     var dowloadDocx = document.getElementById("site")
+    var li_table_delete = document.getElementById("li-table-delete")
     {# 表格添加一行  #}
     strHtml = '                <td><input class="form-control" name="lx"></td>\n' +
         '                <td><input class="form-control" name="ly"></td>\n' +
@@ -208,12 +212,19 @@
     li_table_add.onclick = function () {
         console.log('append')
         var li = document.createElement('tr')
+        li.className='li-tr'
         li.innerHTML = strHtml
         li_table.append(li)
 
-
     }
 
+    li_table_delete.onclick = function () {
+        var trs = document.getElementsByClassName("li-tr")
+        console.log(trs.length)
+
+        var last_tr=trs[trs.length-1]
+        last_tr.parentNode.removeChild(last_tr)
+    }
 
     function getExperimentTestsInfo() {
         console.log("ang ")
