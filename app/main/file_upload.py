@@ -1,4 +1,3 @@
-
 # -*- coding: utf-8 -*-
 import os
 
@@ -21,6 +20,9 @@ def settings():
         return render_template('upload.html')
     else:
         videos = request.files.getlist('video')
+        print(request.files)
+
+        print("fsdfsfd")
         # TODO // 对图像的后缀以及名字的合法性进行鉴定
         for video in videos:
             print(video.filename)
@@ -30,8 +32,8 @@ def settings():
                 file_path = Config.UPLOAD_PATH + os.sep + os.path.split(os.path.abspath(video.filename))[1]
                 video.save(file_path)
             else:
-                flash('Wrong file type!', 'danger')
-                return redirect(url_for('.index'))
+                flash('Wrong file type!'+video.filename, 'danger')
+                #return redirect(url_for('.index'))
         flash("Upload successfully!", 'success')  # @hehao
         # video.save(Config.UPLOAD_PATH + video.filename)
 
@@ -50,3 +52,19 @@ def save_image():
         cv2.imencode('.png', img_np)[1].tofile(image_path + "chart_" + id + ".png")
 
     return "done"
+
+
+@main.route('/image_back', methods=['POST', 'GET'])
+def image_back():
+    image_path = Config.UPLOAD_IMAGE_PATH
+    document_path = Config.SAVE_DOCUMENT_PATH
+    if request.method == 'GET':
+        return render_template('index1.html')
+    else:
+        print(request.files)
+        id = request.form.get('id')
+        image = request.files.get('background')
+        file_path = image_path + 'back_' + id + '.png'
+        image.save(file_path)
+        print("文件保存成功")
+        return redirect('.')

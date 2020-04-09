@@ -69,10 +69,10 @@
                             <tbody>
                             <tr>
                             <tr>
-                                <td><label for="exampleInputFile">File input</label></td>
+                                <td><label for="exampleInputFile">选择视频文件</label></td>
                             </tr>
                             <tr>
-                                <td><input type="file" name="video" multiple="multiple" webkitdirectory directory/>
+                                <td><input type="file" name="video" multiple="multiple"  />
                                 </td>
                                 <td><input type="submit" value="提交"></td>
                             </tr>
@@ -173,6 +173,13 @@
                 <button type="button" class="btn btn-info" onclick="setBackgroundByFrame(this)">设置背景</button>
 
                 <button type="button" class="btn btn-info" onclick="setCurrentFrame(this)">选择当前帧</button>
+                <form  class="form-horizontal" method="post" action="{{ url_for('.image_back') }}" enctype="multipart/form-data">
+                    <input type="file" name="background" placeholder="上传背景"/>
+
+                    <input type="text" class="txt_input" name="id" placeholder="视频顺序 0开始"/>
+                    <input type="submit"  class="btn btn-info" value="提交信息"/>
+
+                </form>
                 <br>
                 <br>
                 <div class="panel panel-primary">
