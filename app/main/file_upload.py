@@ -32,8 +32,8 @@ def settings():
                 file_path = Config.UPLOAD_PATH + os.sep + os.path.split(os.path.abspath(video.filename))[1]
                 video.save(file_path)
             else:
-                flash('Wrong file type!'+video.filename, 'danger')
-                #return redirect(url_for('.index'))
+                flash('Wrong file type!' + video.filename, 'danger')
+                # return redirect(url_for('.index'))
         flash("Upload successfully!", 'success')  # @hehao
         # video.save(Config.UPLOAD_PATH + video.filename)
 
@@ -64,7 +64,18 @@ def image_back():
         print(request.files)
         id = request.form.get('id')
         image = request.files.get('background')
+        temfile = 'test.jpg'
         file_path = image_path + 'back_' + id + '.png'
-        image.save(file_path)
-        print("文件保存成功")
+        image.save(temfile)
+        img = cv2.imread(temfile)
+        print(type(img))
+        shape = img.shape
+        width = shape[1]
+        scale = 640 / width;
+        print("cscale ==" + str(scale))
+
+        newImage = cv2.resize(img, None, fx=scale, fy=scale)
+        cv2.imwrite(file_path, newImage)
+        print(type(image))
+
         return redirect('.')
