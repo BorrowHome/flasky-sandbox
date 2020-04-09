@@ -1,19 +1,10 @@
 # -*- coding: utf-8 -*-
 
 import os
-from flask_migrate import Migrate
-from app import create_app, db
-from app.models import User, Role, PoseToLocation
 
+from app import create_app
 
 app = create_app(os.getenv('FLASK_CONFIG') or 'default')
-migrate = Migrate(app, db)
-
-
-# migrate 的新建 我们需要扫描到这些文件我们才能创建
-@app.shell_context_processor
-def make_shell_context():
-    return dict(db=db, User=User, Role=Role, PoseToLocation=PoseToLocation)
 
 
 # 单元测试

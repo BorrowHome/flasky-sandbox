@@ -85,7 +85,8 @@ function setCurrentFrame() {
 
 }
 
-function setData(data) {
+function setData(Data) {
+    this.data = Data
     myChart.setOption({
         series: [{
             data: data.list_y,
@@ -127,6 +128,7 @@ function change_data() {
             //a,b,c三个参数,具体请参考JQuery API
         }
     })
+    console.log(data_y, "hello ===>")
 
     for (var i = 0; i < data.list_x.length; i++) {
         if (data_x == data.list_x[i]) {
@@ -141,11 +143,6 @@ function change_data() {
         }]
     });
 
-    myChart.setOption({
-        xAxis: {
-            data: data.list_x
-        }
-    })
 
     alert("处理成功")
 

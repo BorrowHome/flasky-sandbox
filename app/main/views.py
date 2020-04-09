@@ -2,7 +2,6 @@
 
 import csv
 import os
-import time
 
 import cv2
 import numpy as np
@@ -13,8 +12,6 @@ from app.utils.site import Site
 from app.utils.sub import PictureSub
 from config import Config
 from . import main
-from .. import db
-from ..models import User
 
 
 @main.route('/')
@@ -53,16 +50,6 @@ def index():
                            site_right_bottom=site_right_bottom,
                            video_src=video_src,
                            )
-
-
-@main.route('/query/')
-def query():
-    user = User()
-    user.username = 'user_name_test' + str(time.time())
-    db.session.add(user)
-    db.session.commit()
-    print('commit')
-    return render_template('web_wideo.html')
 
 
 @main.route('/canvas/')
@@ -167,11 +154,17 @@ def change_datas():
     s = []
     image_path = Config.UPLOAD_IMAGE_PATH
     document_path = Config.SAVE_DOCUMENT_PATH
+
     if request.method == 'POST':
         new = eval(request.form.getlist("current_frame")[0])
         id = request.form['id']
         print(type(new), new)
         # new=[int(new[0]),int(new[1])]
+    with open(document_path + "site_" + id + ".txt", "r+") as  f:
+        a = f.readlines()
+        print(a)
+        frame_location = Site(int(a[0]), int(a[1]), int(a[2]), int(a[3]))
+
     with open(document_path + "sand_" + id + ".csv", "r+", encoding="utf-8", newline="")as f:
         reader = csv.reader(f)
         # writer = csv.writer(f)
@@ -181,7 +174,7 @@ def change_datas():
         for i in s:
             # print(i)
             if str(new[0]) == i[0]:
-                s[s.index(i)][1] = str(244 - new[1])
+                s[s.index(i)][1] = str(frame_location.move_y + frame_location.locate_y - new[1])
                 break
     with open(document_path + "sand_" + id + ".csv", "w", newline="")as f:
         writer = csv.writer(f)

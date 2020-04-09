@@ -6,7 +6,7 @@ from flask_sqlalchemy import SQLAlchemy
 
 from config import config
 
-db = SQLAlchemy()
+# db = SQLAlchemy()
 
 
 def create_app(config_name):
@@ -19,7 +19,7 @@ def create_app(config_name):
     bootstrap = Bootstrap(app)
 
     # 预测情况我们都用init_app函数来初始化，但是好像有问题，但是构造函数好像还可以自动的生成，应该不是问题
-    db.init_app(app)
+    # db.init_app(app)
 
     from .main import main as main_blueprint
     app.register_blueprint(main_blueprint)

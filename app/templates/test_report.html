@@ -94,20 +94,20 @@
         </div>
 
         <div class="form-group">
-            <label for="fluidViscosity" class="col-sm-2 control-label">压裂液粘度（mPa.s）</label>
+            <label for="fluidViscosity" class="col-sm-2 control-label">压裂液粘度(mPa.s)</label>
             <div class="col-sm-4">
                 <input type="text" class="form-control" id="fluidViscosity" placeholder="压裂液粘度（mPa.s）">
             </div>
-            <label for="proppantDensity" class="col-sm-2 control-label">支撑剂密度(kg/m3)</label>
+            <label for="proppantDensity" class="col-sm-2 control-label">支撑剂密度(kg/m<sup>3</sup>)</label>
             <div class="col-sm-4">
-                <input type="text" class="form-control" id="proppantDensity" placeholder="支撑剂密度(kg/m3)">
+                <input type="text" class="form-control" id="proppantDensity" placeholder="支撑剂密度">
             </div>
         </div>
 
         <div class="form-group">
-            <label for="fluidDensity" class="col-sm-2 control-label">压裂液密度(kg/m3)</label>
+            <label for="fluidDensity" class="col-sm-2 control-label">压裂液密度(kg/m<sup>3</sup>)</label>
             <div class="col-sm-4">
-                <input type="text" class="form-control" id="fluidDensity" placeholder="压裂液密度(kg/m3)">
+                <input type="text" class="form-control" id="fluidDensity" placeholder="压裂液密度">
             </div>
             <label for="proppantAperture" class="col-sm-2 control-label">支撑剂粒径(mm)</label>
             <div class="col-sm-4">
@@ -143,7 +143,7 @@
                 <th>time(s)</th>
                 <th>流速(m/s)</th>
                 <th>砂比(%)</th>
-                <th>支撑剂密度(Kg/m3)</th>
+                <th>支撑剂密度(Kg/m<sup>3</sup>)</th>
                 <th>流体粘度(mPa.s)</th>
 
             </tr>
@@ -212,7 +212,7 @@
     li_table_add.onclick = function () {
         console.log('append')
         var li = document.createElement('tr')
-        li.className='li-tr'
+        li.className = 'li-tr'
         li.innerHTML = strHtml
         li_table.append(li)
 
@@ -222,7 +222,7 @@
         var trs = document.getElementsByClassName("li-tr")
         console.log(trs.length)
 
-        var last_tr=trs[trs.length-1]
+        var last_tr = trs[trs.length - 1]
         last_tr.parentNode.removeChild(last_tr)
     }
 
