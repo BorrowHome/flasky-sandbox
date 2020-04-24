@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+    <title>ipc</title>
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <!-- HTML5 shim 和 Respond.js 是为了让 IE8 支持 HTML5 元素和媒体查询（media queries）功能 -->
+    <!-- 警告：通过 file:// 协议（就是直接将 html 页面拖拽到浏览器中）访问页面时 Respond.js 不起作用 -->
+    <!--[if lt IE 9]>
+      <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+    <![endif]-->
+
+    <link href="../static/css/index.css" rel="stylesheet">
+    <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+
+    {#    引入表格的工具#}
+    <script src="https://cdn.bootcss.com/echarts/4.3.0-rc.2/echarts-en.common.js"></script>
+</head>
+
+
+<body>
+<nav class="navbar navbar-default " style="background: lavender">
+    <div class="container">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="#">沙箱压裂液测试系统</a>
+        </div>
+        <div>
+            <ul class="nav nav-pills">
+                <li role="presentation" class=" li-test-li"><a href="{{ url_for('.index') }}">Home</a></li>
+                <li role="presentation" class="li-test-li"><a
+                        href="{{ url_for('.multi_video') }}"><span>多界面处理</span></a></li>
+                <li role="presentation" class="li-test-li"><a href="{{ url_for('.test_report') }}">测试报告</a></li>
+                <li role="presentation" class=" active li-test-li"><a href="{{ url_for('.ipc') }}">测试报告</a></li>
+
+            </ul>
+        </div>
+
+    </div>
+
+</nav>
+
+
+<div class="container-fluid li_container">
+
+    <div class="row main_row">
+
+        <div class="col-md-3 col-lg-3 li-div " id="d1">
+            <!-- 视频预览区域 -->
+            <div class="video-preview">
+
+                <ul>
+                    {% for ip in ips %}
+                        <li> 当前视频id {{ loop.index0 }}</li>
+
+                        <img onclick="choose_a_video(this)"
+                             src="{{ url_for('.steam') }}?ip={{ ip }}"
+                             class="video_player" data="{{ loop.index0 }}">
+                        </li>
+
+                    {% endfor %}
+
+                </ul>
+
+            </div>
+
+            {#   有一个列表的东西来实现它  #}
+        </div>
+        <div class="col-md-7 col-lg-7 li-div li_col_7 ">
+            <!-- 视频播放区域 -->
+            <div class="video">
+                {#                <img src="{{ url_for('.steam') }}?ip={{ ips[0] }}">#}
+                <img src="../static/image/firstFrame5.jpg" id="player" class="video_player">
+            </div>
+
+            <div class="echart">
+                <div id="container" class="li_echart"></div>
+            </div>
+
+
+        </div>
+        <div class="col-md-2 col-lg-2">
+            <h2> 关键点坐标/面积 </h2>
+            <div class="panel panel-primary">
+            </div>
+            <form id="site_form">
+                <div class="panel panel-success ">
+                    <p class="site-center" id="site_left_top">({{ site_left_top }})</p>
+                    <p class="site-center" id="site_left_bottom">({{ site_left_bottom }})</p>
+                    <p class="site-center" id="site_right_top">({{ site_right_top }})</p>
+                    <p class="site-center" id="site_right_bottom">({{ site_right_bottom }})</p>
+                </div>
+
+                <div class="panel panel-danger form-control">
+                    <label class="site-center"> 边框面积: </label>
+                    <p type="text" id="frame_area" class="site_input site-center site-in "></p>
+                </div>
+                <div class="panel panel-danger form-control">
+                    <label> 沙子体积: </label>
+                    <p type="text" id="sand_volume" class="site_input site-center site-in"></p>
+                </div>
+                <div class="panel panel-danger form-control">
+                    <label>面积比例:</label>
+                    <p id="sand_frame_scale" class="site-center site-in"></p>
+                </div>
+
+                <div id="site-change">
+                    <button type="button" id="site_name" class="btn btn-info">
+                        框选坐标
+                    </button>
+                    <button type="button" id="recognize" class="btn btn-info">
+                        识别坐标
+                    </button>
+                    <button type="button" id="area" class="btn btn-info">计算面积</button>
+
+                </div>
+
+            </form>
+            <div class="panel panel-primary">
+            </div>
+
+            <h2>坐标获取</h2>
+            <br>
+            <div id="site-change">
+                <button type="button" class="btn btn-info" onclick="changetorun(this)">运行</button>
+
+                <button type="button" class="btn btn-info" onclick="changetostop(this)">停止</button>
+                <form class="" method="post" action="{{ url_for('.image_back') }}" enctype="multipart/form-data">
+                    <div>
+                        <input type="file" style="width: 100%;" name="background" placeholder="上传背景"/>
+
+                        <input type="text" name="id" placeholder="视频id"/>
+                        <input type="submit" class="btn btn-info" value="提交背景"/>
+
+                    </div>
+
+                </form>
+                <br>
+                <br>
+                <div class="panel panel-primary">
+                </div>
+                <h2>坐标修改</h2>
+                <p id="ds">当前位置 未知</p>
+                <p> 要修改为：
+                    <a type="text" class="site_input" name="new_data_x" id="new_data_x"
+                       style="height: 20px;width: 40px;text-align:center;">50</a>
+
+                    <input type="text" class="site_input" name="new_data_y" id="new_data_y" value="50"
+                           style="height: 20px;width: 40px;text-align:center;"></p>
+
+                <p id="newer_data"></p>
+
+                <input type="button" class="btn btn-info" value="调整图表" onclick="change_data()"/>
+                <input type="button" class="btn btn-info" value="保存图表" id="save_image"/>
+
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+<!-- jQuery (Bootstrap 的所有 JavaScript 插件都依赖 jQuery，所以必须放在前边) -->
+<script src="https://cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<!-- 加载 Bootstrap 的所有 JavaScript 插件。你也可以根据需要只加载单个插件。 -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js"></script>
+
+
+<script src="../static/js/echart.js"></script>
+<script src="../static/js/li_echart.js">
+</script>
+
+<script>
+
+    var steamImg = document.getElementById("player");
+
+    var site_left_top = document.getElementById("site_left_top")
+    var site_left_bottom = document.getElementById("site_left_bottom")
+    var site_right_top = document.getElementById("site_right_top")
+    var site_right_bottom = document.getElementById("site_right_bottom")
+    var frame_area = document.getElementById("frame_area")
+    var sand_volume = document.getElementById("sand_volume")
+    var draw_frame = document.getElementById("site_name")
+    var frame = document.getElementById("area")
+    var recognize = document.getElementById("recognize")
+    var sand_frame_scale = document.getElementById("sand_frame_scale")
+    var save_image = document.getElementById("save_image")
+    run = false
+    hasGetResult = true
+
+    recognize.style.display = 'none'
+
+    draw_frame.onclick = function (e) {
+        $.post(
+            '{{ url_for('.draw_frame') }}',
+            {current_frame: getCurrentFrames()},
+            function (data) {
+                window.location.href = '{{ url_for('.draw_frame')}}';
+
+            }
+        )
+    }
+
+    recognize.onclick = function (e) {
+
+        $.post(
+            '{{ url_for('.recognize') }}',
+            {current_frame: getCurrentFrames()},
+            function (data) {
+                console.log(data)
+                console.log(data.locate_x)
+                tmp1 = (data.locate_x + data.move_x)
+                console.log(tmp1, "tmp1")
+                tmp2 = (data.locate_y + data.move_y)
+                site_left_top.innerText = '(' + data.locate_x + ',' + data.locate_y + ')'
+                site_left_bottom.innerText = '(' + data.locate_x + ',' + tmp2 + ')'
+                site_right_top.innerText = '(' + tmp1 + ',' + data.locate_y + ')'
+                site_right_bottom.innerText = '(' + tmp1 + ',' + tmp2 + ')'
+                alert("通过后台识别算法识别边框的坐标")
+                {#    js 的弱类型导致的，因为是弱类型，故和字符串一起运算的时候会自动转化成字符串来进行运算#}
+            }
+        )
+
+    }
+
+
+    frame.onclick = function (e) {
+        idx = localStorage.getItem("id") == null ? 0 : localStorage.getItem("id")
+
+        $.post(
+            '{{ url_for('.get_volume') }}',
+            {id: idx},
+            function (data) {
+                console.log(data.frame_area.toFixed(2))
+                frame_area.innerText = data.frame_area.toFixed(2)
+                sand_volume.innerText = data.sand_area.toFixed(2)
+                sand_frame_scale.innerText = data.sand_frame_scale.toFixed(2)
+                alert("计算面积成功")
+            }
+        )
+    }
+    {#从上次结束的地方开始#}
+    window.onload = function (e) {
+
+        idx = localStorage.getItem("id") == null ? 0 : localStorage.getItem("id")
+
+        $.post(
+            '{{ url_for('.site_get') }}',
+            {id: idx},
+            function (data) {
+                console.log(data)
+                site_left_top.innerText = '(' + data.site_left_top + ')'
+                site_left_bottom.innerText = '(' + data.site_left_bottom + ')'
+                site_right_top.innerText = '(' + data.site_right_top + ')'
+                site_right_bottom.innerText = '(' + data.site_right_bottom + ')'
+            }
+        )
+    }
+
+
+    function setBackground(pictureURL) {
+        idx = localStorage.getItem("id") == null ? 0 : localStorage.getItem("id")
+
+        $.ajax({
+            url: '{{ url_for('.background') }}',//请求路径
+            data: {
+                back_frame: pictureURL,
+                id: idx
+
+            },
+            type: "POST",//GET,
+            async: true,
+            success: function (resp) {
+                //处理 resp.responseText;
+                console.log(resp)
+                console.log("设置背景")
+            },
+            error: function (a, b, c) {
+                //a,b,c三个参数,具体请参考JQuery API
+            }
+        })
+    }
+
+
+    function getCurrentFrames() {
+
+        var canvas = document.createElement("canvas");
+
+        width = steamImg.width
+        scale = 640 / parseFloat(width)
+        console.log('scale===>')
+
+        console.log(scale)
+        canvas.width = steamImg.width * scale;
+
+        console.log(steamImg.width)
+        canvas.height = steamImg.height * scale;
+        canvas.getContext('2d')
+            .drawImage(steamImg, 0, 0, canvas.width, canvas.height);  //可以只截取一部分图像  。。
+        pictureURL = canvas.toDataURL('image/png');
+
+        return pictureURL
+    }
+
+    function uploadPicture(pictureURL) {
+        idx = localStorage.getItem("id") == null ? 0 : localStorage.getItem("id")
+
+        echart_data = ""
+        console.log(' upload ')
+        $.ajax({
+            url: '{{ url_for('.camera') }}',//请求路径
+            data: {
+                current_frame: pictureURL,
+                id: idx
+            },
+            type: "POST",//GET,
+            async: true,
+            //dataType: "JSON",//需要返回JSON对象(如果Ajax返回的是手动拼接的JSON字符串,需要Key,Value都有引号)
+            success: function (resp) {
+                //处理 resp.responseText;
+                console.log(resp)
+                echart_data = resp
+                setData(echart_data)
+                changeResult()
+            },
+            error: function (a, b, c) {
+                //a,b,c三个参数,具体请参考JQuery API
+            }
+        })
+
+        return echart_data
+    }
+
+    function changeResult() {
+        console.log('hasGetResult')
+        hasGetResult = true
+    }
+
+    // out of date
+    function submitForm() {
+
+        formdata = $("#site_form").serialize()
+        $.post('{{ url_for('.site') }}',
+            formdata,
+            function (data) {
+                console.log(data)
+            }
+        )
+    }
+
+    function changetorun() {
+        run = true
+    }
+
+    function changetostop() {
+        run = false
+    }
+
+    function getinfo(steamTemp) {
+        var canvas = document.createElement("canvas");
+        scale = 640 / parseFloat(steamTemp.width)
+        console.log('scale===>')
+        console.log(scale)
+        canvas.width = steamTemp.width * scale;
+        canvas.height = steamTemp.height * scale;
+        canvas.getContext("2d").drawImage(steamTemp, 0, 0, canvas.width, canvas.height);
+        var img_src = canvas.toDataURL("image/png")
+        return img_src
+    }
+
+    function choose_a_video(obj) {
+
+        id = obj.getAttribute('data')
+        // 存放 id 数据
+        localStorage.setItem("id", id)
+        console.log(id, 'video id', obj.getAttribute('src'))
+        steamImg.src = obj.getAttribute('src');
+
+        {#       var imgsrx = getinfo(obj, 1)
+               setBackground(imgsrx)
+       #}
+
+        $.post(
+            '{{ url_for('.site_get') }}',
+            {id: id},
+            function (data) {
+                console.log(data)
+                site_left_top.innerText = '(' + data.site_left_top + ')'
+                site_left_bottom.innerText = '(' + data.site_left_bottom + ')'
+                site_right_top.innerText = '(' + data.site_right_top + ')'
+                site_right_bottom.innerText = '(' + data.site_right_bottom + ')'
+            }
+        )
+    }
+
+    save_image.onclick = function () {
+        idx = localStorage.getItem("id") == null ? 0 : localStorage.getItem("id")
+
+        console.log("save image")
+        var img_base = saveAsImage()
+        console.log(img_base)
+        $.ajax({
+            url: '{{ url_for('.save_image') }}',//请求路径
+            data: {
+                current_frame: img_base,
+                id: idx
+            },
+            type: "POST",//GET,
+            success: function (resp) {
+                console.log(resp)
+            },
+            error: function (a, b, c) {
+            }
+        })
+
+    }
+    setInterval(function () {
+        console.log('定时任务')
+        if (run) {
+            console.log('ready to run')
+            if (hasGetResult) {
+                console.log('the next setCurrentframe')
+                hasGetResult = false
+                setCurrentFrame()
+            }
+
+        }
+    }, 2000);
+    ;
+
+</script>
+</body>
+
+</html>

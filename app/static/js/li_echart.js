@@ -69,15 +69,7 @@ myChart.on('click', function (params) {
     document.getElementById("new_data_x").innerHTML = older_data1;
     document.getElementById("new_data_y").value = older_data2;
 });
-setInterval(function () {
 
-    if (video.paused == false) {
-        console.log(
-            "播放数据  嘻嘻"
-        )
-    }
-}, 2000);
-;
 
 function setCurrentFrame() {
     var pictureURL = getCurrentFrames()

@@ -8,4 +8,4 @@ main = Blueprint('main', __name__)
 
 # import errors, views, file_upload  这种方式在于python2.*  中使用，但不适用于python3 系列 
 
-from . import errors, views, file_upload, draw_frame, get_volume, multi_video,test_report
+from . import errors, views, file_upload, draw_frame, get_volume, multi_video,test_report,ipc_router

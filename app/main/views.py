@@ -52,10 +52,6 @@ def index():
                            )
 
 
-@main.route('/canvas/')
-def img_to_canvas():
-    return render_template('viedo.html')
-
 
 @main.route('/picture/', methods=['GET', 'POST'])
 def picture():
