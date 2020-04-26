@@ -4,6 +4,7 @@ import numpy as np
 from flask import request, Response, render_template
 
 from app.utils.li_onvif import Onvif_hik
+from app.utils.multi_thread import myThread, changeExitFlag
 from app.utils.rtsp import VideoCamera
 from app.utils.site import Site
 from config import Config
@@ -21,6 +22,7 @@ def gen(camera):
 @main.route('/steam')
 def steam():
     ipv4 = request.args.get('ip')
+
     ipc = Onvif_hik(ipv4, 8899, 'admin', '')
     print(ipv4)
     if ipc.content_cam():
@@ -31,6 +33,7 @@ def steam():
         # return rtsp_uri
 
     else:
+        print('ip 未找到')
         return "ip 未找到"
 
 
@@ -41,11 +44,16 @@ def img_to_canvas():
 
 @main.route('/ipc/')
 def ipc():
-    ips = ['192.168.1.10', '192.168.1.10']
+    ips = []
+
     path_in = './app/static/video/'
     path_out = '../static/video/'
     image_path = Config.UPLOAD_IMAGE_PATH
     document_path = Config.SAVE_DOCUMENT_PATH
+    with open(document_path + "ipcConfig.txt", "r+") as  f:
+        a = f.readlines()
+    for i in a:
+        ips.append(i)
 
     with open(document_path + "site_0.txt", "r+") as  f:
         a = f.readlines()
@@ -94,7 +102,6 @@ def camera():
             reader = csv.reader(f)
 
             for i in reader:
-                print(i[0], i[1])
                 llistx.append(i[0])
                 llisty.append(i[1])
 
@@ -113,3 +120,31 @@ def camera():
         res['id'] = id
         # 以前使用的是jsonify===> 前端使用 data["list_y"]==>有什么区别
         return res
+
+
+@main.route('/thread/')
+def thread():
+    # 创建新线程
+    ipv4 = request.args.get('ip')
+    ipc = Onvif_hik(ipv4, 8899, 'admin', '')
+    print(ipv4)
+    if ipc.content_cam():
+        rtsp_uri = ipc.get_steam_uri()
+        print("get rtsp done")
+
+        thread1 = myThread(1, 'new Thread 1', rtsp_uri, ipv4)
+
+        # 开启新线程
+        thread1.start()
+
+        return 'create'
+    else:
+        print('ip has some errors')
+        return 'ip has some errors'
+
+
+@main.route('/stop')
+def stop():
+    changeExitFlag()
+    print('change ExitFlag')
+    return 'exit '

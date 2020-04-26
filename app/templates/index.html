@@ -36,6 +36,8 @@
                 <li role="presentation" class="li-test-li"><a
                         href="{{ url_for('.multi_video') }}"><span>多界面处理</span></a></li>
                 <li role="presentation" class="li-test-li"><a href="{{ url_for('.test_report') }}">测试报告</a></li>
+                <li role="presentation" class=" li-test-li"><a href="{{ url_for('.ipc') }}">ipc</a></li>
+
             </ul>
         </div>
 
@@ -100,7 +102,7 @@
                                    onclick="choose_a_video(this)">
                                 <source src="{{ filename }}" type="video/mp4">
                                 <source src="movie.ogg" type="video/ogg">
-                                您的浏览器不支持Video标签。
+
                             </video>
                         </li>
                     {% endfor %}
@@ -173,7 +175,7 @@
                 <button type="button" class="btn btn-info" onclick="setBackgroundByFrame(this)">设置背景</button>
 
                 <button type="button" class="btn btn-info" onclick="setCurrentFrame(this)">选择当前帧</button>
-                <form  class="" method="post" action="{{ url_for('.image_back') }}" enctype="multipart/form-data">
+                <form class="" method="post" action="{{ url_for('.image_back') }}" enctype="multipart/form-data">
                     <div>
                         <input type="file" style="width: 100%;" name="background" placeholder="上传背景"/>
 
@@ -223,6 +225,7 @@
 
     recognize.style.display = 'none'
     draw_frame.onclick = function (e) {
+
         $.post(
             '{{ url_for('.draw_frame') }}',
             {current_frame: getCurrentFrames()},
@@ -231,6 +234,8 @@
                 v_time = video.currentTime.toFixed(0)
                 localStorage.setItem("video_src", video_src)
                 localStorage.setItem("video_time", v_time)
+                localStorage.setItem('urlRouter', 0)
+
                 window.location.href = '{{ url_for('.draw_frame',video_time=v_time)}}';
 
             }

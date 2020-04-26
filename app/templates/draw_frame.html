@@ -85,7 +85,7 @@
 
     submit_button.onclick = function () {
         {#判断空#}
-        id = isNaN(localStorage.getItem("id")) ? 0 : localStorage.getItem("id")
+        id = localStorage.getItem("id") == null ? 0 : localStorage.getItem("id")
         console.log(id)
 
         $.post('{{ url_for('.site') }}',
@@ -98,7 +98,15 @@
             },
             function (data) {
                 console.log(data)
-                window.location.href = '{{ url_for('.index')}}';
+                urlRouter = localStorage.getItem('urlRouter') == null ? 0 : localStorage.getItem('urlRouter')
+
+                if (urlRouter == 0) {
+                    window.location.href = '{{ url_for('.index')}}';
+
+                } else if (urlRouter == 1) {
+                    window.location.href = '{{ url_for('.ipc')}}';
+
+                }
 
             }
         )

@@ -10,6 +10,7 @@ class Config:
     ALLOWED_EXTENSIONS = set(['mp4'])  # @hehao
     UPLOAD_IMAGE_PATH = "./app/static/image/"
     SAVE_DOCUMENT_PATH = "./app/static/document/"
+    SAVE_VIDEO_PATH = "./app/static/video/"
 
     @staticmethod
     def init_app(self):

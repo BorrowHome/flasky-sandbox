@@ -36,7 +36,7 @@
                 <li role="presentation" class="li-test-li"><a
                         href="{{ url_for('.multi_video') }}"><span>多界面处理</span></a></li>
                 <li role="presentation" class="li-test-li"><a href="{{ url_for('.test_report') }}">测试报告</a></li>
-                <li role="presentation" class=" active li-test-li"><a href="{{ url_for('.ipc') }}">测试报告</a></li>
+                <li role="presentation" class=" active li-test-li"><a href="{{ url_for('.ipc') }}">ipc</a></li>
 
             </ul>
         </div>
@@ -60,7 +60,7 @@
 
                         <img onclick="choose_a_video(this)"
                              src="{{ url_for('.steam') }}?ip={{ ip }}"
-                             class="video_player" data="{{ loop.index0 }}">
+                             class="video_player" data="{{ loop.index0 }}" ip="{{ ip }}">
                         </li>
 
                     {% endfor %}
@@ -75,7 +75,7 @@
             <!-- 视频播放区域 -->
             <div class="video">
                 {#                <img src="{{ url_for('.steam') }}?ip={{ ips[0] }}">#}
-                <img src="../static/image/firstFrame5.jpg" id="player" class="video_player">
+                <img src="../static/image/firstFrame5.jpg" id="player" class="video_player" ip="">
             </div>
 
             <div class="echart">
@@ -144,19 +144,13 @@
                 <br>
                 <div class="panel panel-primary">
                 </div>
-                <h2>坐标修改</h2>
+                <h2>视频录制</h2>
                 <p id="ds">当前位置 未知</p>
-                <p> 要修改为：
-                    <a type="text" class="site_input" name="new_data_x" id="new_data_x"
-                       style="height: 20px;width: 40px;text-align:center;">50</a>
 
-                    <input type="text" class="site_input" name="new_data_y" id="new_data_y" value="50"
-                           style="height: 20px;width: 40px;text-align:center;"></p>
+                <p id="videoData"></p>
 
-                <p id="newer_data"></p>
-
-                <input type="button" class="btn btn-info" value="调整图表" onclick="change_data()"/>
-                <input type="button" class="btn btn-info" value="保存图表" id="save_image"/>
+                <input type="button" class="btn btn-info" value="开始录制" id="startRecode"/>
+                <input type="button" class="btn btn-info" value="停止录制" id="stopRecode"/>
 
             </div>
 
@@ -189,17 +183,22 @@
     var frame = document.getElementById("area")
     var recognize = document.getElementById("recognize")
     var sand_frame_scale = document.getElementById("sand_frame_scale")
-    var save_image = document.getElementById("save_image")
+    var stopRecode = document.getElementById("stopRecode")
+    var startRecode = document.getElementById('startRecode')
+
     run = false
     hasGetResult = true
 
     recognize.style.display = 'none'
 
     draw_frame.onclick = function (e) {
+
         $.post(
             '{{ url_for('.draw_frame') }}',
             {current_frame: getCurrentFrames()},
             function (data) {
+                localStorage.setItem('urlRouter', 1)
+
                 window.location.href = '{{ url_for('.draw_frame')}}';
 
             }
@@ -341,18 +340,6 @@
         hasGetResult = true
     }
 
-    // out of date
-    function submitForm() {
-
-        formdata = $("#site_form").serialize()
-        $.post('{{ url_for('.site') }}',
-            formdata,
-            function (data) {
-                console.log(data)
-            }
-        )
-    }
-
     function changetorun() {
         run = true
     }
@@ -361,25 +348,18 @@
         run = false
     }
 
-    function getinfo(steamTemp) {
-        var canvas = document.createElement("canvas");
-        scale = 640 / parseFloat(steamTemp.width)
-        console.log('scale===>')
-        console.log(scale)
-        canvas.width = steamTemp.width * scale;
-        canvas.height = steamTemp.height * scale;
-        canvas.getContext("2d").drawImage(steamTemp, 0, 0, canvas.width, canvas.height);
-        var img_src = canvas.toDataURL("image/png")
-        return img_src
-    }
 
     function choose_a_video(obj) {
 
         id = obj.getAttribute('data')
         // 存放 id 数据
+        ip = obj.getAttribute('ip')
+        console.log('ip')
+        localStorage.setItem('currentIp', ip)
         localStorage.setItem("id", id)
         console.log(id, 'video id', obj.getAttribute('src'))
         steamImg.src = obj.getAttribute('src');
+        steamImg.setAttribute('ip', ip)
 
         {#       var imgsrx = getinfo(obj, 1)
                setBackground(imgsrx)
@@ -398,27 +378,7 @@
         )
     }
 
-    save_image.onclick = function () {
-        idx = localStorage.getItem("id") == null ? 0 : localStorage.getItem("id")
 
-        console.log("save image")
-        var img_base = saveAsImage()
-        console.log(img_base)
-        $.ajax({
-            url: '{{ url_for('.save_image') }}',//请求路径
-            data: {
-                current_frame: img_base,
-                id: idx
-            },
-            type: "POST",//GET,
-            success: function (resp) {
-                console.log(resp)
-            },
-            error: function (a, b, c) {
-            }
-        })
-
-    }
     setInterval(function () {
         console.log('定时任务')
         if (run) {
@@ -432,6 +392,17 @@
         }
     }, 2000);
     ;
+    stopRecode.onclick = function () {
+        $.get('{{ url_for('.stop') }}')
+        document.getElementById('videoData').innerText = '已停止'
+    }
+    startRecode.onclick = function () {
+        ip = steamImg.getAttribute('ip')
+        console.log(ip)
+        $.get('{{ url_for('.thread') }}?ip=' + ip)
+        document.getElementById('videoData').innerText = ip + '正在录制'
+    }
+
 
 </script>
 </body>

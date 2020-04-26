@@ -27,7 +27,7 @@ def index():
         for filename in filenames:
             # dir_file_name = os.path.join(dirpath, filename)
             dir_file_name = filename
-            if os.path.splitext(dir_file_name)[1] == '.mp4':  # (('./app/static/movie', '.mp4'))
+            if os.path.splitext(dir_file_name)[1] == '.mp4' or '.avi':  # (('./app/static/movie', '.mp4'))
                 print(dir_file_name)
                 video_names.append(path_out + dir_file_name)
     with open(document_path + "site_0.txt", "r+") as  f:
@@ -50,7 +50,6 @@ def index():
                            site_right_bottom=site_right_bottom,
                            video_src=video_src,
                            )
-
 
 
 @main.route('/picture/', methods=['GET', 'POST'])
