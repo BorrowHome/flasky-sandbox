@@ -4,7 +4,7 @@ import numpy as np
 from flask import request, Response, render_template
 
 from app.utils.li_onvif import Onvif_hik
-from app.utils.multi_thread import myThread, changeExitFlag
+from app.utils.multi_thread import myThread, threadsPool
 from app.utils.rtsp import VideoCamera
 from app.utils.site import Site
 from config import Config
@@ -126,25 +126,46 @@ def camera():
 def thread():
     # 创建新线程
     ipv4 = request.args.get('ip')
-    ipc = Onvif_hik(ipv4, 8899, 'admin', '')
+    # ipc = Onvif_hik(ipv4, 8899, 'admin', '')
+    # print(ipv4)
+    # if ipc.content_cam():
+    #     rtsp_uri = ipc.get_steam_uri()
+    #     print("get rtsp done")
+    #
+    #     thread1 = myThread(1, 'new Thread 1', rtsp_uri, ipv4)
+    #
+    #     # 开启新线程
+    #     thread1.start()
+    #     threadsPool.__setitem__(ipv4, thread1)
+    #
+    #     return 'create'
+    # else:
+    #     print('ip has some errors')
+    #     return 'ip has some errors'
     print(ipv4)
-    if ipc.content_cam():
-        rtsp_uri = ipc.get_steam_uri()
-        print("get rtsp done")
+    if threadsPool.get(ipv4) != None:
+        return ipv4 + '已录制准备'
 
-        thread1 = myThread(1, 'new Thread 1', rtsp_uri, ipv4)
-
-        # 开启新线程
-        thread1.start()
-
-        return 'create'
-    else:
-        print('ip has some errors')
-        return 'ip has some errors'
+    thread1 = myThread(1, 'new Thread ' + ipv4, 'rtsp uri', ipv4)
+    thread1.start()
+    threadsPool.__setitem__(ipv4, thread1)
+    print(type(threadsPool.get(ipv4)))
+    return ipv4 + '已新建录制'
 
 
 @main.route('/stop')
 def stop():
-    changeExitFlag()
-    print('change ExitFlag')
-    return 'exit '
+    ip = request.args.get('ip')
+    print(ip)
+    result = threadsPool.get(ip)
+    if result == None:
+        print('change ExitFlag')
+        return '该ip并没有在后台执行录制程序'
+    else:
+        try:
+            print(type(result))
+            result.stop()
+            return '已停止' + ip + '的录制'
+        except Exception as e:
+            print('停止录制线程出现问题')
+            return '录制出现问题'

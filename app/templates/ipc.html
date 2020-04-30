@@ -393,14 +393,20 @@
     }, 2000);
     ;
     stopRecode.onclick = function () {
-        $.get('{{ url_for('.stop') }}')
-        document.getElementById('videoData').innerText = '已停止'
+        ip = steamImg.getAttribute('ip')
+
+        $.get('{{ url_for('.stop') }}?ip=' + ip, function (data) {
+            document.getElementById('videoData').innerText = data
+        })
+
     }
     startRecode.onclick = function () {
         ip = steamImg.getAttribute('ip')
         console.log(ip)
-        $.get('{{ url_for('.thread') }}?ip=' + ip)
-        document.getElementById('videoData').innerText = ip + '正在录制'
+        $.get('{{ url_for('.thread') }}?ip=' + ip, function (data) {
+            document.getElementById('videoData').innerText = data
+
+        })
     }
 
 
