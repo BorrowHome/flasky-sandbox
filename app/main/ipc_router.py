@@ -126,31 +126,25 @@ def camera():
 def thread():
     # 创建新线程
     ipv4 = request.args.get('ip')
-    # ipc = Onvif_hik(ipv4, 8899, 'admin', '')
-    # print(ipv4)
-    # if ipc.content_cam():
-    #     rtsp_uri = ipc.get_steam_uri()
-    #     print("get rtsp done")
-    #
-    #     thread1 = myThread(1, 'new Thread 1', rtsp_uri, ipv4)
-    #
-    #     # 开启新线程
-    #     thread1.start()
-    #     threadsPool.__setitem__(ipv4, thread1)
-    #
-    #     return 'create'
-    # else:
-    #     print('ip has some errors')
-    #     return 'ip has some errors'
-    print(ipv4)
-    if threadsPool.get(ipv4) != None:
+    if threadsPool.get(ipv4) is not None:
         return ipv4 + '已录制准备'
 
-    thread1 = myThread(1, 'new Thread ' + ipv4, 'rtsp uri', ipv4)
-    thread1.start()
-    threadsPool.__setitem__(ipv4, thread1)
-    print(type(threadsPool.get(ipv4)))
-    return ipv4 + '已新建录制'
+    ipc = Onvif_hik(ipv4, 8899, 'admin', '')
+    print(ipv4)
+    if ipc.content_cam():
+        rtsp_uri = ipc.get_steam_uri()
+        print("get rtsp done")
+
+        thread1 = myThread(1, 'new Thread ' + ipv4, rtsp_uri, ipv4)
+
+        # 开启新线程
+        thread1.start()
+        threadsPool.__setitem__(ipv4, thread1)
+
+        return ipv4 + '已新建录制'
+    else:
+        print('ip has some errors')
+        return 'ip has some errors'
 
 
 @main.route('/stop')
@@ -165,6 +159,7 @@ def stop():
         try:
             print(type(result))
             result.stop()
+            threadsPool.__delitem__(ip)
             return '已停止' + ip + '的录制'
         except Exception as e:
             print('停止录制线程出现问题')

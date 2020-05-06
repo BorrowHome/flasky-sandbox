@@ -312,7 +312,7 @@
         echart_data = ""
         console.log(' upload ')
         $.ajax({
-            url: '{{ url_for('.camera') }}',//请求路径
+            url: '{{ url_for('.picture') }}',//请求路径
             data: {
                 current_frame: pictureURL,
                 id: idx

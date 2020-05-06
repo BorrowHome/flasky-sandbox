@@ -15,7 +15,10 @@ class myThread(threading.Thread):
         self.name = name
         self.rtsp_uri = rtsp_uri
         self.ip = ip
-        self.exit = True
+        self.exit = False
+        video_path = Config.SAVE_VIDEO_PATH
+        currentTime = time.strftime("%Y-%m-%d-%H-%M-%S", time.localtime())
+        self.save_path = video_path + "{}-{}.mp4".format(self.ip, str(currentTime))
 
     def run(self):
         print("开始线程：" + self.name)
@@ -35,12 +38,12 @@ class myThread(threading.Thread):
         print(size)
 
         fourcc = cv2.VideoWriter_fourcc(*'avc1')
-        video_path = Config.SAVE_VIDEO_PATH
-        save_path = video_path + "{}T{}.mp4".format(self.ip, str(time.time()))
-        outVideo = cv2.VideoWriter(save_path, fourcc, fps, size)
+
+        print(self.save_path)
+        outVideo = cv2.VideoWriter(self.save_path, fourcc, fps, size)
         if cap.isOpened():
             rval, frame = cap.read()
-            print('true')
+            print('true  info  ')
         else:
             rval = False
             print('False')
@@ -66,7 +69,8 @@ class myThread(threading.Thread):
 
     def stop(self):
         print('change exit  value to  false')
-        self.exit = False
+        self.exit = True
+        print(self.save_path)
 
     def __del__(self):
         self.stop()
