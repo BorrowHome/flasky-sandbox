@@ -199,10 +199,15 @@ def site_get():
     res = {}
     if request.method == 'POST':
         id = request.form["id"]
-        with open(document_path + "site_" + id + ".txt", "r+") as  f:
-            a = f.readlines()
-            print(a)
-            frame_location = Site(int(a[0]), int(a[1]), int(a[2]), int(a[3]))
+        try:
+            with open(document_path + "site_" + id + ".txt", "r+") as  f:
+                a = f.readlines()
+                print(a)
+                frame_location = Site(int(a[0]), int(a[1]), int(a[2]), int(a[3]))
+        except Exception as e:
+            print(e.__cause__)
+            print('现在还没有存储该site')
+            frame_location = Site(0, 0, 0, 0)
         tmp2 = frame_location.locate_y + frame_location.move_y
         tmp1 = frame_location.locate_x + frame_location.move_x
         res['site_left_top'] = str(frame_location.locate_x) + ',' + str(frame_location.locate_y)

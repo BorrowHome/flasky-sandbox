@@ -96,7 +96,8 @@
 
                 <ul>
                     {% for filename in video_names %}
-                        <li>{{ filename }}</li>
+                        {#                        <li>{{ filename }}</li>#}
+                        <li>视频id {{ loop.index0 }}</li>
                         <li>
                             <video data={{ loop.index0 }} class="video_player"
                                    onclick="choose_a_video(this)">
@@ -180,6 +181,8 @@
                         <input type="file" style="width: 100%;" name="background" placeholder="上传背景"/>
 
                         <input type="text" name="id" placeholder="视频id 0开始"/>
+                        <input type="text" name="location" value="index" style="display: none">
+
                         <input type="submit" class="btn btn-info" value="提交背景"/>
 
                     </div>

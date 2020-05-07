@@ -48,7 +48,9 @@
             <ul>
 
                 {% for filename in video_names %}
-                    <li>{{ filename }}</li>
+                    {#                    <li>{{ filename }}</li>#}
+                    <li>视频id {{ loop.index0 }}</li>
+
                     <li>
                         <div class="father-middle">
                             <div class="col-md-4 col-lg-4 middle ">
@@ -106,6 +108,18 @@
                 <button type="button" class="btn btn-info" id="site-change-set-currentframe"
                         onclick="setCurrentFrame()">选择当前帧
                 </button>
+                <form class="" method="post" action="{{ url_for('.image_back') }}" enctype="multipart/form-data">
+                    <div>
+                        <input type="file" style="width: 100%;" name="background" placeholder="上传背景"/>
+
+                        <input type="text" name="id" placeholder="视频id 0开始"/>
+                        <input type="text" name="location" value="multi_video" style="display: none">
+
+                        <input type="submit" class="btn btn-info" value="提交背景"/>
+
+                    </div>
+
+                </form>
                 <br>
                 <br>
                 <div class="panel panel-primary">
@@ -189,9 +203,13 @@
             '{{ url_for('.update_report') }}',
             function (e) {
                 console.log(e)
-                console.log('更新数据成功')
-                dowloadDocx.click()
-                alert("保存图表成功")
+                if (e.length >= 7) {
+                    alert(e)
+                } else {
+                    dowloadDocx.click()
+                    alert("保存图表成功")
+                }
+
             })
     }
     var dowloadDocx = document.getElementById("site")

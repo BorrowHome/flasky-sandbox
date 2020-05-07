@@ -30,6 +30,9 @@ def update_report():
 
     with open(file_location + 'data.json', 'r') as f:
         dict_data = json.load(f)
-
-    set_sand_docxtpl(dict_data)
-    return "update data"
+    try:
+        set_sand_docxtpl(dict_data)
+        return "success"
+    except Exception as e:
+        print(str(e))
+        return str(e)

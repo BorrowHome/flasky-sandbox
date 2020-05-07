@@ -64,6 +64,9 @@ def image_back():
         print(request.files)
         id = request.form.get('id')
         image = request.files.get('background')
+        location = request.form.get('location')
+        print(location)
+        print('hello world ')
         temfile = 'test.jpg'
         file_path = image_path + 'back_' + id + '.png'
         image.save(temfile)
@@ -71,11 +74,14 @@ def image_back():
         print(type(img))
         shape = img.shape
         width = shape[1]
-        scale = 640 / width;
+        scale = 640 / width
         print("cscale ==" + str(scale))
 
         newImage = cv2.resize(img, None, fx=scale, fy=scale)
         cv2.imwrite(file_path, newImage)
         print(type(image))
-
+        if location == 'ipc':
+            return redirect(url_for('.ipc'))
+        elif location == 'multi_video':
+            return redirect(url_for('.multi_video'))
         return redirect('.')
