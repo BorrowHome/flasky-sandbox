@@ -27,12 +27,13 @@ def test_report():
 @main.route('/update_report/', methods=['GET'])
 def update_report():
     file_location = Config.SAVE_DOCUMENT_PATH
+    location=request.args.get('location')
 
     with open(file_location + 'data.json', 'r') as f:
         dict_data = json.load(f)
     try:
-        set_sand_docxtpl(dict_data)
-        return "success"
+        set_sand_docxtpl(dict_data,location)
+        return "成功"
     except Exception as e:
         print(str(e))
         return str(e)

@@ -90,7 +90,7 @@ def camera():
         str = request.form['current_frame']
         id = request.form['id']
 
-        with open(document_path + "site_" + id + ".txt", "r+") as  f:
+        with open(document_path + "site_" + '0' + ".txt", "r+") as  f:
             a = f.readlines()
             print(a)
             frame_location = Site(int(a[0]), int(a[1]), int(a[2]), int(a[3]))
@@ -164,3 +164,13 @@ def stop():
         except Exception as e:
             print('停止录制线程出现问题')
             return '录制出现问题'
+
+
+@main.route('/liliangbin/')
+def liliangbin():
+    rtsp_uri = 'rtsp://192.168.1.10:554/user=admin_password=tlJwpbo6_channel=1_stream=0.sdp?real_stream'
+    ipv4 = request.args.get('ip')
+    thread1 = myThread(1, 'new Thread ' + ipv4, rtsp_uri, ipv4)
+    thread1.start()
+    threadsPool.__setitem__(ipv4, thread1)
+    return 'hhh'

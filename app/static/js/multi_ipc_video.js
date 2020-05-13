@@ -14,16 +14,16 @@ var site_right_top = document.getElementById("site_right_top")
 var site_right_bottom = document.getElementById("site_right_bottom")
 
 var doms = document.getElementsByClassName("echart-back");
+
+run = false
+hasGetResult = true
+number = 0
+
 var myCharts = []
 for (var e = 0; e < doms.length; e++) {
     myCharts[e] = echarts.init(doms[e])
     console.log("hell", e)
 }
-
-
-run = false
-hasGetResult = true
-number = 0
 
 
 var app = {};
@@ -130,20 +130,7 @@ option = {
 
 }
 ;
-myCharts[0].on('click', function (params) {
-    older_data1 = x;
-    // older_data2=params[0].value;
-    older_data2 = y;
-    document.getElementById("ds").innerHTML = "当前位置 (" + older_data1 + "," + older_data2 + ")";
-    // document.getElementById("new_data_x").value=older_data1;
-    document.getElementById("new_data_x").innerHTML = older_data1;
-    document.getElementById("new_data_y").value = older_data2;
-});
 
-setInterval(function () {
-    console.log("intervel")
-}, 2000);
-;
 
 function setCurrentFrame() {
     var scale = 1
@@ -154,6 +141,7 @@ function setCurrentFrame() {
         data = uploadPicture(pictureURL, i)
     }
 
+    changeResult()
 }
 
 function setData(data) {
@@ -186,51 +174,7 @@ function setData(data) {
 
 }
 
-function change_data() {
-    data_x = parseInt(document.getElementById("new_data_x").innerHTML);
-    data_y = parseInt(document.getElementById("new_data_y").value);
-    document.getElementById("newer_data").innerHTML = "修改后的数据(" + data_x + "," + data_y + ")";
-    $.ajax({
-        url: "http://localhost:5000/change_datas/",//请求路径
-        data: {current_frame: JSON.stringify([data_x, data_y])},
-        type: "POST",//GET,
-        async: false,
-        traditional: true,
-        //dataType: "JSON",//需要返回JSON对象(如果Ajax返回的是手动拼接的JSON字符串,需要Key,Value都有引号)
-        success: function (resp) {
-            //处理 resp.responseText;
-            console.log(resp)
-            echart_data = resp
-        },
-        error: function (a, b, c) {
-            //a,b,c三个参数,具体请参考JQuery API
-        }
-    })
-
-    for (var i = 0; i < data["list_x"].length; i++) {
-        if (data_x == data["list_x"][i]) {
-            data["list_y"][i] = data_y;
-            break;
-        }
-    }
-
-    myCharts[0].setOption({
-        series: [{
-            data: data['list_y']
-        }]
-    });
-
-    myCharts[0].setOption({
-        xAxis: {
-            data: data['list_x']
-        }
-    })
-
-    alert("处理成功")
-
-
-}
-
+console.log(number)
 if (option && typeof option === "object") {
     for (var i = 0; i < doms.length; i++) {
         myCharts[i].setOption(option, true);
@@ -299,6 +243,7 @@ function rwar(i, run_text) {
     })
 
 }
+
 
 setInterval(function () {
     console.log('定时任务')

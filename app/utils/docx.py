@@ -8,25 +8,37 @@ from app.utils.report_utils import li_multiple_plot, get_result, get_multiple_ib
 from config import Config
 
 
-def set_sand_docxtpl(dict_data):
+def set_sand_docxtpl(dict_data, location):
     ites = dict_data['tests']['samples']
     path_in = './app/static/video/'
     path_out = '../static/video/'
-    video_names = []
     print(dict_data)
     print(dict_data['experiment'])
     print('\n')
     print(dict_data['tests'])
     print('dict_dat')
-    for dirpath, dirnames, filenames in os.walk(path_in):
-        for filename in filenames:
-            # dir_file_name = os.path.join(dirpath, filename)
-            dir_file_name = filename
-            if os.path.splitext(dir_file_name)[1] == '.mp4':  # (('./app/static/movie', '.mp4'))
-                print(dir_file_name)
-                video_names.append(path_out + dir_file_name)
-    length = len(video_names)
-    print(length)
+    if location == '' or location == 'index' or location is None or location == ' ':
+        video_names = []
+
+        for dirpath, dirnames, filenames in os.walk(path_in):
+            for filename in filenames:
+                # dir_file_name = os.path.join(dirpath, filename)
+                dir_file_name = filename
+                if os.path.splitext(dir_file_name)[1] == '.mp4':  # (('./app/static/movie', '.mp4'))
+                    print(dir_file_name)
+                    video_names.append(path_out + dir_file_name)
+
+        length = len(video_names)
+    else:
+        ips = []
+        document_path = Config.SAVE_DOCUMENT_PATH
+
+        with open(document_path + "ipcConfig.txt", "r+") as  f:
+            a = f.readlines()
+        for i in a:
+            ips.append(i)
+        length = len(ips)
+
     print("一共有多少个数据")
     doc = DocxTemplate("tpl.docx")
 
@@ -65,14 +77,14 @@ def set_sand_docxtpl(dict_data):
 
     doc.render(context)
     file_location = dict_data['experiment']['file_location']
-    print("file location===>"+file_location)
+    print("file location===>" + file_location)
     if (os.path.exists(file_location)):
         print("rush")
         doc.save(file_location + "/generated_doc.docx")
     else:
         print("cant")
         doc.save("generated_doc.docx")
-    doc.save(document_file_location+"generated_doc.docx")
+    doc.save(document_file_location + "generated_doc.docx")
 
 
 def run_name(name_list, tpl, results_frame):
