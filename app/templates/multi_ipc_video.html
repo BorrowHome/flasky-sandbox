@@ -31,7 +31,8 @@
                 <li role="presentation" class=" li-test-li"><a
                         href="{{ url_for('.multi_video') }}"><span>多界面处理</span></a></li>
                 <li role="presentation" class="  li-test-li"><a href="{{ url_for('.ipc') }}">网络视频源</a></li>
-                <li role="presentation" class=" active li-test-li "><a href="{{ url_for('.multi_ipc_video') }}">多网络视频源</a></li>
+                <li role="presentation" class=" active li-test-li "><a
+                        href="{{ url_for('.multi_ipc_video') }}">多网络视频源</a></li>
                 <li role="presentation" class="li-test-li"><a href="{{ url_for('.test_report') }}">测试报告</a></li>
 
             </ul>
@@ -110,10 +111,11 @@
             <input type="button" class="btn btn-info" value="保存图表" id="save_image"/>
             <a href="{{ url_for('static',filename="document/generated_doc.docx") }}" download="测试报告.docx"
                id="site"></a>
+            <div class="panel panel-primary">
+                </div>
+            <input type="button" class="btn btn-info" value="全部录制" id="startRecodeAll"/>
+            <input type="button" class="btn btn-info" value="停止录制" id="stopRecodeAll"/>
 
-
-            {#                <button type="button" class="btn btn-info" onclick="change_data(this) ">调整图表</button>#}
-            {#                </form>#}
 
         </div>
 
@@ -130,6 +132,8 @@
 <script>
     var dowloadDocx = document.getElementById("site")
 
+    var stopRecodeAll = document.getElementById("stopRecodeAll")
+    var startRecodeAll = document.getElementById('startRecodeAll')
 
     save_image.onclick = function () {
         console.log("saveImage click")
@@ -305,6 +309,23 @@
     function changetostop(obj) {
         run = false
     }
+
+    stopRecodeAll.onclick = function () {
+
+        $.get('{{ url_for('.stop_all') }}', function (data) {
+            document.getElementById('videoData').innerText = '已停止全部'
+            console.log(data)
+        })
+
+    }
+    startRecodeAll.onclick = function () {
+        console.log(ip)
+        $.get('{{ url_for('.thread_all') }}', function (data) {
+            document.getElementById('videoData').innerText = '已全部开始录制'
+            console.log(data)
+        })
+    }
+
 </script>
 </body>
 </html>

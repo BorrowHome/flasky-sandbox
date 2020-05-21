@@ -1,7 +1,7 @@
 import csv
 
 import numpy as np
-from flask import request, Response, render_template
+from flask import request, Response, render_template, jsonify
 
 from app.utils.li_onvif import Onvif_hik
 from app.utils.multi_thread import myThread, threadsPool
@@ -166,11 +166,62 @@ def stop():
             return '录制出现问题'
 
 
-@main.route('/liliangbin/')
-def liliangbin():
-    rtsp_uri = 'rtsp://192.168.1.10:554/user=admin_password=tlJwpbo6_channel=1_stream=0.sdp?real_stream'
-    ipv4 = request.args.get('ip')
-    thread1 = myThread(1, 'new Thread ' + ipv4, rtsp_uri, ipv4)
-    thread1.start()
-    threadsPool.__setitem__(ipv4, thread1)
-    return 'hhh'
+@main.route('/thread_all/')
+def thread_all():
+    ips = []
+    document_path = Config.SAVE_DOCUMENT_PATH
+    with open(document_path + "ipcConfig.txt", "r+") as  f:
+        a = f.readlines()
+    for i in a:
+        ips.append(i)
+    set_ip = []
+    for ipv4 in ips:
+        if threadsPool.get(ipv4) is not None:
+            print(ipv4, '已建立录制')
+            continue
+
+        ipc = Onvif_hik(ipv4, 8899, 'admin', '')
+        print(ipv4)
+        if ipc.content_cam():
+            rtsp_uri = ipc.get_steam_uri()
+            print("get rtsp done")
+
+            thread1 = myThread(1, 'new Thread ' + ipv4, rtsp_uri, ipv4)
+
+            # 开启新线程
+            thread1.start()
+            threadsPool.__setitem__(ipv4, thread1)
+            set_ip.append(ipv4)
+            continue
+        else:
+            print('ip has some errors', ipv4)
+            continue
+
+    return jsonify(set_ip)
+
+
+@main.route('/stop_all')
+def stop_all():
+    ips = []
+    document_path = Config.SAVE_DOCUMENT_PATH
+    with open(document_path + "ipcConfig.txt", "r+") as  f:
+        a = f.readlines()
+    for i in a:
+        ips.append(i)
+    set_ip = []
+
+    for ipv4 in ips:
+        result = threadsPool.get(ipv4)
+        if result == None:
+            print('change ExitFlag')
+            return '该ip并没有在后台执行录制程序'
+        else:
+            try:
+                print(type(result))
+                result.stop()
+                threadsPool.__delitem__(ipv4)
+                set_ip.append(ipv4)
+                print('已停止' + ipv4 + '的录制')
+            except Exception as e:
+                print('停止录制线程出现问题' + ipv4)
+    return jsonify(set_ip)

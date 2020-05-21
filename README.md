@@ -41,6 +41,7 @@
  - 那个文档需要录入哪些信息，有没有什么标注的
  - csv 文件需要平滑处理，可能有噪声点
  - python nmap  很牛逼
+ - 设置背景
  
  
 https://github.com/cisco/openh264/releases  

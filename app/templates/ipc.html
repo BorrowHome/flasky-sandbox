@@ -132,6 +132,8 @@
                 <button type="button" class="btn btn-info" onclick="changetorun(this)">运行</button>
 
                 <button type="button" class="btn btn-info" onclick="changetostop(this)">停止</button>
+                <button type="button" class="btn btn-info" onclick="setBackgroundByFrame(this)">设置背景</button>
+
                 <form class="" method="post" action="{{ url_for('.image_back') }}" enctype="multipart/form-data">
                     <div>
                         <input type="file" style="width: 100%;" name="background" placeholder="上传背景"/>
@@ -152,8 +154,11 @@
 
                 <p id="videoData"></p>
 
-                <input type="button" class="btn btn-info" value="开始录制" id="startRecode"/>
-                <input type="button" class="btn btn-info" value="停止录制" id="stopRecode"/>
+                <input type="button" class="btn btn-info" value="录制当前" id="startRecode"/>
+                <input type="button" class="btn btn-info" value="停止当前" id="stopRecode"/>
+
+                <input type="button" class="btn btn-info" value="全部录制" id="startRecodeAll"/>
+                <input type="button" class="btn btn-info" value="停止录制" id="stopRecodeAll"/>
 
             </div>
 
@@ -188,6 +193,9 @@
     var sand_frame_scale = document.getElementById("sand_frame_scale")
     var stopRecode = document.getElementById("stopRecode")
     var startRecode = document.getElementById('startRecode')
+    var stopRecodeAll = document.getElementById("stopRecodeAll")
+    var startRecodeAll = document.getElementById('startRecodeAll')
+
 
     run = false
     hasGetResult = true
@@ -264,6 +272,11 @@
         )
     }
 
+    function setBackgroundByFrame() {
+        console.log("set  background")
+        var pictureURL = getCurrentFrames()
+        setBackground(pictureURL)
+    }
 
     function setBackground(pictureURL) {
         idx = localStorage.getItem("id") == null ? 0 : localStorage.getItem("id")
@@ -363,6 +376,7 @@
         console.log(id, 'video id', obj.getAttribute('src'))
         steamImg.src = obj.getAttribute('src');
         steamImg.setAttribute('ip', ip)
+        steamImg.setAttribute('data', id)
 
         {#       var imgsrx = getinfo(obj, 1)
                setBackground(imgsrx)
@@ -409,6 +423,22 @@
         $.get('{{ url_for('.thread') }}?ip=' + ip, function (data) {
             document.getElementById('videoData').innerText = data
 
+        })
+    }
+
+    stopRecodeAll.onclick = function () {
+
+        $.get('{{ url_for('.stop_all') }}', function (data) {
+            document.getElementById('videoData').innerText = '已停止全部'
+console.log(data)
+        })
+
+    }
+    startRecodeAll.onclick = function () {
+        console.log(ip)
+        $.get('{{ url_for('.thread_all') }}', function (data) {
+            document.getElementById('videoData').innerText = '已全部开始录制'
+            console.log(data)
         })
     }
 

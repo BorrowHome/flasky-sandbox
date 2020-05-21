@@ -3,7 +3,7 @@ from flask import render_template
 from app.utils.site import Site
 from config import Config
 from . import main
-
+# TODO 2020/5/21 22:46 liliangbin  一键全部录制，全部停止
 
 @main.route("/multi_ipc_video/", methods=["GET", "POST"])
 def multi_ipc_video():
