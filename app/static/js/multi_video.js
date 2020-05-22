@@ -15,11 +15,32 @@ var site_right_bottom = document.getElementById("site_right_bottom")
 
 var doms = document.getElementsByClassName("echart-back");
 var myCharts = []
+
+var data =
+    [
+        {
+            'list_x': [100, 200, 300, 400, 500, 600, 700],
+            'list_y': [1, 2, 3, 4, 5, 6, 7],
+            'id': 0
+        },
+        {
+            'list_x': [100, 200, 300, 400, 500, 600, 700],
+            'list_y': [1, 2, 3, 4, 5, 6, 7],
+            'id': 1
+        }
+    ]
+
+
 for (var e = 0; e < doms.length; e++) {
     myCharts[e] = echarts.init(doms[e])
+
     console.log("hell", e)
 }
 
+for (var i = 0; i < myCharts.length; i++) {
+    myCharts[i].on('click', chartClick);
+
+}
 
 run = false
 hasGetResult = true
@@ -27,7 +48,6 @@ number = 0
 
 
 var app = {};
-var data = {};
 option = null;
 option = {
     tooltip: {
@@ -130,15 +150,20 @@ option = {
 
 }
 ;
-myCharts[0].on('click', function (params) {
+
+function chartClick(params) {
     older_data1 = x;
     // older_data2=params[0].value;
     older_data2 = y;
-    document.getElementById("ds").innerHTML = "当前位置 (" + older_data1 + "," + older_data2 + ")";
+    id = this.getDom().getAttribute('data')
+    console.log(id)
+    document.getElementById("ds").innerHTML = "当前位置 (" + older_data1 + "," + older_data2 + ")" + "  id=" + id;
+    document.getElementById('ds').setAttribute('index', id)
     // document.getElementById("new_data_x").value=older_data1;
     document.getElementById("new_data_x").innerHTML = older_data1;
     document.getElementById("new_data_y").value = older_data2;
-});
+
+}
 
 setInterval(function () {
     console.log("intervel")
@@ -158,6 +183,7 @@ function setCurrentFrame() {
 
 function setData(data) {
     i = data.id
+    this.data[i] = data
     myCharts[i].setOption({
         series: [{
             data: data.list_y,
@@ -186,13 +212,17 @@ function setData(data) {
 
 }
 
-function change_data() {
+function change_data(idx) {
     data_x = parseInt(document.getElementById("new_data_x").innerHTML);
     data_y = parseInt(document.getElementById("new_data_y").value);
+
     document.getElementById("newer_data").innerHTML = "修改后的数据(" + data_x + "," + data_y + ")";
     $.ajax({
-        url: "http://localhost:5000/change_datas/",//请求路径
-        data: {current_frame: JSON.stringify([data_x, data_y])},
+        url: "http://localhost:8080/change_datas/",//请求路径
+        data: {
+            current_frame: JSON.stringify([data_x, data_y]),
+            id: idx
+        },
         type: "POST",//GET,
         async: false,
         traditional: true,
@@ -207,22 +237,23 @@ function change_data() {
         }
     })
 
-    for (var i = 0; i < data["list_x"].length; i++) {
-        if (data_x == data["list_x"][i]) {
-            data["list_y"][i] = data_y;
+    console.log(data[idx])
+    for (var i = 0; i < data[idx].list_x.length; i++) {
+        if (data_x == data[idx].list_x[i]) {
+            data[idx].list_y[i] = data_y;
             break;
         }
     }
 
-    myCharts[0].setOption({
+    myCharts[idx].setOption({
         series: [{
-            data: data['list_y']
+            data: data[idx].list_y
         }]
     });
 
-    myCharts[0].setOption({
+    myCharts[idx].setOption({
         xAxis: {
-            data: data['list_x']
+            data: data[idx].list_x
         }
     })
 
@@ -317,3 +348,5 @@ function changeResult() {
     console.log('hasGetResult')
     hasGetResult = true
 }
+
+

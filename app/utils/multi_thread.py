@@ -64,7 +64,7 @@ class myThread(threading.Thread):
             #   c+=1
             # 使用VideoWriter类中的write(frame)方法，将图像帧写入视频文件
             outVideo.write(frame)
-            print('currentFrame==', c, "  " + self.ip)
+            # print('currentFrame==', c, "  " + self.ip)
             c = c + 1
 
     def stop(self):

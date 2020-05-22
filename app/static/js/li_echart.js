@@ -1,7 +1,12 @@
 var dom = document.getElementById("container");
 var myChart = echarts.init(dom);
 var app = {};
-var data = {};
+var data = {
+    'list_x': [100, 200, 300, 400, 500, 600, 700],
+    'list_y': [1, 2, 3, 4, 5, 6, 7]
+};
+var symbolSize = 5;
+
 option = null;
 option = {
     tooltip: {
@@ -18,7 +23,7 @@ option = {
     },
     xAxis: {
         type: 'category',
-        data: [100, 200, 300, 400, 500, 600, 700]
+        data: data.list_x
     },
 
     yAxis: {
@@ -48,7 +53,8 @@ option = {
         [{
             data: [1, 2, 2.4, 3.6, 5, 6, 7],
             type: 'line',
-            smooth: true
+            smooth: true,
+            symbolSize: symbolSize,
         }],
     grid: {
         left: '2%',
@@ -108,7 +114,10 @@ function change_data() {
 
     $.ajax({
         url: "http://localhost:8080/change_datas/",//请求路径
-        data: {current_frame: JSON.stringify([data_x, data_y]), id: idx},
+        data: {
+            current_frame: JSON.stringify([data_x, data_y]),
+            id: idx
+        },
         type: "POST",//GET,
         async: false,
         traditional: true,
@@ -140,6 +149,7 @@ function change_data() {
 
 
 }
+
 
 if (option && typeof option === "object") {
     myChart.setOption(option, true);

@@ -46,7 +46,7 @@
     {#    <h2 style=" text-align: center">SandBox</h2>#}
     <!-- 这个地方我们有一个导航栏或是标题什么的 -->
     <div class="row ">
-        <div class="col-md-10 col-lg-10  ">
+        <div class="col-md-10 col-lg-10  " style="height: 94vh ;overflow: auto">
             <ul>
 
                 {% for ip in ips %}
@@ -64,7 +64,7 @@
                                      class="video_player" data="{{ loop.index0 }}" ip="{{ ip }}">
                             </div>
                             <div class="col-md-8 col-lg-8 ">
-                                <div class="echart-back"></div>
+                                <div class="echart-back" data="{{ loop.index0 }}"></div>
                             </div>
                         </div>
                     </li>
@@ -104,6 +104,15 @@
             </div>
             <h2>图表操作</h2>
             <p id="ds">当前位置 未知</p>
+            <p> 要修改为：
+                <a type="text" class="site_input" name="new_data_x" id="new_data_x"
+                   style="height: 20px;width: 40px;text-align:center;">50</a>
+
+                <input type="text" class="site_input" name="new_data_y" id="new_data_y" value="50"
+                       style="height: 20px;width: 40px;text-align:center;"></p>
+
+            <p id="newer_data"></p>
+            <input type="button" class="btn btn-info" value="调整图表" id="change-data"/>
 
 
             <p id="videoData"></p>
@@ -112,7 +121,7 @@
             <a href="{{ url_for('static',filename="document/generated_doc.docx") }}" download="测试报告.docx"
                id="site"></a>
             <div class="panel panel-primary">
-                </div>
+            </div>
             <input type="button" class="btn btn-info" value="全部录制" id="startRecodeAll"/>
             <input type="button" class="btn btn-info" value="停止录制" id="stopRecodeAll"/>
 
@@ -134,7 +143,11 @@
 
     var stopRecodeAll = document.getElementById("stopRecodeAll")
     var startRecodeAll = document.getElementById('startRecodeAll')
-
+    document.getElementById('change-data').onclick = function () {
+        id = document.getElementById('ds').getAttribute('index')
+        console.log(id)
+        change_data(id)
+    }
     save_image.onclick = function () {
         console.log("saveImage click")
         for (var i = 0; i < videos.length; i++) {
@@ -319,7 +332,6 @@
 
     }
     startRecodeAll.onclick = function () {
-        console.log(ip)
         $.get('{{ url_for('.thread_all') }}', function (data) {
             document.getElementById('videoData').innerText = '已全部开始录制'
             console.log(data)

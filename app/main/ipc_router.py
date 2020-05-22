@@ -214,7 +214,7 @@ def stop_all():
         result = threadsPool.get(ipv4)
         if result == None:
             print('change ExitFlag')
-            return '该ip并没有在后台执行录制程序'
+            print('该ip未在后台运行', ipv4)
         else:
             try:
                 print(type(result))

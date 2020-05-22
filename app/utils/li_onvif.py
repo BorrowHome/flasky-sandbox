@@ -28,7 +28,7 @@ class Onvif_hik(object):
         try:
             self.mycam = ONVIFCamera(self.ip, self.port, self.username, self.password)
             self.media = self.mycam.create_media_service()  # 创建媒体服务
-            print(self.media.GetProfiles())
+            # print(self.media.GetProfiles())
             self.media_profile = self.media.GetProfiles()[0]  # 获取配置信息
             self.ptz = self.mycam.create_ptz_service()  # 创建控制台服务
             return True
