@@ -286,6 +286,8 @@
 
         width = video.videoWidth
         scale = 640 / parseFloat(width)
+        tempscale=scale.toFixed(1)
+        scale=parseFloat(tempscale)
         console.log(scale)
         canvas.width = video.videoWidth * scale;
 

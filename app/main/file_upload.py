@@ -74,7 +74,8 @@ def image_back():
         print(type(img))
         shape = img.shape
         width = shape[1]
-        scale = 640 / width
+        temp_scale = 640 / float(width)
+        scale = round(temp_scale, 1)
         print("cscale ==" + str(scale))
 
         newImage = cv2.resize(img, None, fx=scale, fy=scale)

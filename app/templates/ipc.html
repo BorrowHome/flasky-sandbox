@@ -324,7 +324,8 @@
         width = steamImg.width
         scale = 640 / parseFloat(width)
         console.log('scale===>')
-
+        tempscale = scale.toFixed(1)
+        scale = parseFloat(tempscale)
         console.log(scale)
         canvas.width = steamImg.width * scale;
 

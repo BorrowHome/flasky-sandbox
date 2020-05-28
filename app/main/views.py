@@ -72,9 +72,14 @@ def picture():
 
         # 背景图
         background = cv2.imread(image_path + "back_" + id + ".png")
+        print(background.shape)
+
         currentFrame = img_np
 
+        print(currentFrame.shape)
+        
         q = sub.subtract_demo(background, currentFrame)
+
         s = sub.inverse(q)
         t = sub.iblack(s, 220)
         cv2.imwrite(image_path + "iblack_" + id + ".png", t)
