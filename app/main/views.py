@@ -77,7 +77,7 @@ def picture():
         currentFrame = img_np
 
         print(currentFrame.shape)
-        
+
         q = sub.subtract_demo(background, currentFrame)
 
         s = sub.inverse(q)

@@ -224,16 +224,16 @@
 
         var canvas = document.createElement("canvas");
 
-        width = steamImg.width
+        width = steamImg.naturalWidth
         scale = 640 / parseFloat(width)
         console.log('scale===>')
         tempscale = scale.toFixed(1)
         scale = parseFloat(tempscale)
         console.log(scale)
-        canvas.width = steamImg.width * scale;
+        canvas.width = steamImg.naturalWidth * scale;
 
-        console.log(steamImg.width)
-        canvas.height = steamImg.height * scale;
+        console.log(steamImg.naturalWidth)
+        canvas.height = steamImg.naturalHeight * scale;
         canvas.getContext('2d')
             .drawImage(steamImg, 0, 0, canvas.width, canvas.height);  //可以只截取一部分图像  。。
         pictureURL = canvas.toDataURL('image/png');
