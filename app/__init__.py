@@ -14,6 +14,7 @@ def create_app(config_name):
     # print (config_name, '   config_name ')
     app.config.from_object(config[config_name])
     app.config['SECRET_KEY'] = '123456'
+    app.config['THREADED']=True
     config[config_name].init_app(app)
     # TODO  liliangbin  路由与自定义错误页面
     bootstrap = Bootstrap(app)

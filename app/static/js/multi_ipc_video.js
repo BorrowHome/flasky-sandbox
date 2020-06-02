@@ -249,7 +249,7 @@ function setData(data) {
     if (number == videos.length) {
         console.log(number)
         changeResult()
-        chars()
+        // chars()
         number = 0
     }
 
@@ -337,7 +337,7 @@ setInterval(function () {
         }
 
     }
-}, 2000);
+}, 6000);
 
 function changeResult() {
     console.log('hasGetResult')

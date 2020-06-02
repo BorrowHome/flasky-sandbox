@@ -88,7 +88,7 @@
         id = localStorage.getItem("id") == null ? 0 : localStorage.getItem("id")
         console.log(id)
 
-        $.post('{{ url_for('.site') }}',
+        $.post('{{ url_for('main.site') }}',
             {
                 locate_x: locate_x.value,
                 locate_y: locate_y.value,
@@ -101,10 +101,10 @@
                 urlRouter = localStorage.getItem('urlRouter') == null ? 0 : localStorage.getItem('urlRouter')
 
                 if (urlRouter == 0) {
-                    window.location.href = '{{ url_for('.index')}}';
+                    window.location.href = '{{ url_for('main.index')}}';
 
                 } else if (urlRouter == 1) {
-                    window.location.href = '{{ url_for('.ipc')}}';
+                    window.location.href = '{{ url_for('main.ipc')}}';
 
                 }
 

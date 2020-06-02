@@ -54,7 +54,7 @@ def save_image():
     return "done"
 
 
-@main.route('/image_back', methods=['POST', 'GET'])
+@main.route('/image_back/', methods=['POST', 'GET'])
 def image_back():
     image_path = Config.UPLOAD_IMAGE_PATH
     document_path = Config.SAVE_DOCUMENT_PATH

@@ -19,7 +19,7 @@ def gen(camera):
                b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
 
 
-@main.route('/steam')
+@main.route('/steam/')
 def steam():
     ipv4 = request.args.get('ip')
 
@@ -147,7 +147,7 @@ def thread():
         return 'ip has some errors'
 
 
-@main.route('/stop')
+@main.route('/stop/')
 def stop():
     ip = request.args.get('ip')
     print(ip)
@@ -173,7 +173,7 @@ def thread_all():
     with open(document_path + "ipcConfig.txt", "r+") as  f:
         a = f.readlines()
     for i in a:
-        ips.append(i)
+        ips.append(i.strip())
     set_ip = []
     for ipv4 in ips:
         if threadsPool.get(ipv4) is not None:
@@ -200,14 +200,14 @@ def thread_all():
     return jsonify(set_ip)
 
 
-@main.route('/stop_all')
+@main.route('/stop_all/')
 def stop_all():
     ips = []
     document_path = Config.SAVE_DOCUMENT_PATH
     with open(document_path + "ipcConfig.txt", "r+") as  f:
         a = f.readlines()
     for i in a:
-        ips.append(i)
+        ips.append(i.strip())
     set_ip = []
 
     for ipv4 in ips:

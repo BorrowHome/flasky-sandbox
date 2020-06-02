@@ -184,7 +184,7 @@ def change_datas():
         return "true"
 
 
-@main.route("/test")
+@main.route("/test/")
 def test():
     try:
         info = request.args.get("test")
@@ -226,6 +226,6 @@ def site_get():
     return res
 
 
-@main.route("/sur")
+@main.route("/sur/")
 def sur():
     return render_template("index1.html")

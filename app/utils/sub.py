@@ -73,8 +73,7 @@ class PictureSub(object):
             "list_x": list1,
             "list_y": list2
         }
-        print(list1)
-        print(list2)
+
         return res
 
 

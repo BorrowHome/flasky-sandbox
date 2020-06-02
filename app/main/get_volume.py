@@ -8,7 +8,7 @@ from config import Config
 from . import main
 
 
-@main.route("/get_volume", methods=['POST', 'GET'])
+@main.route("/get_volume/", methods=['POST', 'GET'])
 def get_volume():
     image_path = Config.UPLOAD_IMAGE_PATH
     document_path = Config.SAVE_DOCUMENT_PATH

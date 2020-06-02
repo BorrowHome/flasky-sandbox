@@ -9,7 +9,7 @@ from . import main
 
 # 现在相当于每次我们添加一个id来处理，常规就默认id为0 如果是多个项目则是为1 2 3 4 .。。。。。
 
-@main.route("/multi_video", methods=["GET", "POST"])
+@main.route("/multi_video/", methods=["GET", "POST"])
 def multi_video():
     video_names = []
     path_in = './app/static/video/'
