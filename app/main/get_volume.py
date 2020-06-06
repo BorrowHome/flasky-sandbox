@@ -4,6 +4,7 @@ from flask import request
 from app.utils import areaRect
 from app.utils.areaS import ostu
 from app.utils.site import Site
+from app.utils.sub import PictureSub
 from config import Config
 from . import main
 
@@ -13,6 +14,11 @@ def get_volume():
     image_path = Config.UPLOAD_IMAGE_PATH
     document_path = Config.SAVE_DOCUMENT_PATH
     id = request.form['id']
+    s = cv2.imread(image_path + "iblack_" + id + ".png")
+    sub = PictureSub()
+    t = sub.iblack(s, 220)
+    # cv2.imwrite(image_path + "iblack_" + id + ".png", t)
+
     with open(document_path + "site_" + id + ".txt", "r+") as f:
         a = f.readlines()
         print(a)
@@ -40,7 +46,9 @@ def get_volume():
     #     points.append(Point(points[tmp - 1].x, temp))
     #     sand_area = helen.get_area_of_poly_gon(points)
     sand_area = 0
-    img = cv2.imread(image_path + "iblack_" + id + ".png")
+    # img = cv2.imread(image_path + "iblack_" + id + ".png")
+
+    img=t
     sand_area = ostu(img)
     sand_frame_scale = float(sand_area) / float(frame_area)
     print(sand_frame_scale)

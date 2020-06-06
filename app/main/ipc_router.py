@@ -37,6 +37,16 @@ def steam():
         return "ip 未找到"
 
 
+@main.route('/liu/')
+def liu():
+    id = request.args.get('id')
+    print(id)
+    print("dddddd")
+    cam = VideoCamera(int(id))
+    return Response(gen(cam),
+                    mimetype='multipart/x-mixed-replace; boundary=frame')
+
+
 @main.route('/canvas/')
 def img_to_canvas():
     return render_template('viedo.html')

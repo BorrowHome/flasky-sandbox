@@ -32,6 +32,7 @@ class PictureSub(object):
 
     def iblack(self, image, k):
         shape = image.shape
+        print(shape)
         channels = shape[2]
         for cn in range(channels):
             """255-原本的颜色就变成了反色"""

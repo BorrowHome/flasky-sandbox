@@ -165,14 +165,10 @@ function chartClick(params) {
 
 }
 
-setInterval(function () {
-    console.log("intervel")
-}, 2000);
-;
 
 function setCurrentFrame() {
     var scale = 1
-
+    this.run = true
     for (var i = 0; i < videos.length; i++) {
         video = videos[i]
         var pictureURL = getCurrentFrames(video)
@@ -183,31 +179,32 @@ function setCurrentFrame() {
 
 function setData(data) {
     i = data.id
-    this.data[i] = data
-    myCharts[i].setOption({
-        series: [{
-            data: data.list_y,
-            type: 'line',
-            smooth: true
-        }]
-    });
-    myCharts[i].setOption({
-        xAxis: {
-            data: data.list_x
-        },
-        yAxis: {
-            min: 0,
-            max: data.max,
-            type: 'value'
-        },
-    })
-    ;
-    number++
-    if (number == videos.length) {
-        console.log(number)
-        changeResult()
-        chars()
-        number = 0
+    if (this.run != true) {
+        return
+    } else {
+        this.data[i] = data
+        myCharts[i].setOption({
+            series: [{
+                data: data.list_y,
+                type: 'line',
+                smooth: true
+            }]
+        });
+        myCharts[i].setOption({
+            xAxis: {
+                data: data.list_x
+            },
+            yAxis: {
+                min: 0,
+                max: data.max,
+                type: 'value'
+            },
+        })
+        ;
+
+        video = this.videos[i]
+        var pictureURL = getCurrentFrames(video)
+        return uploadPicture(pictureURL, i)
     }
 
 }
@@ -332,21 +329,14 @@ function rwar(i, run_text) {
 }
 
 setInterval(function () {
-    console.log('定时任务')
     if (run) {
         console.log('ready to run')
         if (hasGetResult) {
-            console.log('the next setCurrentframe')
             hasGetResult = false
-            setCurrentFrame()
+            // setCurrentFrame()
         }
 
     }
-}, 2000);
-
-function changeResult() {
-    console.log('hasGetResult')
-    hasGetResult = true
-}
+}, 5000);
 
 

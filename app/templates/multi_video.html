@@ -162,7 +162,7 @@
 <script>
 
     document.getElementById('change-data').onclick = function () {
-       id=document.getElementById('ds').getAttribute('index')
+        id = document.getElementById('ds').getAttribute('index')
         console.log(id)
         change_data(id)
     }
@@ -171,6 +171,8 @@
             videos[i].play()
         }
         changetorun()
+        setCurrentFrame()
+        console.log('点击开始运行')
     }
     video_stop.onclick = function () {
         for (var i = 0; i < videos.length; i++) {
@@ -255,7 +257,8 @@
                 //a,b,c三个参数,具体请参考JQuery API
             }
         })
-
+        console.log(echart_data)
+        console.log('message === >echart js ')
         return echart_data
     }
 
@@ -286,8 +289,8 @@
 
         width = video.videoWidth
         scale = 640 / parseFloat(width)
-        tempscale=scale.toFixed(1)
-        scale=parseFloat(tempscale)
+        tempscale = scale.toFixed(1)
+        scale = parseFloat(tempscale)
         console.log(scale)
         canvas.width = video.videoWidth * scale;
 
@@ -363,6 +366,8 @@
     function changetostop(obj) {
         run = false
     }
+
+
 </script>
 </body>
 </html>

@@ -50,6 +50,7 @@ class VideoCamera(object):
     def __init__(self, uri):
         print(uri)
         self.video = cv2.VideoCapture(uri)
+        print(self.video.isOpened())
 
     def __del__(self):
         self.video.release()

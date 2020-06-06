@@ -58,39 +58,57 @@ def picture():
     # 输入的base64编码字符串必须符合base64的padding规则。“当原数据长度不是3的整数倍时, 如果最后剩下两个输入数据，在编码结果后加1个“=”；
     # 如果最后剩下一个输入数据，编码结果后加2个“=”；如果没有剩下任何数据，就什么都不要加，这样才可以保证资料还原的正确性。”
     #
+    import time
+    start = time.clock()
+    # 中间写上代码块
+
     image_path = Config.UPLOAD_IMAGE_PATH
     document_path = Config.SAVE_DOCUMENT_PATH
     if request.method == 'POST':
         str = request.form['current_frame']
         id = request.form['id']
-
+        imageStart = time.clock()
         img_np = base64_to_png(str)
         cv2.imwrite(image_path + "current_" + id + ".png", img_np)
-
+        imageEnd = time.clock()
+        print('base64topng: %s Seconds' % (imageEnd - imageStart))
         res = {}
         sub = PictureSub()
 
         # 背景图
+        writeImgeStart = time.clock()
         background = cv2.imread(image_path + "back_" + id + ".png")
         print(background.shape)
-
+        writeImgeEnd = time.clock()
+        print('WriteImge: %s Seconds' % (writeImgeEnd - writeImgeStart))
         currentFrame = img_np
 
         print(currentFrame.shape)
 
         q = sub.subtract_demo(background, currentFrame)
+        substractIMRun = time.clock()
+        print('substract : %s Seconds' % (substractIMRun - writeImgeEnd))
 
         s = sub.inverse(q)
-        t = sub.iblack(s, 220)
-        cv2.imwrite(image_path + "iblack_" + id + ".png", t)
-        cv2.imwrite(image_path + "ipaint_" + id + ".png", s)
+        InvserseSTOP = time.clock()
+        print('inverse : %s Seconds' % (InvserseSTOP - substractIMRun))
 
+        # t = sub.iblack(s, 220)
+        imageRun = time.clock()
+        print('iblack: %s Seconds' % (imageRun - InvserseSTOP))
+
+        print('sub starct ALL : %s Seconds' % (imageRun - writeImgeEnd))
+        # cv2.imwrite(image_path + "iblack_" + id + ".png", t)
+
+        cv2.imwrite(image_path + "ipaint_" + id + ".png", s)
+        imageStop = time.clock()
+        print('write twoImge: %s Seconds' % (imageStop - imageRun))
         with open(document_path + "site_" + id + ".txt", "r+") as  f:
             a = f.readlines()
             print(a)
             frame_location = Site(int(a[0]), int(a[1]), int(a[2]), int(a[3]))
 
-        res = sub.ipaint(s, 50, id, frame_location.locate_x, frame_location.move_x, frame_location.locate_y,
+        res = sub.ipaint(s, 220, id, frame_location.locate_x, frame_location.move_x, frame_location.locate_y,
                          frame_location.move_y)
 
         res['max'] = frame_location.locate_y + frame_location.move_y
@@ -104,6 +122,8 @@ def picture():
         res['max'] = max_index + 20
         res['id'] = id
         # 以前使用的是jsonify===> 前端使用 data["list_y"]==>有什么区别
+        end = time.clock()
+        print('Running time: %s Seconds' % (end - start))
         return res
 
 
@@ -228,4 +248,5 @@ def site_get():
 
 @main.route("/sur/")
 def sur():
-    return render_template("index1.html")
+    print('done === >')
+    return render_template("viedo.html")
