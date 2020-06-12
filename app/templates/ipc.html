@@ -61,7 +61,7 @@
                         <li> 当前视频id {{ loop.index0 }}</li>
 
                         <img onclick="choose_a_video(this)"
-                             src="{{ url_for('.steam') }}?ip={{ ip }}"
+                             src="http://localhost:8080/steam?ip={{ ip }}"
                              class="video_player" data="{{ loop.index0 }}" ip="{{ ip }}">
                         </li>
 

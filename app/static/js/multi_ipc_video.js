@@ -167,25 +167,7 @@ function change_data(idx) {
     data_y = parseInt(document.getElementById("new_data_y").value);
 
     document.getElementById("newer_data").innerHTML = "修改后的数据(" + data_x + "," + data_y + ")";
-    $.ajax({
-        url: "http://localhost:8080/change_datas/",//请求路径
-        data: {
-            current_frame: JSON.stringify([data_x, data_y]),
-            id: idx
-        },
-        type: "POST",//GET,
-        async: false,
-        traditional: true,
-        //dataType: "JSON",//需要返回JSON对象(如果Ajax返回的是手动拼接的JSON字符串,需要Key,Value都有引号)
-        success: function (resp) {
-            //处理 resp.responseText;
-            console.log(resp)
-            echart_data = resp
-        },
-        error: function (a, b, c) {
-            //a,b,c三个参数,具体请参考JQuery API
-        }
-    })
+    changeEchartData(data_x, data_y, idx)
 
     console.log(data[idx])
     for (var i = 0; i < data[idx].list_x.length; i++) {
@@ -221,36 +203,36 @@ function setCurrentFrame() {
         data = uploadPicture(pictureURL, i)
     }
 
-    changeResult()
 }
 
 function setData(data) {
+
     i = data.id
-    this.data[i] = data
-    myCharts[i].setOption({
-        series: [{
-            data: data.list_y,
-            type: 'line',
-            smooth: true
-        }]
-    });
-    myCharts[i].setOption({
-        xAxis: {
-            data: data.list_x
-        },
-        yAxis: {
-            min: 0,
-            max: data.max,
-            type: 'value'
-        },
-    })
-    ;
-    number++
-    if (number == videos.length) {
-        console.log(number)
-        changeResult()
-        // chars()
-        number = 0
+    if (run == false) {
+        return
+    } else {
+        this.data[i] = data
+        myCharts[i].setOption({
+            series: [{
+                data: data.list_y,
+                type: 'line',
+                smooth: true
+            }]
+        });
+        myCharts[i].setOption({
+            xAxis: {
+                data: data.list_x
+            },
+            yAxis: {
+                min: 0,
+                max: data.max,
+                type: 'value'
+            },
+        })
+        ;
+        video = this.videos[i]
+        var pictureURL = getCurrentFrames(video)
+        return uploadPicture(pictureURL, i)
     }
 
 }

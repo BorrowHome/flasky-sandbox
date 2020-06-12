@@ -112,23 +112,8 @@ function change_data() {
 
     idx = localStorage.getItem("id") == null ? 0 : localStorage.getItem("id")
 
-    $.ajax({
-        url: "http://localhost:8080/change_datas/",//请求路径
-        data: {
-            current_frame: JSON.stringify([data_x, data_y]),
-            id: idx
-        },
-        type: "POST",//GET,
-        async: false,
-        traditional: true,
-        //dataType: "JSON",//需要返回JSON对象(如果Ajax返回的是手动拼接的JSON字符串,需要Key,Value都有引号)
-        success: function (resp) {
-            console.log("更新已同步到csv文件中")
-        },
-        error: function (a, b, c) {
-            //a,b,c三个参数,具体请参考JQuery API
-        }
-    })
+    changeEchartData(data_x, data_y, idx)
+
     console.log(data_y, "hello ===>")
 
     for (var i = 0; i < data.list_x.length; i++) {

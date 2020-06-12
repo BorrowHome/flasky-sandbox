@@ -1,57 +1,63 @@
-FROM nvidia/cuda:10.0-cudnn7-devel-ubuntu16.04
+FROM ubuntu:16.04
 
-RUN apt-get update && apt-get upgrade -y && apt-get install -y \
-    build-essential cmake git wget && \
-    apt-get install -y --no-install-recommends \
-    pkg-config unzip ffmpeg qtbase5-dev python-dev python-numpy python-py \
-    libgtk2.0-dev libjpeg-dev libpng12-dev libtiff5-dev libjasper-dev zlib1g-dev libglew-dev libprotobuf-dev \
-    libavcodec-dev libavformat-dev libavutil-dev libswscale-dev libxine2-dev libgstreamer0.10-dev libgstreamer-plugins-base0.10-dev \
-    libv4l-dev libtbb-dev libfaac-dev libmp3lame-dev libopencore-amrnb-dev libopencore-amrwb-dev libtheora-dev \
-    libvorbis-dev libxvidcore-dev v4l-utils libhdf5-serial-dev libeigen3-dev libtbb-dev libpostproc-dev apt-utils
+MAINTAINER AUTHOR liliangbin
+ENV DEBIAN_FRONTEND noninteractive
+ADD sources.list /etc/apt/
+ADD Python-3.7.0.tar.xz /root
+RUN cd /root && ls
+USER root
+
+# Modify apt-get to aliyun mirror
+RUN apt-get update && apt-get install -y
+
+RUN apt-get -y install g++ curl vim\
+    && apt-get install libssl-dev -y  \
+    && apt-get install -y libffi-dev \
+    && apt-get install -y make \
+    && apt-get install -y libsm6 libxext6 libxrender-dev libglib2.0-dev
+
+# Modify timezone to GTM+8
+ENV TZ=Asia/Shanghai
+RUN apt-get -y install tzdata
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
+# Modify locale
+RUN apt-get -y install locales
+RUN locale-gen en_US.UTF-8
+RUN echo "LANG=\"en_US.UTF-8\"" > /etc/default/locale && \
+    echo "LANGUAGE=\"en_US:en\"" >> /etc/default/locale && \
+    echo "LC_ALL=\"en_US.UTF-8\"" >> /etc/default/locale
 
 
-# Build OpenCV with CUDA
-ENV OPENCV_VERSION="4.0.1"
-RUN \
-    cd ~ && \
-    rm -rf ~/opencv-${OPENCV_VERSION} && \
-    rm -rf ~/opencv_contrib-${OPENCV_VERSION} && \
-    wget https://github.com/opencv/opencv/archive/${OPENCV_VERSION}.zip && \
-    unzip ${OPENCV_VERSION}.zip && \
-    rm ${OPENCV_VERSION}.zip && \
-    wget https://github.com/opencv/opencv_contrib/archive/${OPENCV_VERSION}.zip && \
-    unzip ${OPENCV_VERSION}.zip && \
-    rm ${OPENCV_VERSION}.zip && \
-    mkdir ~/opencv-${OPENCV_VERSION}/build && \
-    cd ~/opencv-${OPENCV_VERSION}/build && \
-    cmake \
-    -DCMAKE_BUILD_TYPE=Release \
-    -DCMAKE_INSTALL_PREFIX=/usr/local \
-    -DBUILD_EXAMPLES=OFF \
-	-DBUILD_opencv_java=OFF \
-	-DBUILD_opencv_python2=ON \
-	-DBUILD_opencv_python3=OFF \
-	-DWITH_FFMPEG=ON \
-	-DWITH_CUDA=ON \
-	-DWITH_GTK=ON \
-	-DWITH_TBB=ON \
-	-DWITH_V4L=ON \
-	-DWITH_QT=ON \
-	-DWITH_OPENGL=ON \
-	-DWITH_CUBLAS=ON \
-	-DWITH_1394=OFF \
-	-DCUDA_TOOLKIT_ROOT_DIR=/usr/local/cuda-10.0 \
-	-DCUDA_ARCH_PTX="" \
-	-DCUDA_NVCC_FLAGS="-D_FORCE_INLINES" \
-	-DCMAKE_LIBRARY_PATH=/usr/local/cuda/lib64/stubs \
-	-DINSTALL_C_EXAMPLES=OFF \
-	-DINSTALL_TESTS=OFF \
-    -DOPENCV_EXTRA_MODULES_PATH=~/opencv_contrib-${OPENCV_VERSION}/modules .. && \
-    make -j6 && \
-    make install && \
-    ldconfig && \
-    cp ~/opencv-${OPENCV_VERSION}/build/lib/cv2.so /usr/local/lib/python2.7/dist-packages/ && \
-    rm -rf ~/opencv-${OPENCV_VERSION}/build
+# Modify pip mirror
+RUN mkdir -p /root/.pip
+RUN echo "[global]" > /root/.pip/pip.conf && \
+    echo "index-url=http://mirrors.aliyun.com/pypi/simple/" >> /root/.pip/pip.conf && \
+    echo "[install]" >> /root/.pip/pip.conf && \
+    echo "trusted-host=mirrors.aliyun.com" >> /root/.pip/pip.conf
 
-RUN rm -rf /var/lib/apt/lists/*
+RUN apt-get -y install wget && pwd && ls
+
+# RUN wget https://www.python.org/ftp/python/3.7.0/Python-3.7.0.tar.xz
+# RUN tar -xvJf Python-3.7.0.tar.xz
+RUN cd /root/Python-3.7.0 \
+    && ./configure prefix=/usr/local/python3 \
+    && make && make install
+RUN rm -rf /usr/bin/python
+RUN rm -rf /usr/bin/pip
+
+RUN  ln -s /usr/local/python3/bin/python3.7 /usr/bin/python
+RUN  ln -s /usr/local/python3/bin/pip3 /usr/bin/pip
+# Install necessary library
+
+RUN python --version
+WORKDIR /flask-sandbox
+
+##RUN  adduser -D flasky
+##USER flasky
+## 添加用户后可能会导致文件目录的访问没有权限
+COPY ../requirements.txt ./
+#
+RUN pip install -r requirements.txt
+COPY .. .
 

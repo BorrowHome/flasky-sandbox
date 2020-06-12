@@ -27,7 +27,7 @@
 // (2) If intend to use `__DEV__`, this module should be imported. Use a global
 // variable `__DEV__` may cause that miss the declaration (see #6535), or the
 // declaration is behind of the using position (for example in `Model.extent`,
-// And tools like rollup can not analysis the dependency if not import).
+// And tools like rollup can not tools the dependency if not import).
 
 var dev;
 
@@ -47735,7 +47735,7 @@ function doConvert$1(methodName, ecModel, finder, value) {
  *
  * @param {string|Object} name
  * @param {string} map Map type
- *        Specify the positioned areas by left, top, width, height
+ *        Specify the positioned areas_height by left, top, width, height
  * @param {Object.<string, string>} [nameMap]
  *        Specify name alias
  * @param {boolean} [invertLongitute=true]
@@ -59165,7 +59165,7 @@ var baseUID = 0;
  * @mixin {module:zrender/mixin/Eventful}
  * @event module:echarts/component/helper/BrushController#brush
  *        params:
- *            areas: Array.<Array>, coord relates to container group,
+ *            areas_height: Array.<Array>, coord relates to container group,
  *                                    If no container specified, to global.
  *            opt {
  *                isEnd: boolean,
@@ -82030,12 +82030,12 @@ var BrushModel = extendComponentModel({
         if (__DEV__) {
             assert$1(isArray(areas));
             each$1(areas, function (area) {
-                assert$1(area.brushType, 'Illegal areas');
+                assert$1(area.brushType, 'Illegal areas_height');
             });
         }
 
         // If ranges is null/undefined, range state remain.
-        // This helps user to dispatchAction({type: 'brush'}) with no areas
+        // This helps user to dispatchAction({type: 'brush'}) with no areas_height
         // set but just want to get the current brush select info from a `brush` event.
         if (!areas) {
             return;
@@ -82366,7 +82366,7 @@ proto$7.onclick = function (ecModel, api, type) {
         api.dispatchAction({
             type: 'brush',
             command: 'clear',
-            // Clear all areas of all brush components.
+            // Clear all areas_height of all brush components.
             areas: []
         });
     }
