@@ -2,6 +2,6 @@
 
 echo 'init  a development environment '
 
-pip install -r requirments.txt
+pip install -r requirements.txt
 
 echo 'done '
