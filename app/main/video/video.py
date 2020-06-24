@@ -5,13 +5,13 @@ import os
 
 import cv2
 import numpy as np
-from flask import render_template, request
+from flask import render_template, request, redirect, url_for
 
+from app.main import main
 from app.utils.frame.frame import base64_to_png
 from app.utils.frame.site import Site
 from app.utils.frame.sub import PictureSub
 from config import Config
-from app.main import main
 
 
 @main.route('/')
@@ -205,7 +205,6 @@ def change_datas():
         return "true"
 
 
-
 # INFO 2020/6/12 15:51 liliangbin  获取用户
 @main.route("/site_get/", methods=['GET', 'POST'])
 def site_get():
@@ -234,3 +233,20 @@ def site_get():
 
     return res
 
+
+@main.route('/video_location/', methods=['POST'])
+def video_location():
+    document_path = Config.SAVE_DOCUMENT_PATH
+
+    video_save_location = request.form.get('video_location')
+    location = request.args.get('location')
+    print(video_save_location)
+    print(location)
+    with open(document_path + "video_save_location.txt", 'w') as f:
+        f.write(str(video_save_location))
+
+    if location == 'ipc':
+        return redirect(url_for('.ipc'))
+    elif location == 'multi_video':
+        return redirect(url_for('.multi_ipc_video'))
+    return redirect('.')

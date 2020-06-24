@@ -7,20 +7,15 @@
     <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
     <title>ipc</title>
     <!-- Bootstrap -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="{{ url_for('static',filename='bootstrap-3.3.7-dist/css/bootstrap.min.css') }}" rel="stylesheet">
+
     <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
-    <!-- HTML5 shim 和 Respond.js 是为了让 IE8 支持 HTML5 元素和媒体查询（media queries）功能 -->
-    <!-- 警告：通过 file:// 协议（就是直接将 html 页面拖拽到浏览器中）访问页面时 Respond.js 不起作用 -->
-    <!--[if lt IE 9]>
-      <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
-      <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
-    <![endif]-->
 
     <link href="../static/css/index.css" rel="stylesheet">
-    <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+    <script src="{{ url_for('static',filename='js/jquery.min.js') }}"></script>
 
     {#    引入表格的工具#}
-    <script src="https://cdn.bootcss.com/echarts/4.3.0-rc.2/echarts-en.common.js"></script>
+    <script src="{{ url_for('static',filename='js/echart.js') }}"></script>
 </head>
 
 
@@ -28,7 +23,7 @@
 <nav class="navbar navbar-default " style="background: lavender">
     <div class="container">
         <div class="navbar-header">
-            <a class="navbar-brand" href="#">沙箱压裂液测试系统</a>
+            <a class="navbar-brand" href="#">砂箱压裂液测试系统</a>
         </div>
         <div>
             <ul class="nav nav-pills">
@@ -104,7 +99,7 @@
                     <p type="text" id="frame_area" class="site_input site-center site-in "></p>
                 </div>
                 <div class="panel panel-danger form-control">
-                    <label> 沙子体积: </label>
+                    <label> 砂子体积: </label>
                     <p type="text" id="sand_volume" class="site_input site-center site-in"></p>
                 </div>
                 <div class="panel panel-danger form-control">
@@ -127,21 +122,17 @@
             <div class="panel panel-primary">
             </div>
 
-            <h2>坐标获取</h2>
+            <h2>视频处理</h2>
             <br>
             <div id="site-change">
                 <button type="button" class="btn btn-info" onclick="changetorun(this)">开始识别</button>
 
                 <button type="button" class="btn btn-info" onclick="changetostop(this)">停止识别</button>
-                <input type="button" class="btn btn-info" value="录制当前" id="startRecode"/>
-                <input type="button" class="btn btn-info" value="停止当前" id="stopRecode"/>
 
-                <input type="button" class="btn btn-info" value="全部录制" id="startRecodeAll"/>
-                <input type="button" class="btn btn-info" value="停止录制" id="stopRecodeAll"/>
-
-                <form class="" method="post" action="{{ url_for('.image_back') }}" enctype="multipart/form-data">
+                <form class="form-horizontal" method="post" action="{{ url_for('.image_back') }}"
+                      enctype="multipart/form-data">
                     <div>
-                        <input type="file" style="width: 100%;" name="background" placeholder="上传背景"/>
+                        <input class="" type="file" style="width: 100%;" name="background" placeholder="上传背景"/>
 
                         <input type="text" name="id" placeholder="视频id"/>
                         <input type="text" name="location" value="ipc" style="display: none">
@@ -151,11 +142,38 @@
                     </div>
 
                 </form>
+
                 <br>
+                <input type="button" class="btn btn-info" value="录制当前" id="startRecode"/>
+                <input type="button" class="btn btn-info" value="停止当前" id="stopRecode"/>
+                <div></div>
+                <input type="button" class="btn btn-info" value="全部录制" id="startRecodeAll"/>
+                <input type="button" class="btn btn-info" value="停止录制" id="stopRecodeAll"/>
+                <div></div>
+                <div class="panel panel-primary">
+                </div>
+                <h2>视频录制位置</h2>
+
+                <form class="form-horizontal" method="post" action="{{ url_for('.video_location') }}?location=ipc">
+                    <div class="form-group">
+                        <div class="col-sm-10">
+                            <label>视频录制位置</label>
+                        </div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" name="video_location" placeholder="视频存放位置"
+                                   value="{{ video_save_location }}">
+                        </div>
+
+                        <div class="col-sm-10">
+                            <button type="submit" class="btn btn-info">修改存放路径</button>
+                        </div>
+                    </div>
+
+                </form>
                 <br>
                 <div class="panel panel-primary">
                 </div>
-                <h2>视频录制</h2>
+                <h2>坐标修改</h2>
                 <p id="ds">当前位置 未知</p>
                 <p> 要修改为：
                     <a type="text" class="site_input" name="new_data_x" id="new_data_x"
@@ -169,7 +187,6 @@
                 <p id="videoData"></p>
                 <input type="button" class="btn btn-info" value="调整图表" onclick="change_data()"/>
 
-
             </div>
 
         </div>
@@ -177,11 +194,8 @@
 
 </div>
 
-<!-- jQuery (Bootstrap 的所有 JavaScript 插件都依赖 jQuery，所以必须放在前边) -->
-<script src="https://cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
-<!-- 加载 Bootstrap 的所有 JavaScript 插件。你也可以根据需要只加载单个插件。 -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js"></script>
-
+<script src="{{ url_for('static',filename='js/jquery.min.js') }}"></script>
+<script src="{{ url_for('static',filename='bootstrap-3.3.7-dist/js/bootstrap.min.js') }}"></script>
 
 <script src="../static/js/echart.js"></script>
 <script>
@@ -457,7 +471,25 @@
         })
     }
 
-
+    function changeEchartData(data_x, data_y, idx) {
+        $.ajax({
+            url: '{{ url_for('main.change_datas') }}',//请求路径
+            data: {
+                current_frame: JSON.stringify([data_x, data_y]),
+                id: idx
+            },
+            type: "POST",//GET,
+            async: false,
+            traditional: true,
+            //dataType: "JSON",//需要返回JSON对象(如果Ajax返回的是手动拼接的JSON字符串,需要Key,Value都有引号)
+            success: function (resp) {
+                console.log("更新已同步到csv文件中")
+            },
+            error: function (a, b, c) {
+                //a,b,c三个参数,具体请参考JQuery API
+            }
+        })
+    }
 </script>
 </body>
 

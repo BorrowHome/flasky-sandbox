@@ -5,8 +5,8 @@ import cv2
 
 # from PIL import Image
 
-# INFO 2020/6/12 16:12 liliangbin  获取沙子的面积
-############################################二值化沙子像素统计
+# INFO 2020/6/12 16:12 liliangbin  获取砂子的面积
+############################################二值化砂子像素统计
 def ostu(img):
     area = 0
     image = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)  # 转灰度

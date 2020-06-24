@@ -1,3 +1,4 @@
+import os
 import threading
 import time
 
@@ -17,8 +18,18 @@ class myThread(threading.Thread):
         self.ip = ip
         self.exit = False
         video_path = Config.SAVE_VIDEO_PATH
+        document_path = Config.SAVE_DOCUMENT_PATH
         currentTime = time.strftime("%Y-%m-%d-%H-%M-%S", time.localtime())
-        self.save_path = video_path + "{}-{}.mp4".format(self.ip, str(currentTime))
+
+        with open(document_path + "video_save_location.txt", "r+") as  f:
+            a = f.readline()
+            file_location = a.strip()
+        print(a)
+        if (os.path.exists(file_location)):
+            print("rush")
+            self.save_path = file_location + "{}-{}.mp4".format(self.ip, str(currentTime))
+        else:
+            self.save_path = video_path + "{}-{}.mp4".format(self.ip, str(currentTime))
 
     def run(self):
         print("开始线程：" + self.name)

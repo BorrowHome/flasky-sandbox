@@ -1,9 +1,9 @@
 from flask import render_template, jsonify
 
 from app.main import main
+from app.utils.frame.site import Site
 from app.utils.ipc.li_onvif import Onvif_hik
 from app.utils.ipc.multi_thread import threadsPool, myThread
-from app.utils.frame.site import Site
 from config import Config
 
 
@@ -34,6 +34,9 @@ def multi_ipc_video():
 
     site_right_top = str(tmp1) + ',' + str(frame_location.locate_y)
     site_right_bottom = str(tmp1) + ',' + str(tmp2)
+    with open(document_path + "video_save_location.txt", "r+") as  f:
+        file_location = f.readline()
+        file_location = file_location.strip()
 
     return render_template('multi_ipc_video.html',
                            ips=ips,
@@ -41,6 +44,7 @@ def multi_ipc_video():
                            site_left_bottom=site_left_bottom,
                            site_right_top=site_right_top,
                            site_right_bottom=site_right_bottom,
+                           video_save_location=file_location
                            )
 
 

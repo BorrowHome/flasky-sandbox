@@ -6,9 +6,9 @@ from config import Config
 
 
 # from PIL import Image
-# INFO 2020/6/12 16:14 liliangbin  文档生成时使用，沙子面积分
+# INFO 2020/6/12 16:14 liliangbin  文档生成时使用，砂子面积分
 
-############################################二值化沙子像素统计
+############################################二值化砂子像素统计
 def ostu(img, locate_x, locate_y, move_x, move_y):
     area1 = 0
     area2 = 0

@@ -62,14 +62,18 @@ def ipc():
 
     site_right_top = str(tmp1) + ',' + str(frame_location.locate_y)
     site_right_bottom = str(tmp1) + ',' + str(tmp2)
-
+    with open(document_path + "video_save_location.txt", "r+") as  f:
+        a = f.readline()
+        a = a.strip()
+    print(a)
     return render_template('ipc.html',
                            ips=ips,
                            site_left_top=site_left_top,
                            site_left_bottom=site_left_bottom,
                            site_right_top=site_right_top,
                            site_right_bottom=site_right_bottom,
-                           default_ip=ips[0]
+                           default_ip=ips[0],
+                           video_save_location=a
                            )
 
 

@@ -74,7 +74,7 @@ option = {
         smooth: true
     },
     title: {
-        text: '沙子面积',
+        text: '砂子面积',
         left: 'center'
     },
     toolbox: {
