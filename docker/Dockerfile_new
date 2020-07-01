@@ -1,0 +1,25 @@
+FROM liliangbin/ubuntu-16.04:v2
+
+MAINTAINER AUTHOR liliangbin
+ENV DEBIAN_FRONTEND noninteractive
+USER root
+
+WORKDIR /flask-sandbox
+
+##RUN  adduser -D flasky
+##USER flasky
+## 添加用户后可能会导致文件目录的访问没有权限
+COPY ./requirements.txt ./
+#
+RUN pip install  -r requirements.txt
+RUN apt-get install -y net-tools \
+    && apt-get install inetutils-ping
+
+
+COPY . .
+
+EXPOSE 5050
+EXPOSE 8080
+RUN chmod a+x waitress_manage.py
+
+ENTRYPOINT ["/usr/bin/python","/flask-sandbox/waitress_manage.py"]

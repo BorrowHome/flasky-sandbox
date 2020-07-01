@@ -27,9 +27,9 @@ class myThread(threading.Thread):
         print(a)
         if (os.path.exists(file_location)):
             print("rush")
-            self.save_path = file_location + "{}-{}.mp4".format(self.ip, str(currentTime))
+            self.save_path = file_location + "/{}-{}.mp4".format(self.ip, str(currentTime))
         else:
-            self.save_path = video_path + "{}-{}.mp4".format(self.ip, str(currentTime))
+            self.save_path = video_path + "/{}-{}.mp4".format(self.ip, str(currentTime))
 
     def run(self):
         print("开始线程：" + self.name)

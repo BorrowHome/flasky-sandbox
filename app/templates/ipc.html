@@ -56,7 +56,7 @@
                         <li> 当前视频id {{ loop.index0 }}</li>
 
                         <img onclick="choose_a_video(this)"
-                             src="http://localhost:8080/steam?ip={{ ip }}"
+                             src="{{ url_for('.steam') }}?ip={{ ip }}"
                              class="video_player" data="{{ loop.index0 }}" ip="{{ ip }}">
                         </li>
 
@@ -99,7 +99,7 @@
                     <p type="text" id="frame_area" class="site_input site-center site-in "></p>
                 </div>
                 <div class="panel panel-danger form-control">
-                    <label> 砂子体积: </label>
+                    <label> 填充面积: </label>
                     <p type="text" id="sand_volume" class="site_input site-center site-in"></p>
                 </div>
                 <div class="panel panel-danger form-control">

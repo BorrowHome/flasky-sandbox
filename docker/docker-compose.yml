@@ -3,19 +3,15 @@
 version: '2'
 services:
   web:
-    image: liliangbin/sandbox:v1
+    image: liliangbin/sandbox:v2
     privileged: true
-    command: ./run.sh
+    command: ls /data
     ports:
+      - "5050:5050"
       - "8080:8080"
     volumes:
-      - /root/static/video:/flask-sandbox/app/static/video
-      - /root/static/image:/flask-sandbox/app/static/image
-      - /root/static/document:/flask-sandbox/app/static/document
-
-// 启动命令
-docker run --name liliangbin -itd -p 8081:8080 \
- -v /root/static/video:/flask-sandbox/app/static/video \
- -v /root/static/image:/flask-sandbox/app/static/image \
- -v /root/static/document:/flask-sandbox/app/static/document \
-  liliangbin/sandbox:v1 ./run.sh
+      - ../app/static/video:/flask-sandbox/app/static/video
+      - ../app/static/image:/flask-sandbox/app/static/image
+      - ../app/static/document:/flask-sandbox/app/static/document
+      - /E/python/steam:/data
+    restart: always

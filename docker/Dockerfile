@@ -14,8 +14,11 @@ RUN apt-get -y install g++ curl vim\
     && apt-get install libssl-dev -y  \
     && apt-get install -y libffi-dev \
     && apt-get install -y make \
-    && apt-get install -y libsm6 libxext6 libxrender-dev libglib2.0-dev
-
+    && apt-get install -y libsm6 libxext6 libxrender-dev libglib2.0-dev  libbz2-dev
+# python 需要的一些模块 安装
+RUN apt-get install -y zlib1g-dev libbz2-dev libssl-dev libncurses5-dev libsqlite3-dev \
+    && apt-get install -y libreadline-dev tk-dev libgdbm-dev libdb-dev libpcap-dev xz-utils libexpat1-dev \
+    && apt-get install -y liblzma-dev libffi-dev libc6-dev
 # Modify timezone to GTM+8
 ENV TZ=Asia/Shanghai
 RUN apt-get -y install tzdata
@@ -60,4 +63,3 @@ COPY ../requirements.txt ./
 #
 RUN pip install -r requirements.txt
 COPY .. .
-

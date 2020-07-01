@@ -5,7 +5,7 @@
 ### 环境建立(推荐使用anaconda)
 
 - sh init.sh  
-- cmd 运行策略问题，使用其他的shell  我使用的是cmder来跑 
+- cmd 运行策略问题，使用其他的shell  我使用的是cmder来跑
 
 ### 运行
 
@@ -14,11 +14,11 @@
 - sh run.sh  启动测试环境
 - 默认具体配置可自己手动修改，默认使用debug 模式。
 - git clone --depth 3   url  # 下载文件过大的时候解决
-- pip install -i https://pypi.tuna.tsinghua.edu.cn/simple some-package 
+- pip install -i https://pypi.tuna.tsinghua.edu.cn/simple some-package
 - 临时安装使用
 
 #### 实际环境（挑选一个）
- 
+
 - python waitress_manage.py  使用waitress 来运行实际环境
 - python gevent_manage.py 使用gevent来作为实际环境，但是ipc有问题。
 
@@ -28,7 +28,7 @@
 - docker run -it --rm liliangbin/sandbox:v1 bash
 - pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple some-package
 
-### todolist 
+### todolist
 
 - echart.js  重构为使用服务端运行pyecharts
 - 添加边框识别算法的方式
@@ -46,5 +46,17 @@
  - csv 文件需要平滑处理，可能有噪声点
  - python nmap  很牛逼
  - 设置背景
- 
-###  
+
+### docker 启动
+- 原始脚本
+-
+    ```
+    docker run --name liliangbin -itd -p 8081:8080 \
+    -v /root/static/video:/flask-sandbox/app/static/video \
+    -v /root/static/image:/flask-sandbox/app/static/image \
+    -v /root/static/document:/flask-sandbox/app/static/document \
+    liliangbin/sandbox:v1 ./run.sh
+    ```
+
+- docker-compose -f xx.yaml up -d
+- docker-compose stop
