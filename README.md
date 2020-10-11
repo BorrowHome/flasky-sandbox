@@ -49,14 +49,15 @@
 
 ### docker 启动
 - 原始脚本
--
-    ```
-    docker run --name liliangbin -itd -p 8081:8080 \
-    -v /root/static/video:/flask-sandbox/app/static/video \
-    -v /root/static/image:/flask-sandbox/app/static/image \
-    -v /root/static/document:/flask-sandbox/app/static/document \
-    liliangbin/sandbox:v1 ./run.sh
-    ```
-
-- docker-compose -f xx.yaml up -d
-- docker-compose stop
+- 构建带有python环境的基础镜像（可优化用apline镜像构建）
+ - 在docker 目录下运行 
+ - docker build -t liliangbin/ubuntu-16.04:v2 -f Dockerfile_orignial .  
+- 构建项目的docker镜像
+ - 在flask-sandbox 目录下运行
+ - docker build -t liliangbin/sanbox:v4 -f docker/Dockerfile_new .
+ - 最后用docker images 会有 liliangbin/sandbox:v3 这个镜像
+- 运行容器 
+ - docker-compose -f docker-compose.yaml up -d   (启动容器 访问 5050 端口即可) 
+ - docker-compose stop （停止容器）
+### 普通启动
+- python waitress_manage.py
