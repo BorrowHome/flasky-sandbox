@@ -3,7 +3,7 @@
 version: '2'
 services:
   web:
-    image: liliangbin/sandbox:v2
+    image: liliangbin/sandbox:v3
     privileged: true
     command: ls /data
     ports:
