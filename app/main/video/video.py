@@ -6,12 +6,13 @@ import os
 import cv2
 import numpy as np
 from flask import render_template, request, redirect, url_for
-
+from flask import jsonify
 from app.main import main
 from app.utils.frame.frame import base64_to_png
 from app.utils.frame.site import Site
 from app.utils.frame.sub import PictureSub
 from config import Config
+import json
 
 
 @main.route('/')
@@ -20,7 +21,7 @@ def index():
     # 使用url_for的时候使用的是函数名（路由名和函数名应一样。）
     video_names = []
     path_in = './app/static/video/'
-    path_out = '../static/video/'
+    path_out = 'http://localhost:8082/static/video/'
     image_path = Config.UPLOAD_IMAGE_PATH
     document_path = Config.SAVE_DOCUMENT_PATH
     for dirpath, dirnames, filenames in os.walk(path_in):
@@ -29,7 +30,7 @@ def index():
             dir_file_name = filename
             if os.path.splitext(dir_file_name)[1] == '.mp4' or '.avi':  # (('./app/static/movie', '.mp4'))
                 print(dir_file_name)
-                video_names.append(path_out + dir_file_name)
+                video_names.append(dir_file_name)
     with open(document_path + "site_0.txt", "r+") as  f:
         a = f.readlines()
         print(a)
@@ -37,19 +38,24 @@ def index():
     video_src = video_names[0]
     tmp2 = frame_location.locate_y + frame_location.move_y
     tmp1 = frame_location.locate_x + frame_location.move_x
-    site_left_top = str(frame_location.locate_x) + ',' + str(frame_location.locate_y)
-    site_left_bottom = str(frame_location.locate_x) + ',' + str(tmp2)
+    site_left_top = [str(frame_location.locate_x), str(frame_location.locate_y)]
+    site_left_bottom = [str(frame_location.locate_x), str(tmp2)]
 
-    site_right_top = str(tmp1) + ',' + str(frame_location.locate_y)
-    site_right_bottom = str(tmp1) + ',' + str(tmp2)
-    return render_template('index.html',
-                           video_names=video_names,
-                           site_left_top=site_left_top,
-                           site_left_bottom=site_left_bottom,
-                           site_right_top=site_right_top,
-                           site_right_bottom=site_right_bottom,
-                           video_src=video_src,
-                           )
+    site_right_top = [str(tmp1), str(frame_location.locate_y)]
+    site_right_bottom = [str(tmp1), str(tmp2)]
+
+    return jsonify(
+        {
+            'video_names': video_names,
+            'site': {
+                'site_left_top': site_left_top,
+                'site_left_bottom': site_left_bottom,
+                'site_right_top': site_right_top,
+                'site_right_bottom': site_right_bottom,
+            },
+            'video_src': video_src
+        }
+    )
 
 
 @main.route('/picture/', methods=['GET', 'POST'])
@@ -65,11 +71,12 @@ def picture():
     image_path = Config.UPLOAD_IMAGE_PATH
     document_path = Config.SAVE_DOCUMENT_PATH
     if request.method == 'POST':
-        str = request.form['current_frame']
-        id = request.form['id']
+        data = json.loads(request.get_data(as_text=True))
+        str = data.get('current_frame')
+        video_name = data.get('video_name')
         imageStart = time.clock()
         img_np = base64_to_png(str)
-        cv2.imwrite(image_path + "current_" + id + ".png", img_np)
+        cv2.imwrite(image_path + "current_" + video_name + ".png", img_np)
         imageEnd = time.clock()
         print('base64topng: %s Seconds' % (imageEnd - imageStart))
         res = {}
@@ -77,7 +84,7 @@ def picture():
 
         # 背景图
         writeImgeStart = time.clock()
-        background = cv2.imread(image_path + "back_" + id + ".png")
+        background = cv2.imread(image_path + "back_" + video_name + ".png")
         print(background.shape)
         writeImgeEnd = time.clock()
         print('WriteImge: %s Seconds' % (writeImgeEnd - writeImgeStart))
@@ -100,15 +107,15 @@ def picture():
         print('sub starct ALL : %s Seconds' % (imageRun - writeImgeEnd))
         # cv2.imwrite(image_path + "iblack_" + id + ".png", t)
 
-        cv2.imwrite(image_path + "ipaint_" + id + ".png", s)
+        cv2.imwrite(image_path + "ipaint_" + video_name + ".png", s)
         imageStop = time.clock()
         print('write twoImge: %s Seconds' % (imageStop - imageRun))
-        with open(document_path + "site_" + id + ".txt", "r+") as  f:
+        with open(document_path + "site_" + video_name + ".txt", "r+") as  f:
             a = f.readlines()
             print(a)
             frame_location = Site(int(a[0]), int(a[1]), int(a[2]), int(a[3]))
 
-        res = sub.ipaint(s, 220, id, frame_location.locate_x, frame_location.move_x, frame_location.locate_y,
+        res = sub.ipaint(s, 220, video_name, frame_location.locate_x, frame_location.move_x, frame_location.locate_y,
                          frame_location.move_y)
 
         res['max'] = frame_location.locate_y + frame_location.move_y
@@ -120,7 +127,7 @@ def picture():
 
         res['list_y'] = data_total.tolist()
         res['max'] = max_index + 20
-        res['id'] = id
+        res['video_name'] = video_name
         # 以前使用的是jsonify===> 前端使用 data["list_y"]==>有什么区别
         end = time.clock()
         print('Running time: %s Seconds' % (end - start))
@@ -133,11 +140,11 @@ def background():
     image_path = Config.UPLOAD_IMAGE_PATH
     document_path = Config.SAVE_DOCUMENT_PATH
     if request.method == 'POST':
-        str = request.form['back_frame']
-        id = request.form['id']
-        print(id)
-        img_np = base64_to_png(str)
-        cv2.imwrite(image_path + "back_" + id + ".png", img_np)
+        jsonData = json.loads(request.get_data(as_text=True))
+        frame = jsonData.get('current_frame')
+        video_name = jsonData.get('video_name')
+        img_np = base64_to_png(frame)
+        cv2.imwrite(image_path + "back_" + video_name + ".png", img_np)
 
         return 'done'
 

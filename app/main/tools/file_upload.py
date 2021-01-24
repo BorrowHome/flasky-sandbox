@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import json
 import os
 
 import cv2
@@ -14,7 +15,7 @@ def allowed_file(filename):
            filename.rsplit('.', 1)[1] in Config.ALLOWED_EXTENSIONS
 
 
-@main.route('/upload/', methods=['GET', 'POST'])
+@main.route('/upload/', methods=['POST'])
 def settings():
     if request.method == 'GET':
         return render_template('upload.html')
@@ -45,11 +46,13 @@ def save_image():
     image_path = Config.UPLOAD_IMAGE_PATH
     document_path = Config.SAVE_DOCUMENT_PATH
     if request.method == 'POST':
-        str = request.form['current_frame']
-        id = request.form['id']
-        img_np = base64_to_png(str)
+        data = json.loads(request.get_data(as_text=True))
+        frame = data.get('current_frame')
+        video_name = data.get('video_name')
+        print(type(video_name))
+        img_np = base64_to_png(frame)
         # cv2.imwrite(image_path + "info.png", img_np)  对中文路径不友好
-        cv2.imencode('.png', img_np)[1].tofile(image_path + "chart_" + id + ".png")
+        cv2.imencode('.png', img_np)[1].tofile(image_path + "chart_" + video_name + ".png")
 
     return "done"
 

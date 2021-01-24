@@ -1,3 +1,5 @@
+import json
+
 import cv2
 from flask import request
 
@@ -9,17 +11,18 @@ from app.utils.frame.sub import PictureSub
 from config import Config
 
 
-@main.route("/get_volume/", methods=['POST', 'GET'])
+@main.route("/area/", methods=['POST', 'GET'])
 def get_volume():
     image_path = Config.UPLOAD_IMAGE_PATH
     document_path = Config.SAVE_DOCUMENT_PATH
-    id = request.form['id']
-    s = cv2.imread(image_path + "ipaint_" + id + ".png") #ipaint 是直接减去的图像
+    data = json.loads(request.get_data(as_text=True))
+    video_name = data.get('video_name')
+    s = cv2.imread(image_path + "ipaint_" + video_name + ".png")  # ipaint 是直接减去的图像
     sub = PictureSub()
-    t = sub.iblack(s, 220) # 图像变为黑白两种
+    t = sub.iblack(s, 220)  # 图像变为黑白两种
     # cv2.imwrite(image_path + "iblack_" + id + ".png", t)
 
-    with open(document_path + "site_" + id + ".txt", "r+") as f:
+    with open(document_path + "site_" + video_name + ".txt", "r+") as f:
         a = f.readlines()
         print(a)
         frame_location = Site(int(a[0]), int(a[1]), int(a[2]), int(a[3]))
@@ -38,5 +41,5 @@ def get_volume():
         "frame_area": frame_area,
         "sand_area": sand_area,
         "sand_frame_scale": sand_frame_scale,
-        "id": id
+        "video_name": video_name
     }

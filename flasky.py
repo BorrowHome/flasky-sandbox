@@ -7,6 +7,8 @@ from app import create_app
 app = create_app(os.getenv('FLASK_CONFIG') or 'default')
 
 
+
+
 # 单元测试
 @app.cli.command()
 def test():
