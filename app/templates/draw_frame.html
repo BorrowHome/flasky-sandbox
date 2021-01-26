@@ -128,12 +128,10 @@
     rubberbandRect.width;
     rubberbandRect.height;
 
-    console.log({{ width }})
     var canvasLeft = rubberbandRect.left
     var canvasTop = rubberbandRect.top;
     var url_current = '../static/image/' + '{{ currentframe }}'
 
-    console.log(url_current)
     {#让图片不再使用浏览器的缓存，就是每次请求的url不一样。如果是相同的url，浏览器会做一定的处理#}
     canvas.style.backgroundImage = 'url("' + url_current + '?t=' + Math.random() + '")';
 
@@ -174,11 +172,6 @@
         context.rect(rubberbandRect.left, rubberbandRect.top, rubberbandRect.width, rubberbandRect.height);
         context.stroke();
         context.restore();
-
-        //console.log(loc.x,mousedown.x)
-        //console.log(mousedown.x)
-
-        //console.log(rubberbandRect.width)
 
     }
 
