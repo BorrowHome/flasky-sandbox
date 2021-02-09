@@ -57,6 +57,19 @@ def save_image():
     return "done"
 
 
+@main.route('/draw_picture/', methods=['POST'])
+def save_im():
+    image_path = Config.UPLOAD_IMAGE_PATH
+    if request.method == 'POST':
+        data = json.loads(request.get_data(as_text=True))
+        frame = data.get('current_frame')
+        video_name = data.get('video_name')
+        img_np = base64_to_png(frame)
+        cv2.imencode('.png', img_np)[1].tofile(image_path + "drawPicture_video" + ".png")
+
+    return "done"
+
+
 @main.route('/image_back/', methods=['POST', 'GET'])
 def image_back():
     image_path = Config.UPLOAD_IMAGE_PATH

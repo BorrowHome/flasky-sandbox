@@ -155,17 +155,13 @@ def site():
     image_path = Config.UPLOAD_IMAGE_PATH
     document_path = Config.SAVE_DOCUMENT_PATH
     if request.method == 'POST':
-        print("post")
-        print(request.form)
-        # 数据识别得的时候最好使用整数实现，int和float的转化有问题，就在计算得时候。脑阔疼
-        # 大坑
-        locate_x = int(float(request.form['locate_x']))
-        locate_y = int(float(request.form['locate_y']))
-        move_x = int(float(request.form['move_x']))
-        move_y = int(float(request.form['move_y']))
-        id = request.form['id']
-        print(id, "fdsf")
-        with open(document_path + "site_" + id + ".txt", 'w') as f:
+        data = json.loads(request.get_data(as_text=True))
+        locate_x = int(float(data.get('locate_x')))
+        locate_y = int(float(data.get('locate_y')))
+        move_x = int(float(data.get('move_x')))
+        move_y = int(float(data.get('move_y')))
+        video_name = data.get('video_name')
+        with open(document_path + "site_" + video_name + ".txt", 'w') as f:
             f.write(str(locate_x) + '\n')
             f.write(str(locate_y) + '\n')
             f.write(str(move_x) + '\n')
