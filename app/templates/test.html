@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    {#    <script src="https://cdn.bootcss.com/jquery/3.2.0/jquery.js"></script>#}
+    <script crossorigin="anonymous"
+            integrity="sha512-oFOCo2/3DtjrJG4N27BjSLQWoiBv171sK6a+JiWjp/7agxC2nCUP358AqzxkBUb5jX8g6CYLPdSKQTbC0weCwA=="
+            src="https://lib.baomitu.com/socket.io/3.1.1/socket.io.js"></script>
+</head>
+<body>
+<div class="container" min-width="1024px" width="100%">
+
+    <div class="dash-sub-title">
+        <h1>alwaysAI Video Streamer</h1>
+    </div>
+
+    <div class="card-deck">
+
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Output</h5>
+                <div class="card-scroller">
+                    <p id="streamer-text"></p>
+                </div>
+            </div>
+        </div>
+
+        <div style="width: 70%">
+            <img id="streamer-image" src="">
+        </div>
+
+    </div>
+</div>
+<div id="time" style="width: 300px;height: 50px;background-color: #0C0C0C;
+    color: white;text-align: center;line-height: 50px;margin-left: 40%;font-size: 20px"></div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function (event) {
+        const image_elem = document.getElementById("streamer-image");
+        const text_elem = document.getElementById("streamer-text");
+
+        var socket = io('http://localhost:8083/test');
+        var name = 'rtmp'
+        socket.on('connect', () => {
+            console.log('Connected');
+            socket.emit('message', {'name': name})
+        });
+
+        socket.on('disconnect', () => {
+            console.log('Disconnected');
+        });
+
+        socket.on('connect_error', (error) => {
+            console.log('Connect error! ' + error);
+        });
+
+        socket.on('connect_timeout', (error) => {
+            console.log('Connect timeout! ' + error);
+        });
+
+        socket.on('error', (error) => {
+            console.log('Error! ' + error);
+        });
+
+        // Update image and text data based on incoming data messages
+        socket.on('response', (msg) => {
+            image_elem.src = msg.image;
+            text_elem.innerHTML = msg.text;
+        });
+
+        socket.on(name, (msg) => {
+            console.log(msg)
+        })
+    });
+
+
+</script>
+</body>
+</html>

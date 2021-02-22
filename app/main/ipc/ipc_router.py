@@ -9,6 +9,8 @@ from app.utils.ipc.camera_host import VideoCamera
 from app.utils.ipc.li_onvif import Onvif_hik
 from app.utils.ipc.multi_thread import myThread, threadsPool
 from config import Config
+from app import socketio
+from flask_socketio import emit
 
 
 def gen(camera):
@@ -163,3 +165,37 @@ def stop():
         except Exception as e:
             print('停止录制线程出现问题')
             return '录制出现问题'
+
+
+# class CVClient(object):
+#     def _convert_image_to_jpeg(self, image):
+#         # Encode frame as jpeg
+#         frame = cv2.imencode('.jpg', image)[1].tobytes()
+#         # Encode frame in base64 representation and remove
+#         # utf-8 encoding
+#
+#         frame = base64.b64encode(frame).decode('utf-8')
+#         return "data:image/jpeg;base64,{}".format(frame)
+
+
+def emit_message(name):
+    """
+
+    :type name: str
+    """
+    result = '{}'.format(name)
+    print(result)
+
+    while True:
+        import time
+        time.sleep(5)
+        emit(result, {'data': 'fadfadfa' + name}, namespace='/test')
+
+
+@socketio.on('message', namespace='/test')
+def give_response(data):
+    result = data.get('name')
+    print(data.get('name'))
+    print(data)
+    # 进行一些对value的处理或者其他操作,在此期间可以随时会调用emit方法向前台发送消息
+    emit_message(result)
