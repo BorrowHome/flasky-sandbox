@@ -1,4 +1,7 @@
 import cv2
+import random
+import base64
+from flask_socketio import emit
 
 
 class VideoCamera(object):
@@ -23,6 +26,52 @@ class VideoCamera(object):
             cv2.imshow("cap", frame)
             if cv2.waitKey(100) & 0xff == ord('q'):
                 break
+
+
+class CVClient(object):
+    def convert_image_to_jpeg(self, frame):
+        # Encode frame as jpeg
+        # Encode frame in base64 representation and remove
+        # utf-8 encoding
+
+        frame = base64.b64encode(frame).decode('utf-8')
+        return "data:image/jpeg;base64,{}".format(frame)
+
+    def emit_message(self, image):
+        print('emit message ========>>>>>>>>>')
+        emit(self.rtmp_location, {'image': self.convert_image_to_jpeg(image)}, namespace='/test')
+        return True
+
+    def __init__(self, rtmp_location):
+        self.run = True
+        self.rtmp_location = rtmp_location
+
+    def get_frame(self):
+        id = random.randint(0, 8)
+        image = cv2.imread('./static/image/current_{}.png'.format(id))
+        frame = cv2.imencode('.jpg', image)[1].tobytes()
+        return frame
+
+    def run_image(self):
+        while self.run:
+            image = self.get_frame()
+            result = self.emit_message(image)
+            import time
+            time.sleep(3)
+
+    def run_rtsp(self):
+        ipcCamera = VideoCamera(self.rtmp_location)
+        while self.run:
+            image = ipcCamera.get_frame()
+            result = self.emit_message(image)
+            import time
+            time.sleep(3)
+
+    def run_rtmp(self):
+        pass
+
+    def stop_run(self):
+        self.run = False
 
 
 if __name__ == '__main__':
