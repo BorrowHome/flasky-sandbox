@@ -28,10 +28,6 @@ def create_app(config_name):
     from .main import main as main_blueprint
     app.register_blueprint(main_blueprint)
 
-    @app.route('/liliangbin')
-    def fsdf():
-        return render_template('test.html')
-
     return app
 
 

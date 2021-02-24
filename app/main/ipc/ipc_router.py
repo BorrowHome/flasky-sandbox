@@ -1,7 +1,7 @@
 import csv
 
 import numpy as np
-from flask import request, Response, render_template
+from flask import request, Response, render_template, jsonify
 
 from app import socketio
 from app.main import main
@@ -69,15 +69,17 @@ def ipc():
         a = f.readline()
         a = a.strip()
     print(a)
-    return render_template('ipc.html',
-                           ips=ips,
-                           site_left_top=site_left_top,
-                           site_left_bottom=site_left_bottom,
-                           site_right_top=site_right_top,
-                           site_right_bottom=site_right_bottom,
-                           default_ip=ips[0],
-                           video_save_location=a
-                           )
+    return jsonify({
+        'ips': ips,
+        'site': {
+            'site_left_top': site_left_top,
+            'site_left_bottom': site_left_bottom,
+            'site_right_top': site_right_top,
+            'site_right_bottom': site_right_bottom,
+        },
+        'default_ip': ips[0],
+        'video_save_location': a
+    })
 
 
 @main.route('/camera/', methods=['GET', 'POST'])
@@ -166,8 +168,6 @@ def stop():
         except Exception as e:
             print('停止录制线程出现问题')
             return '录制出现问题'
-
-
 
 
 @socketio.on('message', namespace='/test/')
