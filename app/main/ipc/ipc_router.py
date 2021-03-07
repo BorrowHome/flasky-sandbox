@@ -60,11 +60,11 @@ def ipc():
 
     tmp2 = frame_location.locate_y + frame_location.move_y
     tmp1 = frame_location.locate_x + frame_location.move_x
-    site_left_top = str(frame_location.locate_x) + ',' + str(frame_location.locate_y)
-    site_left_bottom = str(frame_location.locate_x) + ',' + str(tmp2)
+    site_left_top = [str(frame_location.locate_x), str(frame_location.locate_y)]
+    site_left_bottom = [str(frame_location.locate_x), str(tmp2)]
 
-    site_right_top = str(tmp1) + ',' + str(frame_location.locate_y)
-    site_right_bottom = str(tmp1) + ',' + str(tmp2)
+    site_right_top = [str(tmp1), str(frame_location.locate_y)]
+    site_right_bottom = [str(tmp1), str(tmp2)]
     with open(document_path + "video_save_location.txt", "r+") as  f:
         a = f.readline()
         a = a.strip()
@@ -170,23 +170,28 @@ def stop():
             return '录制出现问题'
 
 
-@socketio.on('message', namespace='/test/')
+@socketio.on('message', namespace='/test')
 def give_response(data):
-    rtmp_location = data.get('name')
+    name = data.get('name')
     print(data.get('name'))
-    print()
+    print('====' * 10)
+    ip = data.get('ip')
     # 进行一些对value的处理或者其他操作,在此期间可以随时会调用emit方法向前台发送消息
-    client = CVClient(rtmp_location)
-    emit_thread[rtmp_location] = client
+    client = CVClient(name=name, rtmp_location=ip)
+    emit_thread[name] = client
     client.run_image()
 
 
 @socketio.on('stop', namespace='/test')
 def stop_emit_message(data):
-    rtmp_location = data.get('name')
+    name = data.get('name')
+    print('=====' * 20)
     print(data.get('name'))
+
     print('stop message ')
-    client = emit_thread.get(rtmp_location)
+    print('=====' * 20)
+
+    client = emit_thread.get(name)
     client.stop_run()
 
 

@@ -8,6 +8,7 @@ import numpy as np
 from flask import render_template, request, redirect, url_for
 from flask import jsonify
 from app.main import main
+from app.utils.FormutaCount import formuta
 from app.utils.frame.frame import base64_to_png
 from app.utils.frame.site import Site
 from app.utils.frame.sub import PictureSub
@@ -73,10 +74,11 @@ def picture():
     if request.method == 'POST':
         data = json.loads(request.get_data(as_text=True))
         str = data.get('current_frame')
-        video_name = data.get('video_name')
+        video_name = data.get('video_name').strip()
         imageStart = time.clock()
         img_np = base64_to_png(str)
-        cv2.imwrite(image_path + "current_" + video_name + ".png", img_np)
+        image_name = "current_{}.png".format(video_name.strip())
+        cv2.imwrite(image_path + image_name, img_np)
         imageEnd = time.clock()
         print('base64topng: %s Seconds' % (imageEnd - imageStart))
         res = {}
@@ -84,7 +86,8 @@ def picture():
 
         # 背景图
         writeImgeStart = time.clock()
-        background = cv2.imread(image_path + "back_" + video_name + ".png")
+        image_back = "back_{}.png".format(video_name)
+        background = cv2.imread(image_path + image_back)
         print(background.shape)
         writeImgeEnd = time.clock()
         print('WriteImge: %s Seconds' % (writeImgeEnd - writeImgeStart))
@@ -143,8 +146,10 @@ def background():
         jsonData = json.loads(request.get_data(as_text=True))
         frame = jsonData.get('current_frame')
         video_name = jsonData.get('video_name')
+        video_name = "back_{}.png".format(video_name.strip())
+        print("=====back image name====={}".format(video_name))
         img_np = base64_to_png(frame)
-        cv2.imwrite(image_path + "back_" + video_name + ".png", img_np)
+        cv2.imwrite(image_path + video_name, img_np)
 
         return 'done'
 
@@ -160,8 +165,10 @@ def site():
         locate_y = int(float(data.get('locate_y')))
         move_x = int(float(data.get('move_x')))
         move_y = int(float(data.get('move_y')))
-        video_name = data.get('video_name')
-        with open(document_path + "site_" + video_name + ".txt", 'w') as f:
+        video_name = data.get('video_name').strip()
+        print("locate x ======>{}".format(locate_x))
+        path = document_path + "site_{}.txt".format(video_name)
+        with open(path, 'w', encoding="utf-8") as f:
             f.write(str(locate_x) + '\n')
             f.write(str(locate_y) + '\n')
             f.write(str(move_x) + '\n')
@@ -253,3 +260,23 @@ def video_location():
     elif location == 'multi_video':
         return redirect(url_for('.multi_ipc_video'))
     return redirect('.')
+
+
+@main.route("/formuta/", methods=['POST'])
+def formuta_count():
+    data = json.loads(request.get_data(as_text=True))
+    pp = data.get('pp')
+    pf = data.get('pf')
+    dp = data.get('dp')
+    ua = data.get('ua')
+    c = data.get('c')
+    w = data.get('w')
+    q = data.get('q')
+    h = data.get('h')
+    fai = data.get('fai')
+
+    # aasd = formuta(pp, pf, dp, ua, c, w, q, h, fai)
+    aasd = formuta(2850, 1020, 0.001, 10, 0.3, 4.5 * 0.001, 5 / 60, 1, 0.3)
+
+    q = aasd.Count()
+    return jsonify(q)

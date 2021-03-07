@@ -1,1 +1,85 @@
-{"device": {"name": "\u538b\u88c2\u6db2\u6d4b\u8bd5\u4e00\u53f7", "produce_company": "\u751f\u4ea7\u5382\u5bb61", "produce_time": "2020.02.21", "maintain_time": "2020.3.30", "responsible_man": "\u5f20\u4e09", "experimenters": "\u674e\u56db", "own_company": "\u67d0\u516c\u53f8"}, "experiment": {"fluid": {"name": "\u6c34", "viscosity": "33", "density": "22"}, "proppant": {"name": "\u77f3\u5934", "density": "33", "aperture": "22"}, "file_location": "D:\\"}, "tests": {"samples": [{"lx": 22, "ly": 22, "time": 22, "v": 3, "scale": 34, "density": 34, "viscosity": 23, "vx": 1, "vy": 1}, {"lx": 234, "ly": 234, "time": 324, "v": 234, "scale": 23, "density": 23, "viscosity": 23, "vx": 0.72, "vy": 0.72}, {"lx": 234, "ly": 234, "time": 234, "v": 234, "scale": 23, "density": 23, "viscosity": 23, "vx": 1, "vy": 1}, {"lx": 23, "ly": 234, "time": 23, "v": 23, "scale": 23, "density": 324, "viscosity": 23, "vx": 1, "vy": 10.17}, {"lx": 234, "ly": 234, "time": 234, "v": 342, "scale": 23, "density": 234, "viscosity": 234, "vx": 1, "vy": 1}], "average_vx": 0.94, "average_vy": 2.78}}
+{
+  "device": {
+    "name": "\u538b\u88c2\u6db2\u6d4b\u8bd5\u4e00\u53f7",
+    "produce_company": "\u751f\u4ea7\u5382\u5bb61",
+    "produce_time": "2020.02.21",
+    "maintain_time": "2020.3.30",
+    "responsible_man": "\u5f20\u4e09",
+    "experimenters": "\u674e\u56db",
+    "own_company": "\u67d0\u516c\u53f8"
+  },
+  "experiment": {
+    "fluid": {
+      "name": "\u6c34",
+      "viscosity": "33",
+      "density": "22"
+    },
+    "proppant": {
+      "name": "\u77f3\u5934",
+      "density": "33",
+      "aperture": "22"
+    },
+    "file_location": "D:\\"
+  },
+  "tests": {
+    "samples": [
+      {
+        "lx": 22,
+        "ly": 22,
+        "time": 22,
+        "v": 3,
+        "scale": 34,
+        "density": 34,
+        "viscosity": 23,
+        "vx": 1,
+        "vy": 1
+      },
+      {
+        "lx": 234,
+        "ly": 234,
+        "time": 324,
+        "v": 234,
+        "scale": 23,
+        "density": 23,
+        "viscosity": 23,
+        "vx": 0.72,
+        "vy": 0.72
+      },
+      {
+        "lx": 234,
+        "ly": 234,
+        "time": 234,
+        "v": 234,
+        "scale": 23,
+        "density": 23,
+        "viscosity": 23,
+        "vx": 1,
+        "vy": 1
+      },
+      {
+        "lx": 23,
+        "ly": 234,
+        "time": 23,
+        "v": 23,
+        "scale": 23,
+        "density": 324,
+        "viscosity": 23,
+        "vx": 1,
+        "vy": 10.17
+      },
+      {
+        "lx": 234,
+        "ly": 234,
+        "time": 234,
+        "v": 342,
+        "scale": 23,
+        "density": 234,
+        "viscosity": 234,
+        "vx": 1,
+        "vy": 1
+      }
+    ],
+    "average_vx": 0.94,
+    "average_vy": 2.78
+  }
+}

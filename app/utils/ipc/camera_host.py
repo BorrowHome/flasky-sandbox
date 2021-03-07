@@ -38,17 +38,18 @@ class CVClient(object):
         return "data:image/jpeg;base64,{}".format(frame)
 
     def emit_message(self, image):
-        print('emit message ========>>>>>>>>>')
-        emit(self.rtmp_location, {'image': self.convert_image_to_jpeg(image)}, namespace='/test')
+        print('emit message ========>>>>>>>>>{}'.format(self.name))
+        emit(self.name, {'image': self.convert_image_to_jpeg(image)}, namespace='/test')
         return True
 
-    def __init__(self, rtmp_location):
+    def __init__(self, name, rtmp_location):
         self.run = True
+        self.name = name
         self.rtmp_location = rtmp_location
 
     def get_frame(self):
-        id = random.randint(0, 8)
-        image = cv2.imread('./static/image/current_{}.png'.format(id))
+        id = random.randint(0, 3)
+        image = cv2.imread('./app/static/image/current_{}.png'.format(id))
         frame = cv2.imencode('.jpg', image)[1].tobytes()
         return frame
 
@@ -66,9 +67,6 @@ class CVClient(object):
             result = self.emit_message(image)
             import time
             time.sleep(3)
-
-    def run_rtmp(self):
-        pass
 
     def stop_run(self):
         self.run = False
