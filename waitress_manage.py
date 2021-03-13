@@ -15,4 +15,4 @@ if __name__ == "__main__":
     from waitress import serve
 
     # waitress官方有更多详细的启动方式
-    serve(app, listen='*:5050', threads=count * 2 + 1)
+    serve(app, listen='*:8082', threads=count * 2 + 1)

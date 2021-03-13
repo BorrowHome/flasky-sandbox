@@ -271,7 +271,7 @@ def formuta_count():
     ua = data.get('ua')
     c = data.get('c')
     w = data.get('w')
-    q = data.get('q')
+    test_q = data.get('q')
     h = data.get('h')
     fai = data.get('fai')
 
@@ -279,4 +279,13 @@ def formuta_count():
     aasd = formuta(2850, 1020, 0.001, 10, 0.3, 4.5 * 0.001, 5 / 60, 1, 0.3)
 
     q = aasd.Count()
+    q['pp'] = pp
+    q['pf'] = pf
+    q['dp'] = dp
+    q['ua'] = ua
+    q['c'] = c
+    q['w'] = w
+    q['q'] = test_q
+    q['h'] = h
+    q['fai'] = fai
     return jsonify(q)
