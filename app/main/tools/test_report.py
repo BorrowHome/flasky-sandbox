@@ -7,28 +7,24 @@ from config import Config
 from app.main import main
 
 
-@main.route('/test_report/', methods=['GET', 'POST'])
+@main.route('/test_report/', methods=['POST'])
 def test_report():
-    if request.method == 'POST':
-        file_location = Config.SAVE_DOCUMENT_PATH
-        origin_data = request.get_data()
-        str_data = str(origin_data, encoding='utf-8')
-        dict_data = json.loads(str_data)
+    file_location = Config.SAVE_DOCUMENT_PATH
+    origin_data = request.get_data()
+    str_data = str(origin_data, encoding='utf-8')
+    dict_data = json.loads(str_data)
 
-        with open(file_location + 'data.json', 'w') as f:
-            json.dump(dict_data, f)
+    with open(file_location + 'data.json', 'w') as f:
+        json.dump(dict_data, f)
 
-        set_sand_docxtpl(dict_data)
-        return jsonify({'success'})
-    else:
-        return render_template('test_report.html')
+    set_sand_docxtpl(dict_data)
+    return jsonify({'success'})
 
 
 @main.route('/update_report/', methods=['GET'])
 def update_report():
     file_location = Config.SAVE_DOCUMENT_PATH
-    location = request.args.get('location')
-
+    location = ''  # 报告的存放位置
     with open(file_location + 'data.json', 'r') as f:
         dict_data = json.load(f)
     try:

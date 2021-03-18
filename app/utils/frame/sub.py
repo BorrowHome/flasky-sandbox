@@ -38,20 +38,20 @@ class PictureSub(object):
             """255-原本的颜色就变成了反色"""
             for i in range(shape[0]):
                 for j in range(shape[1]):
+                    # 二向化归一
                     if (image[i, j, cn] < k):
                         image[i, j, cn] = 0
 
         return image
 
-    def ipaint(self, image, k, id, locate_x, move_x, locate_y, move_y):
-        image_path = Config.UPLOAD_IMAGE_PATH
+    # k 是一个阈值
+    def ipaint(self, image, k, name, locate_x, move_x, locate_y, move_y):
         document_path = Config.SAVE_DOCUMENT_PATH
-        shape = image.shape
-        print(shape[0]) # 480  高度
-        print(shape[1]) # 640  宽度
         list1 = []
         list2 = []
-        with open(document_path + "sand_" + id + ".csv", "w", newline="")as f:
+        bottom_x = move_x + locate_x
+        bottom_y = move_y + locate_y
+        with open(document_path + "sand_" + name + ".csv", "w", newline="")as f:
             writer = csv.writer(f)
             for i in range(locate_x, locate_x + move_x, 1):
                 flag = True
@@ -59,16 +59,18 @@ class PictureSub(object):
                     if (image[j, i, 2] < k):
                         # with open(r"E:sand.csv", "w", newline="")as f:
                         #  writer = csv.writer(f)
-                        writer.writerow([i - 0, j - 0])
-                        list1.append(i - 0)
-                        list2.append(j - 0)
+                        x = i - locate_x
+                        y = bottom_y - j
+                        writer.writerow([x, y])
+                        list1.append(x)
+                        list2.append(y)
                         flag = False
                         break
                     # m = m + 1
                 if flag:
-                    writer.writerow([i, locate_y + move_y])
-                    list1.append(i)
-                    list2.append(locate_y + move_y)
+                    writer.writerow([i - locate_x, 0])
+                    list1.append(i - locate_x)
+                    list2.append(0)
 
         res = {
             "list_x": list1,

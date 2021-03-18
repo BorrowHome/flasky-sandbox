@@ -11,13 +11,13 @@ from app.utils.frame.sub import PictureSub
 from config import Config
 
 
-@main.route("/area/", methods=['POST', 'GET'])
+@main.route("/area/", methods=['POST'])
 def get_volume():
     image_path = Config.UPLOAD_IMAGE_PATH
     document_path = Config.SAVE_DOCUMENT_PATH
     data = json.loads(request.get_data(as_text=True))
     video_name = data.get('video_name').strip()
-    path=image_path + "ipaint_{}.png".format(video_name)
+    path = image_path + "ipaint_{}.png".format(video_name)
     # imread 的filename 长度有限制。
     print(path)
     s = cv2.imread(path.strip())  # ipaint 是直接减去的图像

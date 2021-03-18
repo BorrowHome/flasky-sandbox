@@ -10,5 +10,5 @@ main = Blueprint('main', __name__)
 
 from . import errors
 from app.main.tools import draw_frame, file_upload, get_volume, test_report
-from app.main.video import video, multi_video
 from app.main.ipc import ipc_router, multi_ipc_video
+from app.main.video import video

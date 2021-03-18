@@ -1,19 +1,19 @@
 # -*- coding: utf-8 -*-
 
 import csv
+import json
 import os
 
 import cv2
-import numpy as np
-from flask import render_template, request, redirect, url_for
 from flask import jsonify
+from flask import request
+
 from app.main import main
 from app.utils.FormutaCount import formuta
 from app.utils.frame.frame import base64_to_png
 from app.utils.frame.site import Site
 from app.utils.frame.sub import PictureSub
 from config import Config
-import json
 
 
 @main.route('/')
@@ -22,8 +22,6 @@ def index():
     # 使用url_for的时候使用的是函数名（路由名和函数名应一样。）
     video_names = []
     path_in = './app/static/video/'
-    path_out = 'http://localhost:8082/static/video/'
-    image_path = Config.UPLOAD_IMAGE_PATH
     document_path = Config.SAVE_DOCUMENT_PATH
     for dirpath, dirnames, filenames in os.walk(path_in):
         for filename in filenames:
@@ -32,109 +30,64 @@ def index():
             if os.path.splitext(dir_file_name)[1] == '.mp4' or '.avi':  # (('./app/static/movie', '.mp4'))
                 print(dir_file_name)
                 video_names.append(dir_file_name)
-    with open(document_path + "site_0.txt", "r+") as  f:
-        a = f.readlines()
-        print(a)
-        frame_location = Site(int(a[0]), int(a[1]), int(a[2]), int(a[3]))
+
+    if len(video_names):
+        video_name = video_names[0].split('.')[0]
+    else:
+        video_name = '0'
+    frame_location = Site.read_site(document_path + "site_{}.txt".format(video_name))
     video_src = video_names[0]
-    tmp2 = frame_location.locate_y + frame_location.move_y
-    tmp1 = frame_location.locate_x + frame_location.move_x
-    site_left_top = [str(frame_location.locate_x), str(frame_location.locate_y)]
-    site_left_bottom = [str(frame_location.locate_x), str(tmp2)]
-
-    site_right_top = [str(tmp1), str(frame_location.locate_y)]
-    site_right_bottom = [str(tmp1), str(tmp2)]
-
     return jsonify(
         {
             'video_names': video_names,
-            'site': {
-                'site_left_top': site_left_top,
-                'site_left_bottom': site_left_bottom,
-                'site_right_top': site_right_top,
-                'site_right_bottom': site_right_bottom,
-            },
+            'site': frame_location.get_site(),
             'video_src': video_src
         }
     )
 
 
-@main.route('/picture/', methods=['GET', 'POST'])
+@main.route('/picture/', methods=['POST'])
 def picture():
-    # TODO 2019/10/1 12:02 liliangbin  当前帧解码 ，并调用图像处理函数  返回一个字符串
-    # 输入的base64编码字符串必须符合base64的padding规则。“当原数据长度不是3的整数倍时, 如果最后剩下两个输入数据，在编码结果后加1个“=”；
-    # 如果最后剩下一个输入数据，编码结果后加2个“=”；如果没有剩下任何数据，就什么都不要加，这样才可以保证资料还原的正确性。”
-    #
-    import time
-    start = time.clock()
-    # 中间写上代码块
-
     image_path = Config.UPLOAD_IMAGE_PATH
     document_path = Config.SAVE_DOCUMENT_PATH
-    if request.method == 'POST':
-        data = json.loads(request.get_data(as_text=True))
-        str = data.get('current_frame')
-        video_name = data.get('video_name').strip()
-        imageStart = time.clock()
-        img_np = base64_to_png(str)
-        image_name = "current_{}.png".format(video_name.strip())
-        cv2.imwrite(image_path + image_name, img_np)
-        imageEnd = time.clock()
-        print('base64topng: %s Seconds' % (imageEnd - imageStart))
-        res = {}
-        sub = PictureSub()
+    # 传入的当前的帧保存
+    data = json.loads(request.get_data(as_text=True))
+    str = data.get('current_frame')
+    video_name = data.get('video_name').strip()
+    img_np = base64_to_png(str)
+    image_name = "current_{}.png".format(video_name.strip())
+    cv2.imwrite(image_path + image_name, img_np)
+    # 保存完毕
 
-        # 背景图
-        writeImgeStart = time.clock()
-        image_back = "back_{}.png".format(video_name)
-        background = cv2.imread(image_path + image_back)
-        print(background.shape)
-        writeImgeEnd = time.clock()
-        print('WriteImge: %s Seconds' % (writeImgeEnd - writeImgeStart))
-        currentFrame = img_np
+    # 当前帧减去背景帧
+    image_back = "back_{}.png".format(video_name)
+    background = cv2.imread(image_path + image_back)
 
-        print(currentFrame.shape)
+    currentFrame = img_np
 
-        q = sub.subtract_demo(background, currentFrame)
-        substractIMRun = time.clock()
-        print('substract : %s Seconds' % (substractIMRun - writeImgeEnd))
+    sub = PictureSub()
+    # 图像相减
+    q = sub.subtract_demo(background, currentFrame)
+    # 图像第三通道 反转
+    s = sub.inverse(q)
 
-        s = sub.inverse(q)
-        InvserseSTOP = time.clock()
-        print('inverse : %s Seconds' % (InvserseSTOP - substractIMRun))
+    # cv2.imwrite(image_path + "iblack_" + id + ".png", t)
 
-        # t = sub.iblack(s, 220)
-        imageRun = time.clock()
-        print('iblack: %s Seconds' % (imageRun - InvserseSTOP))
+    cv2.imwrite(image_path + "ipaint_" + video_name + ".png", s)
 
-        print('sub starct ALL : %s Seconds' % (imageRun - writeImgeEnd))
-        # cv2.imwrite(image_path + "iblack_" + id + ".png", t)
+    with open(document_path + "site_" + video_name + ".txt", "r+") as  f:
+        a = f.readlines()
+        print(a)
+        frame_location = Site(int(a[0]), int(a[1]), int(a[2]), int(a[3]))
 
-        cv2.imwrite(image_path + "ipaint_" + video_name + ".png", s)
-        imageStop = time.clock()
-        print('write twoImge: %s Seconds' % (imageStop - imageRun))
-        with open(document_path + "site_" + video_name + ".txt", "r+") as  f:
-            a = f.readlines()
-            print(a)
-            frame_location = Site(int(a[0]), int(a[1]), int(a[2]), int(a[3]))
+    res = sub.ipaint(s, 220, video_name, frame_location.locate_x, frame_location.move_x, frame_location.locate_y,
+                     frame_location.move_y)
 
-        res = sub.ipaint(s, 220, video_name, frame_location.locate_x, frame_location.move_x, frame_location.locate_y,
-                         frame_location.move_y)
+    res['max'] = frame_location.move_y
+    # 变化得y轴
+    res['video_name'] = video_name
 
-        res['max'] = frame_location.locate_y + frame_location.move_y
-        # 变化得y轴
-        list_y = np.array(res['list_y'])
-
-        data_total = res['max'] - list_y
-        max_index = max(data_total.tolist())
-
-        res['list_y'] = data_total.tolist()
-        res['max'] = max_index + 20
-        res['video_name'] = video_name
-        # 以前使用的是jsonify===> 前端使用 data["list_y"]==>有什么区别
-        end = time.clock()
-        print('Running time: %s Seconds' % (end - start))
-        return res
+    return res
 
 
 # INFO 2019/12/25 15:18 liliangbin  背景图片设置
@@ -142,37 +95,35 @@ def picture():
 def background():
     image_path = Config.UPLOAD_IMAGE_PATH
     document_path = Config.SAVE_DOCUMENT_PATH
-    if request.method == 'POST':
-        jsonData = json.loads(request.get_data(as_text=True))
-        frame = jsonData.get('current_frame')
-        video_name = jsonData.get('video_name')
-        video_name = "back_{}.png".format(video_name.strip())
-        print("=====back image name====={}".format(video_name))
-        img_np = base64_to_png(frame)
-        cv2.imwrite(image_path + video_name, img_np)
-
-        return 'done'
+    jsonData = json.loads(request.get_data(as_text=True))
+    frame = jsonData.get('current_frame')
+    video_name = jsonData.get('video_name')
+    video_name = "back_{}.png".format(video_name.strip())
+    print("=====back image name====={}".format(video_name))
+    img_np = base64_to_png(frame)
+    cv2.imwrite(image_path + video_name, img_np)
+    return 'done'
 
 
 # TODO 2020/1/4 15:13 liliangbin 返回的地址应该是画框的位置（视频名字和时间位置）通过前端设置了
-@main.route('/site/', methods=['GET', 'POST'])
+@main.route('/site/', methods=['POST'])
 def site():
     image_path = Config.UPLOAD_IMAGE_PATH
     document_path = Config.SAVE_DOCUMENT_PATH
-    if request.method == 'POST':
-        data = json.loads(request.get_data(as_text=True))
-        locate_x = int(float(data.get('locate_x')))
-        locate_y = int(float(data.get('locate_y')))
-        move_x = int(float(data.get('move_x')))
-        move_y = int(float(data.get('move_y')))
-        video_name = data.get('video_name').strip()
-        print("locate x ======>{}".format(locate_x))
-        path = document_path + "site_{}.txt".format(video_name)
-        with open(path, 'w', encoding="utf-8") as f:
-            f.write(str(locate_x) + '\n')
-            f.write(str(locate_y) + '\n')
-            f.write(str(move_x) + '\n')
-            f.write(str(move_y) + '\n')
+
+    data = json.loads(request.get_data(as_text=True))
+    locate_x = int(float(data.get('locate_x')))
+    locate_y = int(float(data.get('locate_y')))
+    move_x = int(float(data.get('move_x')))
+    move_y = int(float(data.get('move_y')))
+    video_name = data.get('video_name').strip()
+    print("locate x ======>{}".format(locate_x))
+    path = document_path + "site_{}.txt".format(video_name)
+    with open(path, 'w', encoding="utf-8") as f:
+        f.write(str(locate_x) + '\n')
+        f.write(str(locate_y) + '\n')
+        f.write(str(move_x) + '\n')
+        f.write(str(move_y) + '\n')
 
     return "done"
 
@@ -220,26 +171,25 @@ def change_datas():
 def site_get():
     document_path = Config.SAVE_DOCUMENT_PATH
     res = {}
-    if request.method == 'POST':
-        id = request.form["id"]
-        try:
-            with open(document_path + "site_" + id + ".txt", "r+") as  f:
-                a = f.readlines()
-                print(a)
-                frame_location = Site(int(a[0]), int(a[1]), int(a[2]), int(a[3]))
-        except Exception as e:
-            print(e.__cause__)
-            print('现在还没有存储该site')
-            frame_location = Site(0, 0, 0, 0)
-        tmp2 = frame_location.locate_y + frame_location.move_y
-        tmp1 = frame_location.locate_x + frame_location.move_x
-        res['site_left_top'] = str(frame_location.locate_x) + ',' + str(frame_location.locate_y)
-        res['site_left_bottom'] = str(frame_location.locate_x) + ',' + str(tmp2)
+    id = request.form["id"]
+    try:
+        with open(document_path + "site_" + id + ".txt", "r+") as  f:
+            a = f.readlines()
+            print(a)
+            frame_location = Site(int(a[0]), int(a[1]), int(a[2]), int(a[3]))
+    except Exception as e:
+        print(e.__cause__)
+        print('现在还没有存储该site')
+        frame_location = Site(0, 0, 0, 0)
+    tmp2 = frame_location.locate_y + frame_location.move_y
+    tmp1 = frame_location.locate_x + frame_location.move_x
+    res['site_left_top'] = str(frame_location.locate_x) + ',' + str(frame_location.locate_y)
+    res['site_left_bottom'] = str(frame_location.locate_x) + ',' + str(tmp2)
 
-        res['site_right_top'] = str(tmp1) + ',' + str(frame_location.locate_y)
-        res['site_right_bottom'] = str(tmp1) + ',' + str(tmp2)
+    res['site_right_top'] = str(tmp1) + ',' + str(frame_location.locate_y)
+    res['site_right_bottom'] = str(tmp1) + ',' + str(tmp2)
 
-        # return redirect(url_for('main.index'))
+    # return redirect(url_for('main.index'))
 
     return res
 
@@ -255,16 +205,11 @@ def video_location():
     with open(document_path + "video_save_location.txt", 'w') as f:
         f.write(str(video_save_location))
 
-    if location == 'ipc':
-        return redirect(url_for('.ipc'))
-    elif location == 'multi_video':
-        return redirect(url_for('.multi_ipc_video'))
-    return redirect('.')
-
 
 @main.route("/formuta/", methods=['POST'])
 def formuta_count():
     data = json.loads(request.get_data(as_text=True))
+    print(data)
     pp = data.get('pp')
     pf = data.get('pf')
     dp = data.get('dp')
@@ -277,15 +222,6 @@ def formuta_count():
 
     # aasd = formuta(pp, pf, dp, ua, c, w, q, h, fai)
     aasd = formuta(2850, 1020, 0.001, 10, 0.3, 4.5 * 0.001, 5 / 60, 1, 0.3)
-
     q = aasd.Count()
-    q['pp'] = pp
-    q['pf'] = pf
-    q['dp'] = dp
-    q['ua'] = ua
-    q['c'] = c
-    q['w'] = w
-    q['q'] = test_q
-    q['h'] = h
-    q['fai'] = fai
-    return jsonify(q)
+    data.update(q)
+    return jsonify(data)
