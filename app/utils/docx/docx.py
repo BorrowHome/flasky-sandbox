@@ -10,14 +10,11 @@ from config import Config
 
 #  写入docx 中
 def set_sand_docxtpl(dict_data, location=''):
-    ites = dict_data['tests']['samples']
     path_in = './app/static/video/'
     path_out = '../static/video/'
     print(dict_data)
     print(dict_data['experiment'])
     print('\n')
-    print(dict_data['tests'])
-    print('dict_dat')
     names = []
     if location == '' or location == 'index' or location is None or location == ' ':
         video_names = []
@@ -49,11 +46,20 @@ def set_sand_docxtpl(dict_data, location=''):
 
     imge_file_location = Config.UPLOAD_IMAGE_PATH
     document_file_location = Config.SAVE_DOCUMENT_PATH
+    #  多折线图
     multiplt_lines = li_multiple_plot(length, file_location=document_file_location, names=names)
-    results_frame = get_result(ites, imge_file_location)
-    name_list = ['v_vx', 'v_vy', 'scale_vx', 'scale_vy', 'density_vx', 'density_vy', 'viscosity_vx', 'viscosity_vy']
-    results_done = run_name(name_list, doc, results_frame)
-    li_result = get_multiple_iback(length)
+    # 多个图像的线性回归关系
+    print('获取多级线性关系')
+
+    results_frame = get_result(imge_file_location)
+    # 放入docx模板中
+    # name_list = ['v_vx', 'v_vy', 'scale_vx', 'scale_vy', 'density_vx', 'density_vy', 'viscosity_vx', 'viscosity_vy']
+    print('线性关系入docx')
+
+    run_name(doc, results_frame)
+    # 获取面积比例
+    print('获取面积比例开始')
+    li_result = get_multiple_iback(length, names=names)
     i = 0
     for item in li_result:
         print(item['area']['areas'])
@@ -64,33 +70,39 @@ def set_sand_docxtpl(dict_data, location=''):
         i += 1
         item['area_plt'] = InlineImage(doc, item['area_plt'], Mm(70))
         item['height_plt'] = InlineImage(doc, item['height_plt'], Mm(70))
+    print('处理面积比例完毕')
+    #  将数据放入文档中
     context = {
         'device': dict_data['device'],
         'experiment': dict_data['experiment'],
-        'tests': dict_data['tests'],
+        # 'tests': dict_data['tests'],
         'line_relations': results_frame,
         'multiple_lines': InlineImage(doc, multiplt_lines, Mm(100)),
         'contrast': li_result,
         'li_test': [0, 1, 2, 3, 6]
     }
     jinja_env = jinja2.Environment(autoescape=True)
+    print('开始准备存入docx ')
 
     doc.render(context)
+    print('存入docx ')
     file_location = dict_data['experiment']['file_location']
     print("file location===>" + file_location)
     if (os.path.exists(file_location)):
-        print("rush")
+        print("save docx to {}".format(file_location))
         doc.save(file_location + "/generated_doc.docx")
     else:
-        print("cant")
+        print("cant find the location save to default location")
         doc.save("generated_doc.docx")
     doc.save(document_file_location + "generated_doc.docx")
 
 
-def run_name(name_list, tpl, results_frame):
-    for name in name_list:
-        results_frame[name]['a'] = round(results_frame[name]['a'][0][0], 2)
-        results_frame[name]['b'] = round(results_frame[name]['b'][0], 2)
-        results_frame[name]['file_name'] = InlineImage(tpl, results_frame[name]['file_name'],
-                                                       Mm(100))
-    return results_frame
+# 对文件处理
+def run_name(tpl, results_frame):
+    for key in results_frame:
+        name = results_frame.get(key)
+        print('item {}'.format(name))
+        name['a'] = round(name['a'][0][0], 2)
+        name['b'] = round(name['b'][0], 2)
+        name['file_name'] = InlineImage(tpl, name['file_name'],
+                                        Mm(100))

@@ -1,1 +1,24 @@
-{"device": {"name": "", "produce_company": "", "produce_time": "", "maintain_time": "", "responsible_man": "", "experimenters": "", "own_company": ""}, "experiment": {"fluid": {"name": "", "viscosity": "", "density": ""}, "proppant": {"name": "", "density": "", "aperture": ""}, "file_location": ""}, "tests": {"samples": [{"lx": null, "ly": null, "time": null, "v": null, "scale": null, "density": null, "viscosity": null, "vx": null, "vy": null}, {"lx": null, "ly": null, "time": null, "v": null, "scale": null, "density": null, "viscosity": null, "vx": null, "vy": null}, {"lx": null, "ly": null, "time": null, "v": null, "scale": null, "density": null, "viscosity": null, "vx": null, "vy": null}], "average_vx": null, "average_vy": null}}
+{
+  "device": {
+    "name": "",
+    "produce_company": "",
+    "produce_time": "",
+    "maintain_time": "",
+    "responsible_man": "",
+    "experimenters": "",
+    "own_company": ""
+  },
+  "experiment": {
+    "fluid": {
+      "name": "",
+      "viscosity": "",
+      "density": ""
+    },
+    "proppant": {
+      "name": "",
+      "density": "",
+      "aperture": ""
+    },
+    "file_location": ""
+  }
+}

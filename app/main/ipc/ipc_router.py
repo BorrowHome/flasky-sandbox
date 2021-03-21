@@ -105,7 +105,7 @@ def thread():
         rtsp_uri = ipc.get_steam_uri()
         print("get rtsp done")
 
-        thread1 = myThread(1, 'new Thread ' + ipv4, rtsp_uri, ipv4)
+        thread1 = myThread(1, rtsp_uri, ipv4)
 
         # 开启新线程
         thread1.start()
@@ -123,10 +123,10 @@ def stop():
     print(ip)
     result = threadsPool.get(ip)
     if result == None:
-        print('change ExitFlag')
         return '该ip并没有在后台执行录制程序'
     else:
         try:
+            print('change ExitFlag')
             print(type(result))
             result.stop()
             threadsPool.__delitem__(ip)

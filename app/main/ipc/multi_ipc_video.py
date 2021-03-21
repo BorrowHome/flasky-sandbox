@@ -28,7 +28,7 @@ def thread_all():
             rtsp_uri = ipc.get_steam_uri()
             print("get rtsp done")
 
-            thread1 = myThread(1, 'new Thread ' + ipv4, rtsp_uri, ipv4)
+            thread1 = myThread(1, rtsp_uri, ipv4)
 
             # 开启新线程
             thread1.start()

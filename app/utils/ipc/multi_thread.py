@@ -6,14 +6,15 @@ import cv2
 
 from config import Config
 
+#   修改为线程池的方式来实现
 threadsPool = {}
 
 
 class myThread(threading.Thread):
-    def __init__(self, threadID, name, rtsp_uri, ip):
+    def __init__(self, threadID, rtsp_uri, ip):
         threading.Thread.__init__(self)
         self.threadID = threadID
-        self.name = name
+        self.name = ''.join(ip.split('.'))
         self.rtsp_uri = rtsp_uri
         self.ip = ip
         self.exit = False
@@ -27,9 +28,9 @@ class myThread(threading.Thread):
         print(a)
         if (os.path.exists(file_location)):
             print("rush")
-            self.save_path = file_location + "/{}-{}.mp4".format(self.ip, str(currentTime))
+            self.save_path = file_location + "/{}-{}.mp4".format(self.name, str(currentTime))
         else:
-            self.save_path = video_path + "/{}-{}.mp4".format(self.ip, str(currentTime))
+            self.save_path = video_path + "/{}-{}.mp4".format(self.name, str(currentTime))
 
     def run(self):
         print("开始线程：" + self.name)
@@ -85,9 +86,3 @@ class myThread(threading.Thread):
 
     def __del__(self):
         self.stop()
-
-
-# 在应用起来的时候会启动线程
-def changeExitFlag():
-    global exitFlag
-    exitFlag = 1
