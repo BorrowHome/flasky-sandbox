@@ -8,6 +8,7 @@ from app.utils.docx.report_utils import li_multiple_plot, get_result, get_multip
 from config import Config
 
 
+#  写入docx 中
 def set_sand_docxtpl(dict_data, location=''):
     ites = dict_data['tests']['samples']
     path_in = './app/static/video/'
@@ -17,6 +18,7 @@ def set_sand_docxtpl(dict_data, location=''):
     print('\n')
     print(dict_data['tests'])
     print('dict_dat')
+    names = []
     if location == '' or location == 'index' or location is None or location == ' ':
         video_names = []
 
@@ -26,9 +28,11 @@ def set_sand_docxtpl(dict_data, location=''):
                 dir_file_name = filename
                 if os.path.splitext(dir_file_name)[1] == '.mp4':  # (('./app/static/movie', '.mp4'))
                     print(dir_file_name)
+                    names.append(dir_file_name.split('.')[0])
                     video_names.append(path_out + dir_file_name)
 
         length = len(video_names)
+
     else:
         ips = []
         document_path = Config.SAVE_DOCUMENT_PATH
@@ -37,6 +41,7 @@ def set_sand_docxtpl(dict_data, location=''):
             a = f.readlines()
         for i in a:
             ips.append(i)
+            names.append(''.join(i.split('.')))
         length = len(ips)
 
     print("一共有多少个数据")
@@ -44,7 +49,7 @@ def set_sand_docxtpl(dict_data, location=''):
 
     imge_file_location = Config.UPLOAD_IMAGE_PATH
     document_file_location = Config.SAVE_DOCUMENT_PATH
-    multiplt_lines = li_multiple_plot(length, document_file_location)
+    multiplt_lines = li_multiple_plot(length, file_location=document_file_location, names=names)
     results_frame = get_result(ites, imge_file_location)
     name_list = ['v_vx', 'v_vy', 'scale_vx', 'scale_vy', 'density_vx', 'density_vy', 'viscosity_vx', 'viscosity_vy']
     results_done = run_name(name_list, doc, results_frame)

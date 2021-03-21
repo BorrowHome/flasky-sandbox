@@ -101,7 +101,8 @@ def get_result(ites, file_location=''):
     return result
 
 
-def li_multiple_plot(length, file_location=''):
+# 多个曲线放在一个坐标轴里面 生成一张图片 并返回其位置
+def li_multiple_plot(length, file_location='', names=[]):
     plt.figure()
     plt.rcParams['font.sans-serif'] = ['SimHei']  # 用来正常显示中文标签
     plt.rcParams['axes.unicode_minus'] = False  # 用来正常显示负号
@@ -112,8 +113,8 @@ def li_multiple_plot(length, file_location=''):
     document_path = Config.SAVE_DOCUMENT_PATH
 
     for i in range(length):
-        csv_data = pd.read_csv(file_location + "sand_" + str(i) + ".csv", header=None, names=['x', 'y'])
-        with open(document_path + "site_" + str(i) + ".txt", "r+") as  f:
+        csv_data = pd.read_csv(file_location + "sand_" + names[i] + ".csv", header=None, names=['x', 'y'])
+        with open(document_path + "site_" + names[i] + ".txt", "r+") as  f:
             a = f.readlines()
             print(a)
             frame_location = Site(int(a[0]), int(a[1]), int(a[2]), int(a[3]))
@@ -129,15 +130,15 @@ def li_multiple_plot(length, file_location=''):
     return name
 
 
-def get_multiple_iback(length):
+def get_multiple_iback(length, names=[]):
     image_locatoion = Config.UPLOAD_IMAGE_PATH
     document_location = Config.SAVE_DOCUMENT_PATH
     results = []
     for id in range(length):
-        with open(document_location + "site_" + str(id) + ".txt", "r+") as  f:
+        with open(document_location + "site_" + names[id] + ".txt", "r+") as  f:
             a = f.readlines()
             frame_location = Site(int(a[0]), int(a[1]), int(a[2]), int(a[3]))
-        image_info = cv.imread(image_locatoion + 'iblack_' + str(id) + '.png')
+        image_info = cv.imread(image_locatoion + 'iblack_' + names[id] + '.png')
         result_h = divideH(image_info, frame_location.locate_x, frame_location.locate_y,
                            frame_location.move_x, frame_location.move_y)
 
@@ -156,4 +157,4 @@ if __name__ == '__main__':
     document_path = Config.SAVE_DOCUMENT_PATH
 
     # li_multiple_plot(3, document_path)
-    result = li_liner_regression([1, 2, 3, 4, 5], [5, 8, 11, 14, 17],[2,3,4],"name")
+    result = li_liner_regression([1, 2, 3, 4, 5], [5, 8, 11, 14, 17], [2, 3, 4], "name")
