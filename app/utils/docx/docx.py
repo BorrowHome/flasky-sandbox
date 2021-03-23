@@ -1,3 +1,4 @@
+import json
 import os
 
 import jinja2
@@ -59,6 +60,7 @@ def set_sand_docxtpl(dict_data, location=''):
     run_name(doc, results_frame)
     # 获取面积比例
     print('获取面积比例开始')
+    print(names)
     li_result = get_multiple_iback(length, names=names)
     i = 0
     for item in li_result:
@@ -106,3 +108,12 @@ def run_name(tpl, results_frame):
         name['b'] = round(name['b'][0], 2)
         name['file_name'] = InlineImage(tpl, name['file_name'],
                                         Mm(100))
+
+
+def get_formatua_data():
+    document_location = Config.SAVE_DOCUMENT_PATH
+
+    with open(document_location + 'excel_save.json', 'r', encoding='UTF-8') as f:
+        data = json.load(f)
+    print(data)
+    return data

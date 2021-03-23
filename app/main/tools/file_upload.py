@@ -3,36 +3,16 @@ import json
 import os
 
 import cv2
-from flask import request, render_template, redirect, url_for, flash
+from flask import request, flash
 
+from app.main import main
 from app.utils.frame.frame import base64_to_png
 from config import Config
-from app.main import main
 
 
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1] in Config.ALLOWED_EXTENSIONS
-
-
-@main.route('/upload/', methods=['POST'])
-def settings():
-    videos = request.files.getlist('video')
-    print(request.files)
-    for video in videos:
-        print(video.filename)
-        print(video.filename)
-        print(video.filename, os.path.abspath(video.filename))
-        if allowed_file(video.filename):
-            file_path = Config.UPLOAD_PATH + os.sep + os.path.split(os.path.abspath(video.filename))[1]
-            video.save(file_path)
-        else:
-            flash('Wrong file type!' + video.filename, 'danger')
-            # return redirect(url_for('.index'))
-    flash("Upload successfully!", 'success')  # @hehao
-    # video.save(Config.UPLOAD_PATH + video.filename)
-
-    return 'success'
 
 
 @main.route('/save_image/', methods=['POST'])
@@ -81,3 +61,56 @@ def image_back():
 
     newImage = cv2.resize(img, None, fx=scale, fy=scale)
     cv2.imwrite(file_path, newImage)
+
+
+@main.route('/FileUpload/', methods=['POST', 'GET'])
+def FileUpload():
+    images = request.files.getlist('file')
+    a = request.files.get('file')
+    print(len(images))
+    print(images[0])
+    filename = request.form.get('mainVideoName')
+    print("======>{}".format(filename))
+    # TODO // 对图像的后缀以及名字的合法性进行鉴定
+    for image in images:
+        image_path = Config.UPLOAD_IMAGE_PATH
+        document_path = Config.SAVE_DOCUMENT_PATH
+        print(request.files)
+        print('hello world ')
+        temfile = 'test.jpg'
+        file_path = image_path + 'back_' + filename + '.png'
+        image.save(temfile)
+        img = cv2.imread(temfile)
+        print(type(img))
+        shape = img.shape
+        width = shape[1]
+        temp_scale = 640 / float(width)
+        scale = round(temp_scale, 1)
+        print("cscale ==" + str(scale))
+
+        newImage = cv2.resize(img, None, fx=scale, fy=scale)
+        cv2.imwrite(file_path, newImage)
+        print(type(image))
+
+        return '0'
+
+
+@main.route('/VideoUpload/', methods=['POST', 'GET'])
+def VideoUpload():
+    videos = request.files.getlist('file')
+    print(len(videos))
+
+    # TODO // 对图像的后缀以及名字的合法性进行鉴定
+    for video in videos:
+        print(video.filename)
+        print(video.filename, os.path.abspath(video.filename))
+        if allowed_file(video.filename):
+            file_path = Config.UPLOAD_PATH + os.sep + os.path.split(os.path.abspath(video.filename))[1]
+            video.save(file_path)
+            return '1'
+        else:
+            flash('Wrong file type!' + video.filename, 'danger')
+            # return redirect(url_for('.index'))
+    flash("Upload successfully!", 'success')  # @hehao
+    # video.save(Config.UPLOAD_PATH + video.filename)
+    return '0'

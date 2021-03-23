@@ -24,7 +24,7 @@ def get_volume():
     print(s)
     sub = PictureSub()
     t = sub.iblack(s, 220)  # 图像变为黑白两种
-    # cv2.imwrite(image_path + "iblack_" + id + ".png", t)
+    cv2.imwrite(image_path + "iblack_" + video_name + ".png", t)
     path = document_path + "site_{}.txt".format(video_name)
     with open(path, "r+") as f:
         a = f.readlines()

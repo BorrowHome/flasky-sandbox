@@ -143,10 +143,10 @@ def give_response(data):
     print('====' * 10)
     ip = data.get('ip')
     # 进行一些对value的处理或者其他操作,在此期间可以随时会调用emit方法向前台发送消息
-
-    ipc = Onvif_hik(ip, 8899, 'admin', '')
-    if ipc.content_cam():
-        rtsp_uri = ipc.get_steam_uri()
+    rtsp_uri='fsdf'
+    # ipc = Onvif_hik(ip, 8899, 'admin', '')
+    # if ipc.content_cam():
+    #     rtsp_uri = ipc.get_steam_uri()
     client = CVClient(name=name, rtmp_location=rtsp_uri)
     emit_thread[name] = client
     client.run_image()

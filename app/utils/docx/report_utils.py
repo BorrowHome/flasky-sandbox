@@ -1,7 +1,9 @@
-import cv2 as cv
+import cv2
 import matplotlib
 import numpy as np
 import pandas as pd
+
+from app.utils.frame.sub import PictureSub
 
 matplotlib.use('Agg')
 # python – Matplotlib – Tcl_AsyncDelete：错误的线程删除了异步处理程序？
@@ -71,9 +73,13 @@ def li_liner_regression(x, y, test_x, name, file_location=''):
 # 计算对应的数据线性回归关系
 def get_result(file_location=''):
     document_path = Config.SAVE_DOCUMENT_PATH
+    print('开始读取excel')
     data = pd.read_excel(document_path + 'result.xlsx', header=0,
                          names=['pp', 'pf', 'dp', 'ua', 'c', 'w', 'q', 'h', 'fai', 'vcs', 'vpx', 'ueq', 'heq'])
     #  线性回归配置文件
+    print(data)
+    print('==========' * 20)
+    print('读取文件成功')
     data_liner = Config.LINER_CONFIG
     result = {}
     for key in data_liner:
@@ -117,17 +123,24 @@ def li_multiple_plot(length, file_location='', names=[]):
 
 #   获取面积关系
 def get_multiple_iback(length, names=[]):
-    if len(names):
+    if len(names) == 0:
         names = list(range(0, length))
-
-    image_locatoion = Config.UPLOAD_IMAGE_PATH
+    print(names)
+    image_path = Config.UPLOAD_IMAGE_PATH
     document_location = Config.SAVE_DOCUMENT_PATH
     results = []
     for id in range(length):
         with open(document_location + "site_" + str(names[id]) + ".txt", "r+") as  f:
             a = f.readlines()
             frame_location = Site(int(a[0]), int(a[1]), int(a[2]), int(a[3]))
-        image_info = cv.imread(image_locatoion + 'iblack_' + str(names[id]) + '.png')
+        path = image_path + "ipaint_{}.png".format(names[id])
+        # imread 的filename 长度有限制。
+        print(path)
+        s = cv2.imread(path.strip())  # ipaint 是直接减去的图像
+        print(s)
+        sub = PictureSub()
+        image_info = sub.iblack(s, 220)  # 图像变为黑白两种
+        # image_info = cv.imread(image_locatoion + 'iblack_' + str(names[id]) + '.png')
         result_h = divideH(image_info, frame_location.locate_x, frame_location.locate_y,
                            frame_location.move_x, frame_location.move_y)
 
@@ -146,4 +159,7 @@ if __name__ == '__main__':
     document_path = Config.SAVE_DOCUMENT_PATH
 
     # li_multiple_plot(3, document_path)
-    result = li_liner_regression([1, 2, 3, 4, 5], [5, 8, 11, 14, 17], [2, 3, 4], "name")
+    # result = li_liner_regression([1, 2, 3, 4, 5], [5, 8, 11, 14, 17], [2, 3, 4], "name")
+    data = pd.read_excel('result.xlsx', header=0,
+                         names=['pp', 'pf', 'dp', 'ua', 'c', 'w', 'q', 'h', 'fai', 'vcs', 'vpx', 'ueq', 'heq'])
+    print(data)
