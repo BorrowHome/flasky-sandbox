@@ -1,5 +1,6 @@
 import json
 import os
+import time
 
 import jinja2
 from docx.shared import Mm
@@ -74,14 +75,25 @@ def set_sand_docxtpl(dict_data, location=''):
         item['height_plt'] = InlineImage(doc, item['height_plt'], Mm(70))
     print('处理面积比例完毕')
     #  将数据放入文档中
+    NowTime = time.localtime()  # 获取当前时间
+    current_time = time.strftime("%Y-%m-%d %H:%M:%S", NowTime)
+    document_location = Config.SAVE_DOCUMENT_PATH
+
+    with open(document_location + 'excel_save.json', 'r', encoding='UTF-8') as f:
+        data = json.load(f)
     context = {
         'device': dict_data['device'],
         'experiment': dict_data['experiment'],
-        # 'tests': dict_data['tests'],
+        'tests': {
+            "samples": data,
+            "average_vx": 34,
+            "average_vy": 35
+        },
         'line_relations': results_frame,
         'multiple_lines': InlineImage(doc, multiplt_lines, Mm(100)),
         'contrast': li_result,
-        'li_test': [0, 1, 2, 3, 6]
+        'li_test': [0, 1, 2, 3, 6],
+        'product_time': current_time
     }
     jinja_env = jinja2.Environment(autoescape=True)
     print('开始准备存入docx ')

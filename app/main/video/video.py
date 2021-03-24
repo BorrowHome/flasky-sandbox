@@ -170,28 +170,10 @@ def change_datas():
 @main.route("/site_get/", methods=['GET', 'POST'])
 def site_get():
     document_path = Config.SAVE_DOCUMENT_PATH
-    res = {}
-    id = request.form["id"]
-    try:
-        with open(document_path + "site_" + id + ".txt", "r+") as  f:
-            a = f.readlines()
-            print(a)
-            frame_location = Site(int(a[0]), int(a[1]), int(a[2]), int(a[3]))
-    except Exception as e:
-        print(e.__cause__)
-        print('现在还没有存储该site')
-        frame_location = Site(0, 0, 0, 0)
-    tmp2 = frame_location.locate_y + frame_location.move_y
-    tmp1 = frame_location.locate_x + frame_location.move_x
-    res['site_left_top'] = str(frame_location.locate_x) + ',' + str(frame_location.locate_y)
-    res['site_left_bottom'] = str(frame_location.locate_x) + ',' + str(tmp2)
-
-    res['site_right_top'] = str(tmp1) + ',' + str(frame_location.locate_y)
-    res['site_right_bottom'] = str(tmp1) + ',' + str(tmp2)
-
-    # return redirect(url_for('main.index'))
-
-    return res
+    data = json.loads(request.get_data(as_text=True))
+    name = data.get('name').strip()
+    frame_location = Site.read_site(document_path + "site_{}.txt".format(name))
+    return jsonify({'site': frame_location.get_site()})
 
 
 @main.route('/video_location/', methods=['POST'])

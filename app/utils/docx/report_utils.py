@@ -97,7 +97,7 @@ def get_result(file_location=''):
 
 # 多个曲线放在一个坐标轴里面 生成一张图片 并返回其位置
 def li_multiple_plot(length, file_location='', names=[]):
-    if len(names):
+    if len(names)==0:
         names = list(range(0, length))
     plt.figure()
     plt.rcParams['font.sans-serif'] = ['SimHei']  # 用来正常显示中文标签
@@ -111,7 +111,7 @@ def li_multiple_plot(length, file_location='', names=[]):
     for i in range(length):
         csv_data = pd.read_csv(file_location + "sand_" + str(names[i]) + ".csv", header=None, names=['x', 'y'])
         plt.plot(csv_data['x'], csv_data['y'],
-                 label='video_' + str(i))
+                 label='video_' + str(names[i]))
 
     name = Config.UPLOAD_IMAGE_PATH + 'multiple_lines.png'
     plt.legend()

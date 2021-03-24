@@ -31,6 +31,9 @@ def ipc():
         ipc_name = ''.join(ips[0].split('.'))
     else:
         ipc_name = '0'
+
+    print('ipc_name {}'.format(ipc_name))
+    ipc_name = ipc_name.strip()
     frame_location = Site.read_site(document_path + "site_{}.txt".format(ipc_name))
 
     try:
@@ -143,7 +146,7 @@ def give_response(data):
     print('====' * 10)
     ip = data.get('ip')
     # 进行一些对value的处理或者其他操作,在此期间可以随时会调用emit方法向前台发送消息
-    rtsp_uri='fsdf'
+    rtsp_uri = 'fsdf'
     # ipc = Onvif_hik(ip, 8899, 'admin', '')
     # if ipc.content_cam():
     #     rtsp_uri = ipc.get_steam_uri()
