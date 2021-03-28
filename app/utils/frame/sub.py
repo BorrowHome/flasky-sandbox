@@ -2,13 +2,41 @@
 import csv
 
 import cv2 as cv
+from PIL import Image
 
 from config import Config
+import numpy as np
+import cv2
 
 
 class PictureSub(object):
     def __init__(self):
         pass
+
+    def testf(self, path1, path2, name):
+        imageA = Image.open(path1)  # 导入图片
+        imageB = Image.open(path2)
+
+        grayA = imageA.convert('L')  # 转为灰阶
+        grayB = imageB.convert('L')
+
+        width_A, height_A = grayA.size  # 设置图片长宽，截取图片，肯定grayA的尺寸=grayB的尺寸
+
+        data_c = np.zeros(shape=(width_A, height_A))  # 初始化矩阵data_c
+
+        for i in range(1, width_A):  # 例遍横坐标，建立矩阵  需注意，列表首位是0.numpy首位是1，Image首位按1,
+            for j in range(1, height_A):  # 例遍纵坐标
+                im_data_1 = grayA.getpixel((i, j))  # 原始图片像素灰阶数值
+                im_data_2 = grayB.getpixel((i, j))  # 当前图片像素灰阶数值
+                im_data = (im_data_1 - im_data_2)  # 两个图片像素灰阶数值差
+                ima_data = abs(im_data)
+                if ima_data < 15:  # 以2为阙值，灰阶值差异大于2及沙砾，小于2按照光线影响
+                    data_c[i, j] = 225  # 建立矩阵data_c
+                else:
+                    data_c[i, j] = 0
+        data_c = data_c.T
+        cv2.imwrite(Config.UPLOAD_IMAGE_PATH + "ipaint_" + name + ".png", data_c)
+        return data_c
 
     def __int__(self, first_frames, current_frames):
         self.first_frames = first_frames
@@ -18,7 +46,11 @@ class PictureSub(object):
 
     def subtract_demo(self, m1, m2):  # 像素的减运算
         dst = cv.subtract(m1, m2)
-        # cv.imshow("subtract_demo", dst)
+        # img_hsv = cv.cvtColor(dst, cv.COLOR_BGR2HSV)
+        # red_min = np.array([0, 50, 50])
+        # red_max = np.array([30, 255, 255])
+        # red_mask = cv.inRange(img_hsv, red_min, red_max)
+        # img_red = cv.bitwise_and(dst, dst, mask=red_mask)
         return dst
 
     def inverse(self, image):
@@ -56,7 +88,7 @@ class PictureSub(object):
             for i in range(locate_x, locate_x + move_x, 1):
                 flag = True
                 for j in range(locate_y, move_y + locate_y, 1):
-                    if (image[j, i, 2] < k):
+                    if (image[j, i] < k):
                         # with open(r"E:sand.csv", "w", newline="")as f:
                         #  writer = csv.writer(f)
                         x = i - locate_x

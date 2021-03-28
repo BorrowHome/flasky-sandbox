@@ -1,12 +1,12 @@
 import csv
 
 import numpy as np
-from flask import request, Response, render_template, jsonify
+from flask import request, jsonify
 
 from app import socketio
 from app.main import main
 from app.utils.frame.site import Site
-from app.utils.ipc.camera_host import VideoCamera, CVClient
+from app.utils.ipc.camera_host import CVClient
 from app.utils.ipc.li_onvif import Onvif_hik
 from app.utils.ipc.multi_thread import myThread, threadsPool
 from config import Config
@@ -34,6 +34,7 @@ def ipc():
 
     print('ipc_name {}'.format(ipc_name))
     ipc_name = ipc_name.strip()
+    #  第一波就灭有的情况
     frame_location = Site.read_site(document_path + "site_{}.txt".format(ipc_name))
 
     try:
@@ -146,14 +147,11 @@ def give_response(data):
     print('====' * 10)
     ip = data.get('ip')
     # 进行一些对value的处理或者其他操作,在此期间可以随时会调用emit方法向前台发送消息
-    rtsp_uri = 'fsdf'
-    # ipc = Onvif_hik(ip, 8899, 'admin', '')
+    rtsp_uri = 'rtmp://58.200.131.2:1935/livetv/cctv1'
+    ipc = Onvif_hik(ip, 8899, 'admin', '')
     # if ipc.content_cam():
     #     rtsp_uri = ipc.get_steam_uri()
-    client = CVClient(name=name, rtmp_location=rtsp_uri)
-    emit_thread[name] = client
-    client.run_image()
-    # client.run_rtsp()
+    client = emit_message_thread(name, rtsp_uri)
 
 
 @socketio.on('stop', namespace='/test')
@@ -166,12 +164,21 @@ def stop_emit_message(data):
     print('=====' * 20)
 
     client = emit_thread.get(name)
-    client.stop_run()
+    client.stop()
 
 
 @socketio.on('disconnect', namespace='/test')
 def disconnect():
     print('disconnect')
     for key, client in emit_thread.items():
-        client.stop_run()
+        # client.stop_run()
         print(client.rtmp_location)
+
+
+def emit_message_thread(name, rtsp_uri):
+    client = CVClient(name=name, rtmp_location=rtsp_uri, socketio=socketio)
+    print('name====={}'.format(name))
+    # client.run_image()
+    # client.start()
+    emit_thread[name] = client
+    socketio.start_background_task(target=client.run_rtsp())

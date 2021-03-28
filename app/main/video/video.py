@@ -61,20 +61,20 @@ def picture():
 
     # 当前帧减去背景帧
     image_back = "back_{}.png".format(video_name)
-    background = cv2.imread(image_path + image_back)
-
-    currentFrame = img_np
-
+    # background = cv2.imread(image_path + image_back)
+    #
+    # currentFrame = img_np
+    #
     sub = PictureSub()
-    # 图像相减
-    q = sub.subtract_demo(background, currentFrame)
-    # 图像第三通道 反转
-    s = sub.inverse(q)
-
-    # cv2.imwrite(image_path + "iblack_" + id + ".png", t)
-
-    cv2.imwrite(image_path + "ipaint_" + video_name + ".png", s)
-
+    # # 图像相减
+    # q = sub.subtract_demo(background, currentFrame)
+    # # 图像第三通道 反转
+    # s = sub.inverse(q)
+    #
+    # # cv2.imwrite(image_path + "iblack_" + id + ".png", t)
+    #
+    # cv2.imwrite(image_path + "ipaint_" + video_name + ".png", s)
+    s = sub.testf(image_path + image_name, image_path + image_back,video_name)
     with open(document_path + "site_" + video_name + ".txt", "r+") as  f:
         a = f.readlines()
         print(a)
@@ -203,7 +203,9 @@ def formuta_count():
     fai = data.get('fai')
 
     # aasd = formuta(pp, pf, dp, ua, c, w, q, h, fai)
-    aasd = formuta(2850, 1020, 0.001, 10, 0.3, 4.5 * 0.001, 5 / 60, 1, 0.3)
+    # aasd = formuta(2850, 1020, 0.001, 10, 0.3, 4.5 * 0.001, 5 / 60, 1, 0.3)
+    aasd = formuta(pp, pf, dp, ua, c, w, test_q, h, fai)
+
     q = aasd.Count()
     data.update(q)
     return jsonify(data)
