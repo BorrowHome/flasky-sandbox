@@ -1,17 +1,25 @@
 import csv
 
 import numpy as np
-from flask import request, jsonify
+from flask import request, jsonify, Response
 
 from app import socketio
 from app.main import main
 from app.utils.frame.site import Site
-from app.utils.ipc.camera_host import CVClient
+from app.utils.ipc.camera_host import CVClient, VideoCamera
 from app.utils.ipc.li_onvif import Onvif_hik
 from app.utils.ipc.multi_thread import myThread, threadsPool
 from config import Config
 
 emit_thread = {}
+
+
+def gen(camera):
+    while True:
+        frame = camera.get_frame()
+        # 使用generator函数输出视频流， 每次请求输出的content类型是image/jpeg
+        yield (b'--frame\r\n'
+               b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
 
 
 @main.route('/ipc/')
@@ -51,49 +59,26 @@ def ipc():
         'video_save_location': a
     })
 
+# opencv的编解码能力===》替换当时
+@main.route('/steam/')
+def steam():
+    ipv4 = request.args.get('ip')
 
-@main.route('/camera/', methods=['GET', 'POST'])
-def camera():
-    # TODO 2019/10/1 12:02 liliangbin  当前帧解码 ，并调用图像处理函数  返回一个字符串
-    # 输入的base64编码字符串必须符合base64的padding规则。“当原数据长度不是3的整数倍时, 如果最后剩下两个输入数据，在编码结果后加1个“=”；
-    # 如果最后剩下一个输入数据，编码结果后加2个“=”；如果没有剩下任何数据，就什么都不要加，这样才可以保证资料还原的正确性。”
+    ipc = Onvif_hik(ipv4, 8899, 'admin', '')
+    print(ipv4)
+    rtsp_uri = 'rtmp://58.200.131.2:1935/livetv/cctv1'
+    # if ipc.content_cam():
+    #     rtsp_uri = ipc.get_steam_uri()
+    #     print("done")
+    #     return Response(gen(VideoCamera(rtsp_uri)),
+    #                     mimetype='multipart/x-mixed-replace; boundary=frame')
+    #     # return rtsp_uri
     #
-    image_path = Config.UPLOAD_IMAGE_PATH
-    document_path = Config.SAVE_DOCUMENT_PATH
-    if request.method == 'POST':
-        str = request.form['current_frame']
-        id = request.form['id']
-
-        with open(document_path + "site_" + '0' + ".txt", "r+") as  f:
-            a = f.readlines()
-            print(a)
-            frame_location = Site(int(a[0]), int(a[1]), int(a[2]), int(a[3]))
-
-        res = {}
-        llistx = []
-        llisty = []
-        with open(document_path + 'sand_2.csv', 'r') as f:
-            reader = csv.reader(f)
-
-            for i in reader:
-                llistx.append(i[0])
-                llisty.append(i[1])
-
-        res['list_x'] = llistx
-        res['list_y'] = llisty
-
-        res['max'] = frame_location.locate_y + frame_location.move_y
-        # 变化得y轴
-        list_y = np.array(res['list_y']).astype(np.int)
-
-        data_total = res['max'] - list_y
-        max_index = max(data_total.tolist())
-
-        res['list_y'] = data_total.tolist()
-        res['max'] = max_index + 20
-        res['id'] = id
-        # 以前使用的是jsonify===> 前端使用 data["list_y"]==>有什么区别
-        return res
+    # else:
+    #     print('ip 未找到')
+    #     return "ip 未找到"
+    return Response(gen(VideoCamera(rtsp_uri)),
+                    mimetype='multipart/x-mixed-replace; boundary=frame')
 
 
 @main.route('/thread/')
@@ -105,20 +90,28 @@ def thread():
 
     ipc = Onvif_hik(ipv4, 8899, 'admin', '')
     print(ipv4)
-    if ipc.content_cam():
-        rtsp_uri = ipc.get_steam_uri()
-        print("get rtsp done")
+    rtsp_uri = 'rtmp://58.200.131.2:1935/livetv/cctv1'
 
-        thread1 = myThread(1, rtsp_uri, ipv4)
+    # if ipc.content_cam():
+    #     rtsp_uri = ipc.get_steam_uri()
+    #     print("get rtsp done")
+    #
+    #     thread1 = myThread(1, rtsp_uri, ipv4)
+    #
+    #     # 开启新线程
+    #     thread1.start()
+    #     threadsPool.__setitem__(ipv4, thread1)
+    #
+    #     return ipv4 + '已新建录制'
+    # else:
+    #     print('ip has some errors')
+    #     return 'ip has some errors'
+    thread1 = myThread(1, rtsp_uri, ipv4)
 
-        # 开启新线程
-        thread1.start()
-        threadsPool.__setitem__(ipv4, thread1)
-
-        return ipv4 + '已新建录制'
-    else:
-        print('ip has some errors')
-        return 'ip has some errors'
+    # 开启新线程
+    thread1.start()
+    threadsPool.__setitem__(ipv4, thread1)
+    return ipv4 + '已新建录制'
 
 
 @main.route('/stop/')
@@ -138,41 +131,6 @@ def stop():
         except Exception as e:
             print('停止录制线程出现问题')
             return '录制出现问题'
-
-
-@socketio.on('message', namespace='/test')
-def give_response(data):
-    name = data.get('name')
-    print(data.get('name'))
-    print('====' * 10)
-    ip = data.get('ip')
-    # 进行一些对value的处理或者其他操作,在此期间可以随时会调用emit方法向前台发送消息
-    rtsp_uri = 'rtmp://58.200.131.2:1935/livetv/cctv1'
-    ipc = Onvif_hik(ip, 8899, 'admin', '')
-    # if ipc.content_cam():
-    #     rtsp_uri = ipc.get_steam_uri()
-    client = emit_message_thread(name, rtsp_uri)
-
-
-@socketio.on('stop', namespace='/test')
-def stop_emit_message(data):
-    name = data.get('name')
-    print('=====' * 20)
-    print(data.get('name'))
-
-    print('stop message ')
-    print('=====' * 20)
-
-    client = emit_thread.get(name)
-    client.stop()
-
-
-@socketio.on('disconnect', namespace='/test')
-def disconnect():
-    print('disconnect')
-    for key, client in emit_thread.items():
-        # client.stop_run()
-        print(client.rtmp_location)
 
 
 def emit_message_thread(name, rtsp_uri):

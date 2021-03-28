@@ -21,11 +21,15 @@ class VideoCamera(object):
     def get_frame(self):
         success, image = self.video.read()
         # 因为opencv读取的图片并非jpeg格式，因此要用motion JPEG模式需要先将图片转码成jpg格式图片
-        # image = cv2.flip(image, 180)
-        # 存储了对应的文件
-        ret, jpeg = cv2.imencode('.jpg', image)
-        cv2.imwrite(filename=self.file_location + self.name.strip() + '.png', img=image)
-        return jpeg.tobytes()
+        if success:
+            # image = cv2.flip(image, 180)  #  转换方向 180 度
+            # 存储了对应的文件
+            ret, jpeg = cv2.imencode('.jpg', image)
+            # cv2.imwrite(filename=self.file_location + self.name.strip() + '.png', img=image)
+            return jpeg.tobytes()
+        else:
+            print('can not get ')
+            return None
 
     def show(self):
         while 1:

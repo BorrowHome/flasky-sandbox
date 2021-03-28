@@ -71,13 +71,11 @@ class myThread(threading.Thread):
             rval, frame = cap.read()
             # cv2.imshow('test', frame)
             # 每间隔20帧保存一张图像帧
-            # if tot % 20 ==0 :
-            #   cv2.imwrite('cut/'+'cut_'+str(c)+'.jpg',frame)
-            #   c+=1
+            if c % 20 == 0:
+                print('currentFrame==', c, "  " + self.ip)
+                c += 1
             # 使用VideoWriter类中的write(frame)方法，将图像帧写入视频文件
             outVideo.write(frame)
-            # print('currentFrame==', c, "  " + self.ip)
-            c = c + 1
 
     def stop(self):
         print('change exit  value to  false')

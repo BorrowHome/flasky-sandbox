@@ -2,7 +2,6 @@
 
 import os
 
-from flask_cors import CORS
 from gevent import pywsgi
 from geventwebsocket.handler import WebSocketHandler
 
