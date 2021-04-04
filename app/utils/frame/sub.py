@@ -45,34 +45,34 @@ class PictureSub(object):
     #     get the video first frames
 
     def subtract_demo(self, m1, m2):  # 像素的减运算
-        dst = cv.subtract(m1, m2)
-        # img_hsv = cv.cvtColor(dst, cv.COLOR_BGR2HSV)
-        # red_min = np.array([0, 50, 50])
-        # red_max = np.array([30, 255, 255])
-        # red_mask = cv.inRange(img_hsv, red_min, red_max)
-        # img_red = cv.bitwise_and(dst, dst, mask=red_mask)
-        return dst
+        dst = m2
+        img_hsv = cv.cvtColor(dst, cv.COLOR_BGR2HSV)
+        red_min = np.array([0, 50, 50])
+        red_max = np.array([30, 255, 255])
+        red_mask = cv.inRange(img_hsv, red_min, red_max)
+        img_red = cv.bitwise_and(dst, dst, mask=red_mask)
+        return img_red
 
     def inverse(self, image):
         shape = image.shape
         channels = shape[2]
-        for cn in range(channels):
-            """255-原本的颜色就变成了反色"""
-            image[:, :, cn] = 255 - image[:, :, cn]
-        # cv.imshow("imshow_inverse", image)
+        # for cn in range(channels):
+        #     """255-原本的颜色就变成了反色"""
+        #     image[:, :, cn] = 255 - image[:, :, cn]
+        # # cv.imshow("imshow_inverse", image)
         return image
 
     def iblack(self, image, k):
         shape = image.shape
         print(shape)
         channels = shape[2]
-        for cn in range(channels):
-            """255-原本的颜色就变成了反色"""
-            for i in range(shape[0]):
-                for j in range(shape[1]):
-                    # 二向化归一
-                    if (image[i, j, cn] < k):
-                        image[i, j, cn] = 0
+        # for cn in range(channels):
+        #     """255-原本的颜色就变成了反色"""
+        #     for i in range(shape[0]):
+        #         for j in range(shape[1]):
+        #             # 二向化归一
+        #             if (image[i, j, cn] < k):
+        #                 image[i, j, cn] = 0
 
         return image
 
@@ -88,7 +88,7 @@ class PictureSub(object):
             for i in range(locate_x, locate_x + move_x, 1):
                 flag = True
                 for j in range(locate_y, move_y + locate_y, 1):
-                    if (image[j, i] < k):
+                    if (image[j, i,2] > 10):
                         # with open(r"E:sand.csv", "w", newline="")as f:
                         #  writer = csv.writer(f)
                         x = i - locate_x

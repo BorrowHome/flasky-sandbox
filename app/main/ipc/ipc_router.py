@@ -1,12 +1,8 @@
-import csv
-
-import numpy as np
 from flask import request, jsonify, Response
 
-from app import socketio
 from app.main import main
 from app.utils.frame.site import Site
-from app.utils.ipc.camera_host import CVClient, VideoCamera
+from app.utils.ipc.camera_host import VideoCamera
 from app.utils.ipc.li_onvif import Onvif_hik
 from app.utils.ipc.multi_thread import myThread, threadsPool
 from config import Config
@@ -58,6 +54,7 @@ def ipc():
         'default_ip': ips[0],
         'video_save_location': a
     })
+
 
 # opencv的编解码能力===》替换当时
 @main.route('/steam/')
@@ -133,10 +130,12 @@ def stop():
             return '录制出现问题'
 
 
-def emit_message_thread(name, rtsp_uri):
-    client = CVClient(name=name, rtmp_location=rtsp_uri, socketio=socketio)
-    print('name====={}'.format(name))
-    # client.run_image()
-    # client.start()
-    emit_thread[name] = client
-    socketio.start_background_task(target=client.run_rtsp())
+@main.route('/steam/uri/')
+def steam_uri():
+    ipv4 = request.args.get('ip')
+
+    ipc = Onvif_hik(ipv4, 8899, 'admin', '')
+    print(ipv4)
+    rtsp_uri = 'rtmp://58.200.131.2:1935/livetv/cctv1'
+
+    return rtsp_uri

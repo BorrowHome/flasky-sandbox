@@ -1,17 +1,14 @@
-import os
-
-basedir = os.path.abspath(os.path.dirname(__file__))
+from waitress_manage import basedir
 
 
 class Config:
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-
-    UPLOAD_PATH = os.path.dirname(__file__) + "\\app\\static\\video"
+    UPLOAD_PATH = basedir + "\\app\\static\\video\\"
     ALLOWED_EXTENSIONS = set(['mp4'])  # @hehao
-    UPLOAD_IMAGE_PATH = "./app/static/image/"
-    SAVE_DOCUMENT_PATH = "./app/static/document/"
-    SAVE_VIDEO_PATH = "./app/static/video/"
-    LINER_CONFIG={
+    UPLOAD_IMAGE_PATH = basedir + "\\app\\static\\image\\"
+    SAVE_DOCUMENT_PATH = basedir + "\\app\\static\\document\\"
+    SAVE_VIDEO_PATH = basedir + "\\app\\static\\video\\"
+    LINER_CONFIG = {
         "pp_vx":
             {
                 'title': '支撑剂密度和水平速度关系',
@@ -54,30 +51,3 @@ class Config:
             'y': 'vcs'
         }
     }
-    @staticmethod
-    def init_app(self):
-        pass
-
-
-class DevelopmentConfig(Config):
-    DEBUG = True
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DEVE_DATABASE_URL') or 'mysql://llb:123456@forcebing.top/liliangbin'
-
-
-class TestingConfig(Config):
-    TESTING = True
-    SQLALCHEMY_DATABASE_URI = os.environ.get('TEST_DATABASE_URL') or 'sqlite://'
-
-
-class ProductionConfig(Config):
-    SQLALCHEMY_DATABASE_URI = os.environ.get('PRODUCTION_DATABASE_URL') or 'sqlite:///' + os.path.join(basedir,
-                                                                                                       'data.sqlite')
-
-
-config = {
-    'development': DevelopmentConfig,
-    'testing': TestingConfig,
-    'production': ProductionConfig,
-
-    'default': DevelopmentConfig
-}

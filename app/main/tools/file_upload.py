@@ -38,31 +38,7 @@ def save_im():
     return "done"
 
 
-# 上传背景图片 并强制转化图片大小  需要重构
-@main.route('/image_back/', methods=['POST', 'GET'])
-def image_back():
-    image_path = Config.UPLOAD_IMAGE_PATH
-    print(request.files)
-    id = request.form.get('id')
-    image = request.files.get('background')
-    location = request.form.get('location')
-    print(location)
-    print('hello world ')
-    temfile = 'test.jpg'
-    file_path = image_path + 'back_' + id + '.png'
-    image.save(temfile)
-    img = cv2.imread(temfile)
-    print(type(img))
-    shape = img.shape
-    width = shape[1]
-    temp_scale = 640 / float(width)
-    scale = round(temp_scale, 1)
-    print("cscale ==" + str(scale))
-
-    newImage = cv2.resize(img, None, fx=scale, fy=scale)
-    cv2.imwrite(file_path, newImage)
-
-
+#  上传的背景图片
 @main.route('/FileUpload/', methods=['POST', 'GET'])
 def FileUpload():
     images = request.files.getlist('file')
@@ -74,9 +50,8 @@ def FileUpload():
     # TODO // 对图像的后缀以及名字的合法性进行鉴定
     for image in images:
         image_path = Config.UPLOAD_IMAGE_PATH
-        document_path = Config.SAVE_DOCUMENT_PATH
         print(request.files)
-        print('hello world ')
+        print('save temp upload back group with  name test.jpg ')
         temfile = 'test.jpg'
         file_path = image_path + 'back_' + filename + '.png'
         image.save(temfile)
@@ -98,19 +73,18 @@ def FileUpload():
 @main.route('/VideoUpload/', methods=['POST', 'GET'])
 def VideoUpload():
     videos = request.files.getlist('file')
+    video_save_location = Config.SAVE_VIDEO_PATH
     print(len(videos))
+    print('upload path === {}'.format(video_save_location))
 
-    # TODO // 对图像的后缀以及名字的合法性进行鉴定
     for video in videos:
-        print(video.filename)
-        print(video.filename, os.path.abspath(video.filename))
+        print('file name ==={}'.format(video.filename))
         if allowed_file(video.filename):
-            file_path = Config.UPLOAD_PATH + os.sep + os.path.split(os.path.abspath(video.filename))[1]
-            video.save(file_path)
+            video.save(video_save_location+video.filename)
             return '1'
         else:
-            flash('Wrong file type!' + video.filename, 'danger')
-            # return redirect(url_for('.index'))
-    flash("Upload successfully!", 'success')  # @hehao
-    # video.save(Config.UPLOAD_PATH + video.filename)
+            print('当前file 后缀不支持')
+            return '0'
+
+    print('无上传的文件')
     return '0'

@@ -1,15 +1,15 @@
 class formuta:
     def __init__(self, Param_Pp, Param_Pf, Param_Dp, Param_Ua, Param_c, Param_w, Param_q, Param_h, Param_fai):
         self.Constant_g = float(9.8)
-        self.Param_Pp = Param_Pp
-        self.Param_Pf = Param_Pf
-        self.Param_Dp = Param_Dp
-        self.Param_Ua = Param_Ua
-        self.Param_c = Param_c
-        self.Param_w = Param_w
-        self.Param_q = Param_q
-        self.Param_h = Param_h
-        self.Param_fai = Param_fai
+        self.Param_Pp = float(Param_Pp)
+        self.Param_Pf = float(Param_Pf)
+        self.Param_Dp = float(Param_Dp)
+        self.Param_Ua = float(Param_Ua)
+        self.Param_c = float(Param_c)
+        self.Param_w = float(Param_w)
+        self.Param_q = float(Param_q)
+        self.Param_h = float(Param_h)
+        self.Param_fai = float(Param_fai)
 
     def Count(self):
         # print('qwe')
