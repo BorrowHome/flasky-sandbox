@@ -8,6 +8,7 @@ class Config:
     UPLOAD_IMAGE_PATH = basedir + "\\app\\static\\image\\"
     SAVE_DOCUMENT_PATH = basedir + "\\app\\static\\document\\"
     SAVE_VIDEO_PATH = basedir + "\\app\\static\\video\\"
+    ONVIF_DEPENDENCE_LOCATION = basedir + "\\app\\dependence\\wsdl\\"
     LINER_CONFIG = {
         "pp_vx":
             {

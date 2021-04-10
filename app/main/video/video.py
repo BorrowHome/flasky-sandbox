@@ -203,8 +203,8 @@ def formuta_count():
     fai = data.get('fai')
 
     # aasd = formuta(pp, pf, dp, ua, c, w, q, h, fai)
-    aasd = formuta(2850, 1020, 0.001, 10, 0.3, 4.5 * 0.001, 5 / 60, 1, 0.3)
-    # aasd = formuta(pp, pf, dp, ua, c, w, test_q, h, fai)
+    # aasd = formuta(2850, 1020, 0.001, 10, 0.3, 4.5 * 0.001, 5 / 60, 1, 0.3)
+    aasd = formuta(pp, pf, dp, ua, c, w, test_q, h, fai)
 
     q = aasd.Count()
     data.update(q)

@@ -64,18 +64,18 @@ def steam():
     ipc = Onvif_hik(ipv4, 8899, 'admin', '')
     print(ipv4)
     rtsp_uri = 'rtmp://58.200.131.2:1935/livetv/cctv1'
-    # if ipc.content_cam():
-    #     rtsp_uri = ipc.get_steam_uri()
-    #     print("done")
-    #     return Response(gen(VideoCamera(rtsp_uri)),
-    #                     mimetype='multipart/x-mixed-replace; boundary=frame')
-    #     # return rtsp_uri
-    #
-    # else:
-    #     print('ip 未找到')
-    #     return "ip 未找到"
-    return Response(gen(VideoCamera(rtsp_uri)),
-                    mimetype='multipart/x-mixed-replace; boundary=frame')
+    if ipc.content_cam():
+        rtsp_uri = ipc.get_steam_uri()
+        print("done")
+        return Response(gen(VideoCamera(rtsp_uri)),
+                        mimetype='multipart/x-mixed-replace; boundary=frame')
+        # return rtsp_uri
+
+    else:
+        print('ip 未找到')
+        return "ip 未找到"
+    # return Response(gen(VideoCamera(rtsp_uri)),
+    #                 mimetype='multipart/x-mixed-replace; boundary=frame')
 
 
 @main.route('/thread/')
@@ -89,26 +89,26 @@ def thread():
     print(ipv4)
     rtsp_uri = 'rtmp://58.200.131.2:1935/livetv/cctv1'
 
-    # if ipc.content_cam():
-    #     rtsp_uri = ipc.get_steam_uri()
-    #     print("get rtsp done")
-    #
-    #     thread1 = myThread(1, rtsp_uri, ipv4)
-    #
-    #     # 开启新线程
-    #     thread1.start()
-    #     threadsPool.__setitem__(ipv4, thread1)
-    #
-    #     return ipv4 + '已新建录制'
-    # else:
-    #     print('ip has some errors')
-    #     return 'ip has some errors'
-    thread1 = myThread(1, rtsp_uri, ipv4)
+    if ipc.content_cam():
+        rtsp_uri = ipc.get_steam_uri()
+        print("get rtsp done")
 
-    # 开启新线程
-    thread1.start()
-    threadsPool.__setitem__(ipv4, thread1)
-    return ipv4 + '已新建录制'
+        thread1 = myThread(1, rtsp_uri, ipv4)
+
+        # 开启新线程
+        thread1.start()
+        threadsPool.__setitem__(ipv4, thread1)
+
+        return ipv4 + '已新建录制'
+    else:
+        print('ip has some errors')
+        return 'ip has some errors'
+    # thread1 = myThread(1, rtsp_uri, ipv4)
+    #
+    # # 开启新线程
+    # thread1.start()
+    # threadsPool.__setitem__(ipv4, thread1)
+    # return ipv4 + '已新建录制'
 
 
 @main.route('/stop/')
@@ -137,5 +137,8 @@ def steam_uri():
     ipc = Onvif_hik(ipv4, 8899, 'admin', '')
     print(ipv4)
     rtsp_uri = 'rtmp://58.200.131.2:1935/livetv/cctv1'
+    if ipc.content_cam():
+        rtsp_uri = ipc.get_steam_uri()
+        print("get rtsp done")
 
     return rtsp_uri

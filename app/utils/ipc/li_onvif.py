@@ -6,6 +6,8 @@ import zeep
 from onvif import ONVIFCamera
 from requests.auth import HTTPDigestAuth
 
+from config import Config
+
 
 def zeep_pythonvalue(self, xmlvalue):
     return xmlvalue
@@ -26,7 +28,8 @@ class Onvif_hik(object):
         :return:
         """
         try:
-            self.mycam = ONVIFCamera(self.ip, self.port, self.username, self.password)
+            self.mycam = ONVIFCamera(self.ip, self.port, self.username, self.password,
+                                     wsdl_dir=Config.ONVIF_DEPENDENCE_LOCATION)
             self.media = self.mycam.create_media_service()  # 创建媒体服务
             # print(self.media.GetProfiles())
             self.media_profile = self.media.GetProfiles()[0]  # 获取配置信息
