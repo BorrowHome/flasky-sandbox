@@ -286,7 +286,6 @@ def mosaicpicture():
     # 图像第三通道 反转
     s = sub.inverse(q)
     # cv2.imwrite(image_path + "iblack_" + id + ".png", t)
-    # cv2.imwrite(image_path + "ipaint_" + video_name + ".png", s)
     cv2.imencode('.png', s)[1].tofile(image_path + "ipaint_" + video_name + ".png")
     with open(document_path + "site_" + video_name + ".txt", "r+") as  f:
         a = f.readlines()
@@ -298,11 +297,6 @@ def mosaicpicture():
     #调整拼接视频数据csv 对应位置的值
     for i in range(len(res['list_x'])):
         res['list_x'][i] = res['list_x'][i] + CoordinateAddNumb
-        # res['list_x'][i]=res['list_x'][i]+CoordinateAddNumb-frame_location.locate_x
-    #测试@res
-
-    with open('res.txt','a+') as f:
-        f.write('{},{},{}\n'.format(len(res['list_x']),len(res['list_y']),res['list_x'][0]))
 
     with open(document_path + "sand_VideoMosaic.csv", "r+") as  f:
         qwe=f.read().strip().split('\n')
@@ -333,8 +327,4 @@ def mosaicpicture():
     # 变化得y轴
     res['video_name'] = video_name
     # 添加  用于增加当前视频显示在图标中的坐标值
-    #test 数据
-    with open("testsand_VideoMosaic.csv", "a+") as  f:
-        f.write('{}\n'.format(len(res['list_x'])))
-        # f.writelines(res['list_y'])
     return res
