@@ -53,7 +53,7 @@ class Onvif_hik(object):
     def get_steam_uri(self):
         print(self.media_profile.token)
         res = self.media.GetStreamUri(
-            {'StreamSetup': {'Stream': 'RTP-Unicast', 'Transport': 'HTTP'}, 'ProfileToken': self.media_profile.token})
+            {'StreamSetup': {'Stream': 'RTP-Unicast', 'Transport': 'HTTP'}, 'ProfileToken': '002'})
         print(res.Uri)
         # 此处默认拿的是最大的分辨率，我们可以把token 换成001 或是002 ，分辨率会下来
         return res.Uri
