@@ -20,5 +20,6 @@ print('main to  ', basedir)
 if __name__ == "__main__":
     from waitress import serve
 
+    print('init multiple threads ===>{}'.format(count * 2 + 1))
     # waitress官方有更多详细的启动方式
-    serve(app, listen='0.0.0.0:8082', threads=count * 2 + 1)
+    serve(app, listen='0.0.0.0:8082', threads=50)
