@@ -59,21 +59,17 @@ def picture():
     cv2.imencode('.png', img_np)[1].tofile(image_path + image_name)
     # 保存完毕
 
-    # 当前帧减去背景帧
-    image_back = "back_{}.png".format(video_name)
-    print(image_back)
-    background = cv2.imdecode(np.fromfile(image_path + image_back, dtype=np.uint8),cv2.IMREAD_COLOR)
-
     currentFrame = img_np
 
     sub = PictureSub()
     # # 图像相减
-    q = sub.subtract_demo(background, currentFrame)
+    q = sub.subtract_demo('', currentFrame)
     # # 图像第三通道 反转
     # s = sub.inverse(q)
     #
     # # cv2.imwrite(image_path + "iblack_" + id + ".png", t)
     #
+    print(q)
     cv2.imwrite(image_path + "ipaint_" + video_name + ".png", q)
     # s = sub.testf(image_path + image_name, image_path + image_back,video_name)
     # 图像第三通道 反转
@@ -108,7 +104,7 @@ def background():
     video_name = "back_{}.png".format(video_name.strip())
     print("=====back image name====={}".format(video_name))
     img_np = base64_to_png(frame)
-    cv2.imencode('.png', img_np)[1].tofile(image_path+video_name)
+    cv2.imencode('.png', img_np)[1].tofile(image_path + video_name)
     return 'done'
 
 
@@ -216,7 +212,9 @@ def formuta_count():
     q = aasd.Count()
     data.update(q)
     return jsonify(data)
-#mosaicpicture
+
+
+# mosaicpicture
 
 #
 @main.route('/mosaicpicture/', methods=['POST'])
@@ -237,32 +235,32 @@ def mosaicpicture():
     print(video_names)
     print(video_name)
     for i in range(len(video_names)):
-        video_names[i]=video_names[i].split('.')[0]
-    videoOrder=video_names.index(video_name)
-    CoordinateAddNumb=0
-    #将超过总的 move_x 的坐标点删除 保证不会出现上次实验留下的多余点
-    #计算最大y数据 MaxY
-    MaxY=0
+        video_names[i] = video_names[i].split('.')[0]
+    videoOrder = video_names.index(video_name)
+    CoordinateAddNumb = 0
+    # 将超过总的 move_x 的坐标点删除 保证不会出现上次实验留下的多余点
+    # 计算最大y数据 MaxY
+    MaxY = 0
     for i in video_names:
         frame_location = Site.read_site(document_path + "site_{}.txt".format(i))
-        CoordinateAddNumb+=frame_location.move_x
-        if frame_location.move_y>MaxY:
-            MaxY=frame_location.move_y
+        CoordinateAddNumb += frame_location.move_x
+        if frame_location.move_y > MaxY:
+            MaxY = frame_location.move_y
 
     with open(document_path + "sand_VideoMosaic.csv", "r+") as  f:
         qwe = f.read().strip().split('\n')
-        Lenqwe=len(qwe)
-        if Lenqwe<CoordinateAddNumb+10:
-            for i in range(CoordinateAddNumb+10-Lenqwe):
-                qwe.append('{},0'.format(Lenqwe+i))
-        qwe = qwe[0:CoordinateAddNumb+10]
+        Lenqwe = len(qwe)
+        if Lenqwe < CoordinateAddNumb + 10:
+            for i in range(CoordinateAddNumb + 10 - Lenqwe):
+                qwe.append('{},0'.format(Lenqwe + i))
+        qwe = qwe[0:CoordinateAddNumb + 10]
     with open(document_path + "sand_VideoMosaic.csv", "w+") as f:
         f.writelines('\n'.join(qwe))
 
     CoordinateAddNumb = 0
     for i in video_names[0:videoOrder]:
         frame_location = Site.read_site(document_path + "site_{}.txt".format(i))
-        CoordinateAddNumb+=frame_location.move_x
+        CoordinateAddNumb += frame_location.move_x
 
     frame_location = Site.read_site(document_path + "site_{}.txt".format(video_name))
 
@@ -276,49 +274,43 @@ def mosaicpicture():
     cv2.imencode('.png', img_np)[1].tofile(image_path + image_name)
     # 保存完毕
     # 当前帧减去背景帧
-    image_back = "back_{}.png".format(video_name)
-    # background = cv2.imread(image_path + image_back)
-    background = cv2.imdecode(np.fromfile(image_path + image_back, dtype=np.uint8), cv2.IMREAD_COLOR)
     currentFrame = img_np
     sub = PictureSub()
     # 图像相减
-    q = sub.subtract_demo(background, currentFrame)
+    q = sub.subtract_demo('', currentFrame)
     # 图像第三通道 反转
+    print(q)
     s = sub.inverse(q)
     # cv2.imwrite(image_path + "iblack_" + id + ".png", t)
     cv2.imencode('.png', s)[1].tofile(image_path + "ipaint_" + video_name + ".png")
-    with open(document_path + "site_" + video_name + ".txt", "r+") as  f:
+    with open(document_path + "site_" + video_name.strip() + ".txt", "r+") as  f:
         a = f.readlines()
         print(a)
         frame_location = Site(int(a[0]), int(a[1]), int(a[2]), int(a[3]))
-    res = sub.ipaint(s, 220, video_name, frame_location.locate_x, frame_location.move_x, frame_location.locate_y,
+    print(video_name)
+    res = sub.ipaint(q, 220, video_name, frame_location.locate_x, frame_location.move_x, frame_location.locate_y,
                      frame_location.move_y)
-    #res 进行处理
-    #调整拼接视频数据csv 对应位置的值
+    # res 进行处理
+    # 调整拼接视频数据csv 对应位置的值
     for i in range(len(res['list_x'])):
         res['list_x'][i] = res['list_x'][i] + CoordinateAddNumb
 
     with open(document_path + "sand_VideoMosaic.csv", "r+") as  f:
-        qwe=f.read().strip().split('\n')
+        qwe = f.read().strip().split('\n')
         writer = csv.writer(f)
-        print(len(res['list_x']),len(res['list_y']))
+        print(len(res['list_x']), len(res['list_y']))
         for i in range(len(res['list_x'])):
-            qwe[CoordinateAddNumb+i]=qwe[CoordinateAddNumb+i].split(',')[0]+',{}'.format(res['list_y'][i])
+            qwe[CoordinateAddNumb + i] = qwe[CoordinateAddNumb + i].split(',')[0] + ',{}'.format(res['list_y'][i])
     with open(document_path + "sand_VideoMosaic.csv", "w+") as  f:
         f.writelines('\n'.join(qwe))
-    listx=[]
-    listy=[]
+    listx = []
+    listy = []
     # 根据拼接视频csv 上传res数据
     with open(document_path + "sand_VideoMosaic.csv", "r+") as  f:
-        wadad=f.read().strip().split('\n')
+        wadad = f.read().strip().split('\n')
         for i in wadad:
             listx.append(int(i.split(',')[0]))
             listy.append(int(i.split(',')[1]))
-            # try:
-            #     listx.append(int(i.split(',')[0]))
-            #     listy.append(int(i.split(',')[1]))
-            # except:
-            #     continue
     res = {
         "list_x": listx,
         "list_y": listy
