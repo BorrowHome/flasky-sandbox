@@ -14,7 +14,7 @@ from app.utils.frame.frame import base64_to_png
 from app.utils.frame.site import Site
 from app.utils.frame.sub import PictureSub
 from config import Config
-
+from app.utils.image import image_crop,image_split
 
 @main.route('/')
 def index():
@@ -70,7 +70,8 @@ def picture():
     # # cv2.imwrite(image_path + "iblack_" + id + ".png", t)
     #
     print(q)
-    cv2.imwrite(image_path + "ipaint_" + video_name + ".png", q)
+    # cv2.imwrite(image_path + "ipaint_" + video_name + ".png", q)
+    cv2.imencode('.png', q)[1].tofile(image_path + "ipaint_" + video_name + ".png")
     # s = sub.testf(image_path + image_name, image_path + image_back,video_name)
     # 图像第三通道 反转
     s = sub.inverse(q)
@@ -220,6 +221,7 @@ def formuta_count():
 @main.route('/mosaicpicture/', methods=['POST'])
 def mosaicpicture():
     video_names = []
+    image_path = Config.UPLOAD_IMAGE_PATH
     path_in = './app/static/video/'
     document_path = Config.SAVE_DOCUMENT_PATH
     for dirpath, dirnames, filenames in os.walk(path_in):
@@ -261,16 +263,13 @@ def mosaicpicture():
     for i in video_names[0:videoOrder]:
         frame_location = Site.read_site(document_path + "site_{}.txt".format(i))
         CoordinateAddNumb += frame_location.move_x
-
     frame_location = Site.read_site(document_path + "site_{}.txt".format(video_name))
-
     image_path = Config.UPLOAD_IMAGE_PATH
     document_path = Config.SAVE_DOCUMENT_PATH
     # 传入的当前的帧保存
     # video_name = data.get('video_name').strip()
     img_np = base64_to_png(strqwe)
     image_name = "current_{}.png".format(video_name.strip())
-    # cv2.imwrite(image_path + image_name, img_np)
     cv2.imencode('.png', img_np)[1].tofile(image_path + image_name)
     # 保存完毕
     # 当前帧减去背景帧
@@ -279,9 +278,7 @@ def mosaicpicture():
     # 图像相减
     q = sub.subtract_demo('', currentFrame)
     # 图像第三通道 反转
-    print(q)
     s = sub.inverse(q)
-    # cv2.imwrite(image_path + "iblack_" + id + ".png", t)
     cv2.imencode('.png', s)[1].tofile(image_path + "ipaint_" + video_name + ".png")
     with open(document_path + "site_" + video_name.strip() + ".txt", "r+") as  f:
         a = f.readlines()
@@ -318,5 +315,13 @@ def mosaicpicture():
     res['max'] = MaxY
     # 变化得y轴
     res['video_name'] = video_name
+    #以下为拼接图片显示区域
+    imagenames=[]
+    if videoOrder==len(video_names)-1:
+        for i in video_names:
+            image_crop(image_path+'current_'+i+'.png', document_path+'site_'+i+'.txt', image_path+i)
+        imagenames=[image_path+i+'_mosaic.jpg' for i in video_names]
+        image_split(image_path,imagenames,len(video_names))
+
     # 添加  用于增加当前视频显示在图标中的坐标值
     return res
