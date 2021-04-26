@@ -14,7 +14,8 @@ from app.utils.frame.frame import base64_to_png
 from app.utils.frame.site import Site
 from app.utils.frame.sub import PictureSub
 from config import Config
-from app.utils.image import image_crop,image_split
+from app.utils.image import image_crop, image_split
+
 
 @main.route('/')
 def index():
@@ -32,7 +33,7 @@ def index():
                 video_names.append(dir_file_name)
 
     if len(video_names):
-        video_name = video_names[0].split('.')[0]
+        video_name = video_names[0].split('.mp4')[0]
     else:
         video_name = '0'
     frame_location = Site.read_site(document_path + "site_{}.txt".format(video_name))
@@ -206,11 +207,13 @@ def formuta_count():
     h = data.get('h')
     fai = data.get('fai')
 
+    print(data)
     # aasd = formuta(pp, pf, dp, ua, c, w, q, h, fai)
     # aasd = formuta(2850, 1020, 0.001, 10, 0.3, 4.5 * 0.001, 5 / 60, 1, 0.3)
     aasd = formuta(pp, pf, dp, ua, c, w, test_q, h, fai)
 
     q = aasd.Count()
+
     data.update(q)
     return jsonify(data)
 
@@ -237,7 +240,7 @@ def mosaicpicture():
     print(video_names)
     print(video_name)
     for i in range(len(video_names)):
-        video_names[i] = video_names[i].split('.')[0]
+        video_names[i] = video_names[i].split('.mp4')[0]
     videoOrder = video_names.index(video_name)
     CoordinateAddNumb = 0
     # 将超过总的 move_x 的坐标点删除 保证不会出现上次实验留下的多余点
@@ -315,13 +318,15 @@ def mosaicpicture():
     res['max'] = MaxY
     # 变化得y轴
     res['video_name'] = video_name
-    #以下为拼接图片显示区域
-    imagenames=[]
-    if videoOrder==len(video_names)-1:
+    # 以下为拼接图片显示区域
+    imagenames = []
+    print(video_names)
+    if videoOrder == len(video_names) - 1:
         for i in video_names:
-            image_crop(image_path+'current_'+i+'.png', document_path+'site_'+i+'.txt', image_path+i)
-        imagenames=[image_path+i+'_mosaic.jpg' for i in video_names]
-        image_split(image_path,imagenames,len(video_names))
+            image_path = './app/static/image/'
+            image_crop(image_path + 'current_{}.png'.format(i), document_path + 'site_{}.txt'.format(i), image_path + i)
+        imagenames = [image_path + i + '_mosaic.jpg' for i in video_names]
+        image_split(image_path, imagenames, len(video_names))
 
     # 添加  用于增加当前视频显示在图标中的坐标值
     return res

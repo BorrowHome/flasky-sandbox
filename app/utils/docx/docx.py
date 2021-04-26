@@ -27,7 +27,7 @@ def set_sand_docxtpl(dict_data, location=''):
                 dir_file_name = filename
                 if os.path.splitext(dir_file_name)[1] == '.mp4':  # (('./app/static/movie', '.mp4'))
                     print(dir_file_name)
-                    names.append(dir_file_name.split('.')[0])
+                    names.append(dir_file_name.split('.mp4')[0])
                     video_names.append(path_out + dir_file_name)
 
         length = len(video_names)

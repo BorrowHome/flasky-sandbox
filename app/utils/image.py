@@ -11,6 +11,9 @@ from config import Config
 # save_path = "D://kk//"
 
 def image_crop(image_path,coordinate_path,save_path):  #图片裁减，参数分别为背景图文件路径，坐标文件路径，裁剪后图片保存路径
+
+    print(image_path)
+    print(coordinate_path)
     img = cv2.imread(image_path)
     f = open(coordinate_path, "r")
     line = f.read()
@@ -23,6 +26,7 @@ def image_crop(image_path,coordinate_path,save_path):  #图片裁减，参数分
     crop = img[int(locate_y):int(final_y),int(locate_x):int(final_x)]  #按照坐标进行裁剪
     # cv2.imshow("image", crop)
     # cv2.waitKey(0)
+    print('save pictuure')
     cv2.imwrite(save_path + "_mosaic.jpg", crop)   #保存图片
 
 

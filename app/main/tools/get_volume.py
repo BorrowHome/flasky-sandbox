@@ -65,7 +65,7 @@ def mosaicarea():
     print(video_names)
     FrontVideo_names=[]
     for i in range(len(video_names)):
-        FrontVideo_names.append(video_names[i].split('.')[0])
+        FrontVideo_names.append(video_names[i].split('.mp4')[0])
     Frame_areaS=0
     Sand_areaS=0
     Sand_frame_scales=[]
