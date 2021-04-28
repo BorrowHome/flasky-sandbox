@@ -309,8 +309,9 @@ def mosaicpicture():
     with open(document_path + "sand_VideoMosaic.csv", "r+") as  f:
         wadad = f.read().strip().split('\n')
         for i in wadad:
-            listx.append(int(i.split(',')[0]))
-            listy.append(int(i.split(',')[1]))
+            if i!='':
+                listx.append(int(i.split(',')[0]))
+                listy.append(int(i.split(',')[1]))
     res = {
         "list_x": listx,
         "list_y": listy
