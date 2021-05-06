@@ -3,6 +3,7 @@ import PIL.Image as Image
 import cv2
 import numpy as np
 from config import Config
+
 # image_path = r'C:\Users\admin\Desktop\沙箱截图\\'  # 图片集的地址
 # image_save_path = r'C:\Users\admin\Desktop\kk\final.jpg'  # 图片合并后的保存地址
 #
@@ -10,33 +11,38 @@ from config import Config
 # coordinate_path = r"D:\kk\coordinate.txt"
 # save_path = "D://kk//"
 
-def image_crop(image_path,coordinate_path,save_path):  #图片裁减，参数分别为背景图文件路径，坐标文件路径，裁剪后图片保存路径
+
+def image_crop(image_path, coordinate_path, save_path):  # 图片裁减，参数分别为背景图文件路径，坐标文件路径，裁剪后图片保存路径
 
     print(image_path)
     print(coordinate_path)
-    img = cv2.imread(image_path)
+    # img = cv2.imread(image_path)
+    img = cv2.imdecode(np.fromfile(image_path, dtype=np.uint8), -1)
     f = open(coordinate_path, "r")
     line = f.read()
-    num = line.split('\n')   #读取坐标
+    num = line.split('\n')  # 读取坐标
     print(num[0], num[1], num[2], num[3])
-    locate_x, locate_y, move_x, move_y =num[0], num[1], num[2], num[3]
+    locate_x, locate_y, move_x, move_y = num[0], num[1], num[2], num[3]
     final_y = int(locate_y) + int(move_y)
     final_x = int(locate_x) + int(move_x)
     # print(final_y,final_x)
-    crop = img[int(locate_y):int(final_y),int(locate_x):int(final_x)]  #按照坐标进行裁剪
+    try:
+        crop = img[int(locate_y):int(final_y), int(locate_x):int(final_x)]  # 按照坐标进行裁剪
+    except Exception as e:
+        print('ddd')
     # cv2.imshow("image", crop)
     # cv2.waitKey(0)
     print('save pictuure')
-    cv2.imwrite(save_path + "_mosaic.jpg", crop)   #保存图片
+    cv2.imwrite(save_path + "_mosaic.jpg", crop)  # 保存图片
 
 
-def image_split(image_path,image_names,image_column):  #图片合并算法
+def image_split(image_path, image_names, image_column):  # 图片合并算法
     IMAGES_PATH = image_path
     IMAGES_FORMAT = ['.jpg', '.JPG']  # 图片格式
     IMAGE_SIZE = 256  # 每张小图片的大小
     IMAGE_ROW = 1  # 图片间隔，也就是合并成一张图后，一共有几行
     IMAGE_COLUMN = image_column  # 图片间隔，也就是合并成一张图后，一共有几列
-    IMAGE_SAVE_PATH = Config.UPLOAD_IMAGE_PATH+'VideoMosaic.png'
+    IMAGE_SAVE_PATH = Config.UPLOAD_IMAGE_PATH + 'VideoMosaic.png'
 
     # 获取图片集地址下的所有图片名称
     print(image_names)

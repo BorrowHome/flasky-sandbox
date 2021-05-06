@@ -1,5 +1,5 @@
 @echo off
 echo Starting ffmepg backend...
-start /min "ffmepgTransfer" "server.exe"
+REM start /min "ffmepgTransfer" "server.exe"
 echo Starting server...
 start /min "serverbackend" "waitress_manage.exe"

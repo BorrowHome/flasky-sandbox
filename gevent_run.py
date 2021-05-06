@@ -1,7 +1,6 @@
 import os
 
 from flask_script import Manager
-from gevent import monkey
 from gevent import pywsgi
 
 from app import create_app

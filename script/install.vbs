@@ -1,8 +1,8 @@
 currentpath = createobject("Scripting.FileSystemObject").GetFolder(".").Path
 
 set WshShell=WScript.CreateObject("WScript.Shell")
-strDesktop=WshShell.SpecialFolders("Desktop")
-' strDesktop="c:/sandbox"
+' strDesktop=WshShell.SpecialFolders("Desktop")
+strDesktop="c:/sandbox"
 set oShellLink=WshShell.CreateShortcut(strDesktop & "\start.lnk")
 oShellLink.TargetPath=currentpath & "\start.bat"
 oShellLink.WindowStyle=1

@@ -53,6 +53,29 @@ class VideoCamera(object):
                 break
 
 
+# 处理图像畸变情况
+def resolve_change(img):
+    fx = 1000
+    cx = 960
+    fy = 1000
+    cy = 540
+    k1, k2, p1, p2, k3 = -0.195, 0.05, 0, 0, 0
+
+    # 相机坐标系到像素坐标系的转换矩阵
+    k = np.array([
+        [fx, 0, cx],
+        [0, fy, cy],
+        [0, 0, 1]
+    ])
+    # 畸变系数
+    d = np.array([
+        k1, k2, p1, p2, k3
+    ])
+    h, w = img.shape[:2]
+    mapx, mapy = cv2.initUndistortRectifyMap(k, d, None, k, (w, h), 5)
+    return cv2.remap(img, mapx, mapy, cv2.INTER_LINEAR)
+
+
 if __name__ == '__main__':
     came = VideoCamera(0)
     came.show()

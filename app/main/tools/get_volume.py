@@ -36,7 +36,10 @@ def get_volume():
                                          frame_location.locate_y + frame_location.move_y)
 
     img = t
-    sand_area = ostu(img)
+    sand_area = ostu(img, frame_location.locate_x,
+                     frame_location.locate_x + frame_location.move_x,
+                     frame_location.locate_y,
+                     frame_location.locate_y + frame_location.move_y)
     print(sand_area)
     sand_frame_scale = float(sand_area) / float(frame_area)
     print(sand_frame_scale)
@@ -47,6 +50,8 @@ def get_volume():
         "sand_frame_scale": sand_frame_scale,
         "video_name": video_name
     }
+
+
 @main.route("/mosaicarea/", methods=['POST'])
 def mosaicarea():
     image_path = Config.UPLOAD_IMAGE_PATH
@@ -63,12 +68,12 @@ def mosaicarea():
                 video_names.append(dir_file_name)
     data = json.loads(request.get_data(as_text=True))
     print(video_names)
-    FrontVideo_names=[]
+    FrontVideo_names = []
     for i in range(len(video_names)):
         FrontVideo_names.append(video_names[i].split('.mp4')[0])
-    Frame_areaS=0
-    Sand_areaS=0
-    Sand_frame_scales=[]
+    Frame_areaS = 0
+    Sand_areaS = 0
+    Sand_frame_scales = []
     for video_name in FrontVideo_names:
         path = image_path + "ipaint_{}.png".format(video_name)
         # imread 的filename 长度有限制。
@@ -86,18 +91,21 @@ def mosaicarea():
                                              frame_location.locate_y,
                                              frame_location.locate_x + frame_location.move_x,
                                              frame_location.locate_y + frame_location.move_y)
-        Frame_areaS+=frame_area
+        Frame_areaS += frame_area
         img = t
-        sand_area = ostu(img)
+        sand_area = ostu(img, frame_location.locate_x,
+                         frame_location.locate_x + frame_location.move_x,
+                         frame_location.locate_y,
+                         frame_location.locate_y + frame_location.move_y)
         sand_frame_scale = float(sand_area) / float(frame_area)
-        Sand_frame_scales.append(sand_frame_scale*frame_area)
-        Sand_areaS+=sand_area
+        Sand_frame_scales.append(sand_frame_scale * frame_area)
+        Sand_areaS += sand_area
 
-    frame_area=Frame_areaS
-    sand_area=Sand_areaS
-    sand_frame_scale=0
+    frame_area = Frame_areaS
+    sand_area = Sand_areaS
+    sand_frame_scale = 0
     for i in Sand_frame_scales:
-        sand_frame_scale+=i/frame_area
+        sand_frame_scale += i / frame_area
     print(frame_area)
     print(sand_area)
     print(sand_frame_scale)
@@ -107,7 +115,6 @@ def mosaicarea():
         "sand_area": sand_area,
         "sand_frame_scale": sand_frame_scale
     }
-
 
 
 if __name__ == '__main__':

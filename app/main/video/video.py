@@ -72,7 +72,6 @@ def picture():
     #
     print(q)
     # cv2.imwrite(image_path + "ipaint_" + video_name + ".png", q)
-    cv2.imencode('.png', q)[1].tofile(image_path + "ipaint_" + video_name + ".png")
     # s = sub.testf(image_path + image_name, image_path + image_back,video_name)
     # 图像第三通道 反转
     s = sub.inverse(q)
@@ -324,8 +323,13 @@ def mosaicpicture():
     print(video_names)
     if videoOrder == len(video_names) - 1:
         for i in video_names:
-            image_path = './app/static/image/'
-            image_crop(image_path + 'current_{}.png'.format(i), document_path + 'site_{}.txt'.format(i), image_path + i)
+            imagelo = image_path + 'current_{}.png'.format(i.strip())
+            site_location = document_path + 'site_{}.txt'.format(i.strip())
+            save_path = image_path + i
+            print(imagelo)
+            print(site_location)
+            print(save_path)
+            image_crop(imagelo, site_location, save_path)
         imagenames = [image_path + i + '_mosaic.jpg' for i in video_names]
         image_split(image_path, imagenames, len(video_names))
 
