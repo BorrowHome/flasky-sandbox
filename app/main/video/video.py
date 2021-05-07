@@ -228,7 +228,6 @@ def mosaicpicture():
     document_path = Config.SAVE_DOCUMENT_PATH
     for dirpath, dirnames, filenames in os.walk(path_in):
         for filename in filenames:
-            # dir_file_name = os.path.join(dirpath, filename)
             dir_file_name = filename
             if os.path.splitext(dir_file_name)[1] == '.mp4' or '.avi':  # (('./app/static/movie', '.mp4'))
                 print(dir_file_name)
@@ -250,16 +249,6 @@ def mosaicpicture():
         CoordinateAddNumb += frame_location.move_x
         if frame_location.move_y > MaxY:
             MaxY = frame_location.move_y
-
-    with open(document_path + "sand_VideoMosaic.csv", "r+") as  f:
-        qwe = f.read().strip().split('\n')
-        Lenqwe = len(qwe)
-        if Lenqwe < CoordinateAddNumb + 10:
-            for i in range(CoordinateAddNumb + 10 - Lenqwe):
-                qwe.append('{},0'.format(Lenqwe + i))
-        qwe = qwe[0:CoordinateAddNumb + 10]
-    with open(document_path + "sand_VideoMosaic.csv", "w+") as f:
-        f.writelines('\n'.join(qwe))
 
     CoordinateAddNumb = 0
     for i in video_names[0:videoOrder]:
@@ -294,17 +283,17 @@ def mosaicpicture():
     for i in range(len(res['list_x'])):
         res['list_x'][i] = res['list_x'][i] + CoordinateAddNumb
 
-    with open(document_path + "sand_VideoMosaic.csv", "r+") as  f:
-        qwe = f.read().strip().split('\n')
-        writer = csv.writer(f)
+    with open(document_path + "sand_VideoMosaic_{}.csv".format(video_name), "w+") as  f:
+        qwe = []
+        # print(qwe)
         print(len(res['list_x']), len(res['list_y']))
         for i in range(len(res['list_x'])):
-            qwe[CoordinateAddNumb + i] = qwe[CoordinateAddNumb + i].split(',')[0] + ',{}'.format(res['list_y'][i])
-    with open(document_path + "sand_VideoMosaic.csv", "w+") as  f:
+            qwe.append('{},{}'.format(CoordinateAddNumb + i+1,res['list_y'][i]))
         f.writelines('\n'.join(qwe))
+
     listx = []
     listy = []
-    # 根据拼接视频csv 上传res数据
+    # # 根据拼接视频csv 上传res数据
     with open(document_path + "sand_VideoMosaic.csv", "r+") as  f:
         wadad = f.read().strip().split('\n')
         for i in wadad:
@@ -322,6 +311,28 @@ def mosaicpicture():
     imagenames = []
     print(video_names)
     if videoOrder == len(video_names) - 1:
+        qwe=[]
+        for video_name in video_names:
+            with open(document_path + "sand_VideoMosaic_{}.csv".format(video_name), "r+") as f:
+                tempCsv=f.read().strip().split('\n')
+                qwe=qwe+tempCsv
+        with open(document_path + "sand_VideoMosaic.csv", "w+") as  f:
+            f.writelines('\n'.join(qwe))
+        with open(document_path + "sand_VideoMosaic.csv", "r+") as  f:
+            wadad = f.read().strip().split('\n')
+            listx = []
+            listy = []
+            for i in wadad:
+                if i != '':
+                    listx.append(int(i.split(',')[0]))
+                    listy.append(int(i.split(',')[1]))
+        res = {
+            "list_x": listx,
+            "list_y": listy
+        }
+        res['max'] = MaxY
+        # 变化得y轴
+        res['video_name'] = video_name
         for i in video_names:
             imagelo = image_path + 'current_{}.png'.format(i.strip())
             site_location = document_path + 'site_{}.txt'.format(i.strip())
