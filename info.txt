@@ -19,3 +19,5 @@ waitress
 matplotlib
 openpyxl
 xlrd==1.2.0
+flask_cors
+flask_script

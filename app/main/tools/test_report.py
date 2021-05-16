@@ -2,7 +2,7 @@ import json
 
 from flask import request, render_template, jsonify
 
-from app.utils.docx.docx import set_sand_docxtpl
+from app.utils.docx.docx import set_sand_docxtpl, set_docx
 from config import Config
 from app.main import main
 import pandas as  pd
@@ -15,7 +15,8 @@ def update_report():
     with open(file_location + 'data.json', 'r') as f:
         dict_data = json.load(f)
     try:
-        set_sand_docxtpl(dict_data, location)
+        # set_sand_docxtpl(dict_data, location)
+        set_docx(dict_data, location)
         return "成功"
     except Exception as e:
         print(str(e))

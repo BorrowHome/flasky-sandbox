@@ -19,7 +19,9 @@ class formuta:
                 pow(self.Param_Pf, 0.29) * pow((self.Param_Pp - self.Param_Pf), 0.29) * pow(self.Param_Dp, 0.56))
         Indirect_Param1_Fc = (1 - self.Param_c) / pow(10, self.Param_c * 1.82)
         Indirect_Param1_Fw = 0.563 * pow(self.Param_Dp / self.Param_w, 2) - 1.563 * (self.Param_Dp / self.Param_w) + 1
-        Indirect_Param1_Vc_s = Indirect_Param1_Vs * Indirect_Param1_Fre * Indirect_Param1_Fc * Indirect_Param1_Fw
+        # Indirect_Param1_Vc_s = Indirect_Param1_Vs * Indirect_Param1_Fre * Indirect_Param1_Fc * Indirect_Param1_Fw
+        Indirect_Param1_Vc_s = Indirect_Param1_Vs * Indirect_Param1_Fc * Indirect_Param1_Fw
+
         # 2
 
         Indirect_Param2_Vfs = self.Param_q / (self.Param_w * self.Param_h)
@@ -47,7 +49,7 @@ class formuta:
 
         # 新加覆盖掉以前的
         Indirect_Param3_Ueq = pow(Indirect_Param3_Uw_eq / 3.46, 2) * (
-                    4 * Indirect_Param3_Psc * self.Param_Pf / self.Param_Ua)
+                4 * Indirect_Param3_Psc * Indirect_Param3_Rh / self.Param_Ua)
 
         # 4
         Indirect_Param4_Heq = self.Param_h - self.Param_q / (self.Param_w * Indirect_Param3_Ueq)
@@ -71,5 +73,5 @@ if __name__ == '__main__':
     q = aasd.Count()
     print(q)
 
-# 压裂液的粘度为10mPa·s，砂粒密度2850kg/m3，压裂液密度为1020kg/m3，缝宽4.5mm，缝高1m，粒径1mm，
-# 砂比为30%，排量为5m3/min，砂堤孔隙度30%。
+# 压裂液的粘度为20mPa·s，砂粒密度2850kg/m3，压裂液密度为1020kg/m3，缝宽4.5mm，缝高15m，粒径0.8mm，
+# 砂比为30%，排量为4m3/min，砂堤孔隙度30%。

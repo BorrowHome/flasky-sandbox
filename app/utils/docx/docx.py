@@ -6,7 +6,8 @@ import jinja2
 from docx.shared import Mm
 from docxtpl import DocxTemplate, InlineImage
 
-from app.utils.docx.report_utils import li_multiple_plot, get_result, get_multiple_iback, sand_area_contraction
+from app.utils.docx.report_utils import li_multiple_plot, get_result, get_multiple_iback, sand_area_contraction, \
+    run_single_image
 from config import Config
 
 
@@ -129,3 +130,82 @@ def get_formatua_data():
         data = json.load(f)
     print(data)
     return data
+
+
+def set_docx(dict_data, location=''):
+    #  写入docx 中
+    path_in = './app/static/video/'
+    path_out = '../static/video/'
+    print(dict_data['experiment'])
+    print('\n')
+    names = []
+    if location == '' or location == 'index' or location is None or location == ' ':
+        video_names = []
+        for dirpath, dirnames, filenames in os.walk(path_in):
+            for filename in filenames:
+                # dir_file_name = os.path.join(dirpath, filename)
+                dir_file_name = filename
+                if os.path.splitext(dir_file_name)[1] == '.mp4':  # (('./app/static/movie', '.mp4'))
+                    print(dir_file_name)
+                    names.append(dir_file_name.split('.mp4')[0])
+                    video_names.append(path_out + dir_file_name)
+
+        length = len(video_names)
+
+    else:
+        ips = []
+        document_path = Config.SAVE_DOCUMENT_PATH
+
+        with open(document_path + "ipcConfig.txt", "r+") as  f:
+            a = f.readlines()
+        for i in a:
+            ips.append(i)
+            names.append(''.join(i.split('.')))
+        length = len(ips)
+
+    print("一共有多少个数据")
+    doc = DocxTemplate("tpl2.docx")
+
+    imge_file_location = Config.UPLOAD_IMAGE_PATH
+    x_text = dict_data['device']['x_text']
+    y_text = dict_data['device']['y_text']
+    document_file_location = Config.SAVE_DOCUMENT_PATH
+    #  多折线图
+    multiplt_lines = li_multiple_plot(length, file_location=document_file_location, names=names, x_text=x_text,
+                                      y_text=y_text)
+    single_line = run_single_image(document_file_location, doc, names, x_text, y_text)
+
+    document_location = Config.SAVE_DOCUMENT_PATH
+
+    context = {
+        'device': dict_data['device'],
+        'experiment': dict_data['experiment'],
+        'multiple_lines': InlineImage(doc, multiplt_lines, Mm(100)),
+        'single_lines': single_line,
+        'li_test': [0, 1, 2, 3, 6],
+    }
+    jinja_env = jinja2.Environment(autoescape=True)
+    print('开始准备存入docx ')
+
+    doc.render(context)
+    print('存入docx ')
+    file_location = dict_data['experiment']['file_location']
+    print("file location===>" + file_location)
+    if (os.path.exists(file_location)):
+        print("save docx to {}".format(file_location))
+        doc.save(file_location + "/generated_doc.docx")
+    else:
+        print("cant find the location save to default location")
+        doc.save("generated_doc.docx")
+    doc.save(document_file_location + "generated_doc.docx")
+
+
+if __name__ == '__main__':
+    document_location = Config.SAVE_DOCUMENT_PATH
+
+    with open(document_location + 'data.json', 'r', encoding='UTF-8') as f:
+        data = json.load(f)
+    print(data)
+    set_docx = (document_location)
+
+    print('done')

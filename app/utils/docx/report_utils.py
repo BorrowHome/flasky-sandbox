@@ -2,6 +2,8 @@ import cv2
 import matplotlib
 import numpy as np
 import pandas as pd
+from docx.shared import Mm
+from docxtpl import InlineImage
 
 from app.utils.frame.sub import PictureSub
 
@@ -58,7 +60,6 @@ def li_liner_regression(x, y, test_x, name, file_location=''):
 
     plt.rcParams['savefig.dpi'] = 200  # 图片像素
     plt.rcParams['figure.dpi'] = 200  # 分辨率
-    print('dfdfsd')
     plt.scatter(x, y, color='black')
     plt.plot(test_x, regr.predict(test_x), color='blue',
              linewidth=3)
@@ -96,8 +97,8 @@ def get_result(file_location=''):
 
 
 # 多个曲线放在一个坐标轴里面 生成一张图片 并返回其位置
-def li_multiple_plot(length, file_location='', names=[]):
-    if len(names)==0:
+def li_multiple_plot(length, file_location='', names=[], x_text='', y_text=''):
+    if len(names) == 0:
         names = list(range(0, length))
     plt.figure()
     plt.rcParams['font.sans-serif'] = ['SimHei']  # 用来正常显示中文标签
@@ -115,10 +116,47 @@ def li_multiple_plot(length, file_location='', names=[]):
 
     name = Config.UPLOAD_IMAGE_PATH + 'multiple_lines.png'
     plt.legend()
+    plt.ylabel(y_text)
+    plt.xlabel(x_text)
     plt.savefig(name)
     plt.close()
 
     return name
+
+
+def run_single_image(file_location, tpl, names=[], x_text='', y_text=''):
+    result = []
+    for i in names:
+        single_picture = li_singleLine_plot(file_location, i, x_text, y_text)
+        file = InlineImage(tpl,single_picture, Mm(100))
+        result.append({
+            "video_name": i,
+            "file": file
+        })
+    return result
+
+
+# 获取单条数据的返回
+def li_singleLine_plot(file_location='', name='', x_text='', y_text=''):
+    plt.figure()
+    plt.rcParams['font.sans-serif'] = ['SimHei']  # 用来正常显示中文标签
+    plt.rcParams['axes.unicode_minus'] = False  # 用来正常显示负号
+    plt.rcParams['figure.figsize'] = (8.0, 5.0)
+
+    plt.rcParams['savefig.dpi'] = 200  # 图片像素
+    plt.rcParams['figure.dpi'] = 200  # 分辨率
+
+    csv_data = pd.read_csv(file_location + "sand_" + str(name) + ".csv", header=None, names=['x', 'y'])
+    plt.plot(csv_data['x'], csv_data['y'])
+
+    file_name = Config.UPLOAD_IMAGE_PATH + 'plt_{}.png'.format(name)
+    plt.legend()
+    plt.ylabel(y_text)
+    plt.xlabel(x_text)
+    plt.savefig(file_name)
+    plt.close()
+
+    return file_name
 
 
 #   获取面积关系
