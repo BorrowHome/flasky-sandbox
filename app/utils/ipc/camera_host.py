@@ -38,8 +38,8 @@ class VideoCamera(object):
 
     def get_frame(self):
         success, image = self.video.read()
-        cv2.imwrite('C:\abc.jpg', image)
-        image = self.undistort(image)
+        # cv2.imwrite('C:\abc.jpg', image)
+        # image = self.undistort(image)
         # 因为opencv读取的图片并非jpeg格式，因此要用motion JPEG模式需要先将图片转码成jpg格式图片
         # image = cv2.flip(image, 180)
         ret, jpeg = cv2.imencode('.jpg', image)

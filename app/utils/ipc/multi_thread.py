@@ -71,14 +71,14 @@ class myThread(threading.Thread):
                 return
             rval, frame = cap.read()
             # 添加对图像保存时做畸变处理
-            deal_frame = resolve_change(frame)
+            # deal_frame = resolve_change(frame)
             # cv2.imshow('test', frame)
             # 每间隔20帧保存一张图像帧
             if c % 20 == 0:
                 print('currentFrame==', c, "  " + self.ip)
                 c += 1
             # 使用VideoWriter类中的write(frame)方法，将图像帧写入视频文件
-            outVideo.write(deal_frame)
+            outVideo.write(frame)
 
     def stop(self):
         print('change exit  value to  false')
