@@ -22,13 +22,18 @@ def gen(camera):
 @main.route('/ipc/')
 def ipc():
     ips = []
+    ipnames=[]
     path_out = '../static/video/'
     document_path = Config.SAVE_DOCUMENT_PATH
     try:
-        with open(document_path + "ipcConfig.txt", "r+") as  f:
+        with open(document_path + "ipcConfig.txt", "r+",encoding="utf8") as  f:
             a = f.readlines()
         for i in a:
-            ips.append(i)
+            ips.append(i.split(' ')[0])
+            if len(i.split(' '))==2:
+                ipnames.append(i.split(' ')[-1].strip('\n'))
+            else:
+                ipnames.append(i.split(' ')[0])
     except IOError:
         print('ipc 读取出错')
 
@@ -48,9 +53,11 @@ def ipc():
             a = a.strip()
     except IOError:
         a = path_out
-
+    print('*'*10)
+    print(ipnames)
     return jsonify({
         'ips': ips,
+        'ipnames':ipnames,
         'site': frame_location.get_site(),
         'default_ip': ips[0],
         'video_save_location': a
