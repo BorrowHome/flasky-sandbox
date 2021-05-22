@@ -224,6 +224,11 @@ def formuta_count():
 def mosaicpicture():
     video_names = []
     image_path = Config.UPLOAD_IMAGE_PATH
+    data = json.loads(request.get_data(as_text=True))
+    location = data.get('location')
+    strqwe = data.get('current_frame')
+    video_name = data.get('video_name').strip()
+
     path_in = './app/static/video/'
     document_path = Config.SAVE_DOCUMENT_PATH
     for dirpath, dirnames, filenames in os.walk(path_in):
@@ -232,13 +237,11 @@ def mosaicpicture():
             if os.path.splitext(dir_file_name)[1] == '.mp4' or '.avi':  # (('./app/static/movie', '.mp4'))
                 print(dir_file_name)
                 video_names.append(dir_file_name)
-    data = json.loads(request.get_data(as_text=True))
-    strqwe = data.get('current_frame')
-    video_name = data.get('video_name').strip()
+
     print(video_names)
-    print(video_name)
     for i in range(len(video_names)):
         video_names[i] = video_names[i].split('.mp4')[0]
+
     videoOrder = video_names.index(video_name)
     CoordinateAddNumb = 0
     # 将超过总的 move_x 的坐标点删除 保证不会出现上次实验留下的多余点
@@ -288,7 +291,7 @@ def mosaicpicture():
         # print(qwe)
         print(len(res['list_x']), len(res['list_y']))
         for i in range(len(res['list_x'])):
-            qwe.append('{},{}'.format(CoordinateAddNumb + i+1,res['list_y'][i]))
+            qwe.append('{},{}'.format(CoordinateAddNumb + i + 1, res['list_y'][i]))
         f.writelines('\n'.join(qwe))
 
     listx = []
@@ -297,7 +300,7 @@ def mosaicpicture():
     with open(document_path + "sand_VideoMosaic.csv", "r+") as  f:
         wadad = f.read().strip().split('\n')
         for i in wadad:
-            if i!='':
+            if i != '':
                 listx.append(int(i.split(',')[0]))
                 listy.append(int(i.split(',')[1]))
     res = {
@@ -311,11 +314,11 @@ def mosaicpicture():
     imagenames = []
     print(video_names)
     if videoOrder == len(video_names) - 1:
-        qwe=[]
+        qwe = []
         for video_name in video_names:
             with open(document_path + "sand_VideoMosaic_{}.csv".format(video_name), "r+") as f:
-                tempCsv=f.read().strip().split('\n')
-                qwe=qwe+tempCsv
+                tempCsv = f.read().strip().split('\n')
+                qwe = qwe + tempCsv
         with open(document_path + "sand_VideoMosaic.csv", "w+") as  f:
             f.writelines('\n'.join(qwe))
         with open(document_path + "sand_VideoMosaic.csv", "r+") as  f:

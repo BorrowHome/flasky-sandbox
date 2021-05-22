@@ -8,6 +8,7 @@ from docxtpl import DocxTemplate, InlineImage
 
 from app.utils.docx.report_utils import li_multiple_plot, get_result, get_multiple_iback, sand_area_contraction, \
     run_single_image
+from app.utils.ipc.ipc_read import read_ips
 from config import Config
 
 
@@ -34,13 +35,8 @@ def set_sand_docxtpl(dict_data, location=''):
         length = len(video_names)
 
     else:
-        ips = []
-        document_path = Config.SAVE_DOCUMENT_PATH
-
-        with open(document_path + "ipcConfig.txt", "r+") as  f:
-            a = f.readlines()
-        for i in a:
-            ips.append(i)
+        ips = read_ips()
+        for i in ips:
             names.append(''.join(i.split('.')))
         length = len(ips)
 
@@ -153,13 +149,9 @@ def set_docx(dict_data, location=''):
         length = len(video_names)
 
     else:
-        ips = []
+        ips = read_ips()
         document_path = Config.SAVE_DOCUMENT_PATH
-
-        with open(document_path + "ipcConfig.txt", "r+") as  f:
-            a = f.readlines()
-        for i in a:
-            ips.append(i)
+        for i in ips:
             names.append(''.join(i.split('.')))
         length = len(ips)
 

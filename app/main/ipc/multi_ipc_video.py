@@ -1,6 +1,7 @@
 from flask import jsonify
 
 from app.main import main
+from app.utils.ipc.ipc_read import read_ips
 from app.utils.ipc.li_onvif import Onvif_hik
 from app.utils.ipc.multi_thread import threadsPool, myThread
 from config import Config
@@ -11,11 +12,7 @@ from config import Config
 def thread_all():
     ips = []
     document_path = Config.SAVE_DOCUMENT_PATH
-    with open(document_path + "ipcConfig.txt", "r+") as  f:
-        a = f.readlines()
-    for i in a:
-        ips.append(i.strip())
-
+    ips = read_ips()
     set_ip = []
     for ipv4 in ips:
         if threadsPool.get(ipv4) is not None:
@@ -44,12 +41,7 @@ def thread_all():
 
 @main.route('/stop_all/')
 def stop_all():
-    ips = []
-    document_path = Config.SAVE_DOCUMENT_PATH
-    with open(document_path + "ipcConfig.txt", "r+") as  f:
-        a = f.readlines()
-    for i in a:
-        ips.append(i.strip())
+    ips = read_ips()
     set_ip = []
 
     for ipv4 in ips:

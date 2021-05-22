@@ -3,6 +3,7 @@ from flask import request, jsonify, Response
 from app.main import main
 from app.utils.frame.site import Site
 from app.utils.ipc.camera_host import VideoCamera
+from app.utils.ipc.ipc_read import read_ips, read_ip_names
 from app.utils.ipc.li_onvif import Onvif_hik
 from app.utils.ipc.multi_thread import myThread, threadsPool
 from config import Config
@@ -19,24 +20,13 @@ def gen(camera):
         yield (b'--frame\r\n'
                b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
 
+
 @main.route('/ipc/')
 def ipc():
-    ips = []
-    ipnames=[]
     path_out = '../static/video/'
     document_path = Config.SAVE_DOCUMENT_PATH
-    try:
-        with open(document_path + "ipcConfig.txt", "r+",encoding="utf8") as  f:
-            a = f.readlines()
-        for i in a:
-            ips.append(i.split(' ')[0])
-            if len(i.split(' '))==2:
-                ipnames.append(i.split(' ')[-1].strip('\n'))
-            else:
-                ipnames.append(i.split(' ')[0])
-    except IOError:
-        print('ipc 读取出错')
-
+    ips = read_ips()
+    ipnames = read_ip_names()
     if len(ips):
         ipc_name = ''.join(ips[0].split('.'))
     else:
@@ -53,11 +43,11 @@ def ipc():
             a = a.strip()
     except IOError:
         a = path_out
-    print('*'*10)
+    print('*' * 10)
     print(ipnames)
     return jsonify({
         'ips': ips,
-        'ipnames':ipnames,
+        'ipnames': ipnames,
         'site': frame_location.get_site(),
         'default_ip': ips[0],
         'video_save_location': a
@@ -72,18 +62,18 @@ def steam():
     ipc = Onvif_hik(ipv4, 8899, 'admin', '')
     print(ipv4)
     rtsp_uri = 'rtmp://58.200.131.2:1935/livetv/cctv1'
-    if ipc.content_cam():
-        rtsp_uri = ipc.get_steam_uri()
-        print("done")
-        return Response(gen(VideoCamera(rtsp_uri)),
-                        mimetype='multipart/x-mixed-replace; boundary=frame')
-        # return rtsp_uri
-
-    else:
-        print('ip 未找到')
-        return "ip 未找到"
-    # return Response(gen(VideoCamera(rtsp_uri)),
-    #                 mimetype='multipart/x-mixed-replace; boundary=frame')
+    # if ipc.content_cam():
+    #     rtsp_uri = ipc.get_steam_uri()
+    #     print("done")
+    #     return Response(gen(VideoCamera(rtsp_uri)),
+    #                     mimetype='multipart/x-mixed-replace; boundary=frame')
+    #     # return rtsp_uri
+    #
+    # else:
+    #     print('ip 未找到')
+    #     return "ip 未找到"
+    return Response(gen(VideoCamera(rtsp_uri)),
+                    mimetype='multipart/x-mixed-replace; boundary=frame')
 
 
 @main.route('/thread/')
@@ -145,8 +135,8 @@ def steam_uri():
     ipc = Onvif_hik(ipv4, 8899, 'admin', '')
     print(ipv4)
     rtsp_uri = 'rtmp://58.200.131.2:1935/livetv/cctv1'
-    if ipc.content_cam():
-        rtsp_uri = ipc.get_steam_uri()
-        print("get rtsp done")
+    # if ipc.content_cam():
+    #     rtsp_uri = ipc.get_steam_uri()
+    #     print("get rtsp done")
 
     return rtsp_uri
