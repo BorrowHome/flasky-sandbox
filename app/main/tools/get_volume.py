@@ -8,6 +8,7 @@ from app.utils.areas_height import areaRect
 from app.utils.areas_height.areaS import ostu
 from app.utils.frame.site import Site
 from app.utils.frame.sub import PictureSub
+from app.utils.ipc.ipc_read import read_video_names
 from config import Config
 
 
@@ -56,21 +57,10 @@ def get_volume():
 def mosaicarea():
     image_path = Config.UPLOAD_IMAGE_PATH
     document_path = Config.SAVE_DOCUMENT_PATH
-    video_names = []
-    path_in = './app/static/video/'
-    document_path = Config.SAVE_DOCUMENT_PATH
-    for dirpath, dirnames, filenames in os.walk(path_in):
-        for filename in filenames:
-            # dir_file_name = os.path.join(dirpath, filename)
-            dir_file_name = filename
-            if os.path.splitext(dir_file_name)[1] == '.mp4' or '.avi':  # (('./app/static/movie', '.mp4'))
-                print(dir_file_name)
-                video_names.append(dir_file_name)
     data = json.loads(request.get_data(as_text=True))
-    print(video_names)
-    FrontVideo_names = []
-    for i in range(len(video_names)):
-        FrontVideo_names.append(video_names[i].split('.mp4')[0])
+    location = data.get('location')
+    video_names = []
+    FrontVideo_names = read_video_names(location)
     Frame_areaS = 0
     Sand_areaS = 0
     Sand_frame_scales = []

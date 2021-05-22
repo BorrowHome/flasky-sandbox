@@ -13,6 +13,7 @@ from app.utils.FormutaCount import formuta
 from app.utils.frame.frame import base64_to_png
 from app.utils.frame.site import Site
 from app.utils.frame.sub import PictureSub
+from app.utils.ipc.ipc_read import read_video_names
 from config import Config
 from app.utils.image import image_crop, image_split
 
@@ -222,28 +223,17 @@ def formuta_count():
 #
 @main.route('/mosaicpicture/', methods=['POST'])
 def mosaicpicture():
-    video_names = []
-    image_path = Config.UPLOAD_IMAGE_PATH
     data = json.loads(request.get_data(as_text=True))
     location = data.get('location')
     strqwe = data.get('current_frame')
     video_name = data.get('video_name').strip()
-
-    path_in = './app/static/video/'
+    image_path = Config.UPLOAD_IMAGE_PATH
     document_path = Config.SAVE_DOCUMENT_PATH
-    for dirpath, dirnames, filenames in os.walk(path_in):
-        for filename in filenames:
-            dir_file_name = filename
-            if os.path.splitext(dir_file_name)[1] == '.mp4' or '.avi':  # (('./app/static/movie', '.mp4'))
-                print(dir_file_name)
-                video_names.append(dir_file_name)
-
-    print(video_names)
-    for i in range(len(video_names)):
-        video_names[i] = video_names[i].split('.mp4')[0]
-
+    video_names = read_video_names(location)
     videoOrder = video_names.index(video_name)
+
     CoordinateAddNumb = 0
+
     # 将超过总的 move_x 的坐标点删除 保证不会出现上次实验留下的多余点
     # 计算最大y数据 MaxY
     MaxY = 0
@@ -257,12 +247,9 @@ def mosaicpicture():
     for i in video_names[0:videoOrder]:
         frame_location = Site.read_site(document_path + "site_{}.txt".format(i))
         CoordinateAddNumb += frame_location.move_x
-    frame_location = Site.read_site(document_path + "site_{}.txt".format(video_name))
-    image_path = Config.UPLOAD_IMAGE_PATH
-    document_path = Config.SAVE_DOCUMENT_PATH
-    # 传入的当前的帧保存
-    # video_name = data.get('video_name').strip()
+
     img_np = base64_to_png(strqwe)
+
     image_name = "current_{}.png".format(video_name.strip())
     cv2.imencode('.png', img_np)[1].tofile(image_path + image_name)
     # 保存完毕
