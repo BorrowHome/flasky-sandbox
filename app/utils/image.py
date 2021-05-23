@@ -33,7 +33,8 @@ def image_crop(image_path, coordinate_path, save_path):  # 图片裁减，参数
     # cv2.imshow("image", crop)
     # cv2.waitKey(0)
     print('save pictuure')
-    cv2.imwrite(save_path + "_mosaic.jpg", crop)  # 保存图片
+    # cv2.imwrite(save_path + "_mosaic.jpg", crop)  # 保存图片
+    cv2.imencode('.png', crop)[1].tofile(save_path + "_mosaic.jpg")
 
 
 def image_split(image_path, image_names, image_column):  # 图片合并算法

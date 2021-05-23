@@ -36,11 +36,9 @@ def excel_save():
         f.write(json.dumps(excel))
     return 'df'
 
-
 @main.route("/recovery_Excel/", methods=['POST'])
 def recovery_Excel():
     document_location = Config.SAVE_DOCUMENT_PATH
-
     with open(document_location + 'excel_save.json', 'r', encoding='UTF-8') as f:
         data = json.load(f)
     print('运行 recovery_Excel ,返回本地储存数据')

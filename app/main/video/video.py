@@ -88,7 +88,8 @@ def picture():
     res = sub.ipaint(q, 220, video_name, frame_location.locate_x, frame_location.move_x, frame_location.locate_y,
                      frame_location.move_y)
 
-    res['max'] = frame_location.move_y
+    # res['max'] = frame_location.move_y
+    res['max'] = 1300
     # 变化得y轴
     res['video_name'] = video_name
 
@@ -223,17 +224,25 @@ def formuta_count():
 #
 @main.route('/mosaicpicture/', methods=['POST'])
 def mosaicpicture():
+    video_names = []
+    image_path = Config.UPLOAD_IMAGE_PATH
+    path_in = './app/static/video/'
+    document_path = Config.SAVE_DOCUMENT_PATH
+    for dirpath, dirnames, filenames in os.walk(path_in):
+        for filename in filenames:
+            dir_file_name = filename
+            if os.path.splitext(dir_file_name)[1] == '.mp4' or '.avi':  # (('./app/static/movie', '.mp4'))
+                print(dir_file_name)
+                video_names.append(dir_file_name)
     data = json.loads(request.get_data(as_text=True))
-    location = data.get('location')
     strqwe = data.get('current_frame')
     video_name = data.get('video_name').strip()
-    image_path = Config.UPLOAD_IMAGE_PATH
-    document_path = Config.SAVE_DOCUMENT_PATH
-    video_names = read_video_names(location)
+    print(video_names)
+    print(video_name)
+    for i in range(len(video_names)):
+        video_names[i] = video_names[i].split('.mp4')[0]
     videoOrder = video_names.index(video_name)
-
     CoordinateAddNumb = 0
-
     # 将超过总的 move_x 的坐标点删除 保证不会出现上次实验留下的多余点
     # 计算最大y数据 MaxY
     MaxY = 0
@@ -246,10 +255,14 @@ def mosaicpicture():
     CoordinateAddNumb = 0
     for i in video_names[0:videoOrder]:
         frame_location = Site.read_site(document_path + "site_{}.txt".format(i))
-        CoordinateAddNumb += frame_location.move_x
-
+        # CoordinateAddNumb += frame_location.move_x
+        # CoordinateAddNumb += 800
+    frame_location = Site.read_site(document_path + "site_{}.txt".format(video_name))
+    image_path = Config.UPLOAD_IMAGE_PATH
+    document_path = Config.SAVE_DOCUMENT_PATH
+    # 传入的当前的帧保存
+    # video_name = data.get('video_name').strip()
     img_np = base64_to_png(strqwe)
-
     image_name = "current_{}.png".format(video_name.strip())
     cv2.imencode('.png', img_np)[1].tofile(image_path + image_name)
     # 保存完毕
@@ -278,7 +291,7 @@ def mosaicpicture():
         # print(qwe)
         print(len(res['list_x']), len(res['list_y']))
         for i in range(len(res['list_x'])):
-            qwe.append('{},{}'.format(CoordinateAddNumb + i + 1, res['list_y'][i]))
+            qwe.append('{},{}'.format(CoordinateAddNumb + i+1,res['list_y'][i]))
         f.writelines('\n'.join(qwe))
 
     listx = []
@@ -287,7 +300,7 @@ def mosaicpicture():
     with open(document_path + "sand_VideoMosaic.csv", "r+") as  f:
         wadad = f.read().strip().split('\n')
         for i in wadad:
-            if i != '':
+            if i!='':
                 listx.append(int(i.split(',')[0]))
                 listy.append(int(i.split(',')[1]))
     res = {
@@ -301,11 +314,15 @@ def mosaicpicture():
     imagenames = []
     print(video_names)
     if videoOrder == len(video_names) - 1:
-        qwe = []
+        qwe=[]
+        tempx=0
         for video_name in video_names:
             with open(document_path + "sand_VideoMosaic_{}.csv".format(video_name), "r+") as f:
-                tempCsv = f.read().strip().split('\n')
-                qwe = qwe + tempCsv
+                tempCsv=f.read().strip().split('\n')
+                for i in tempCsv:
+                    qwe.append('{},{}'.format(tempx,i.split(',')[1]))
+                    tempx+=1
+                # qwe=qwe+tempCsv
         with open(document_path + "sand_VideoMosaic.csv", "w+") as  f:
             f.writelines('\n'.join(qwe))
         with open(document_path + "sand_VideoMosaic.csv", "r+") as  f:
@@ -320,7 +337,8 @@ def mosaicpicture():
             "list_x": listx,
             "list_y": listy
         }
-        res['max'] = MaxY
+        # res['max'] = MaxY
+        res['max'] = 1300
         # 变化得y轴
         res['video_name'] = video_name
         for i in video_names:

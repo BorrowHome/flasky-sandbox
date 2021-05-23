@@ -10,7 +10,8 @@ from app.utils.frame.site import Site
 from app.utils.frame.sub import PictureSub
 from app.utils.ipc.ipc_read import read_video_names
 from config import Config
-
+import numpy as np
+from app.utils.frame.frame import base64_to_png
 
 @main.route("/area/", methods=['POST'])
 def get_volume():
@@ -21,7 +22,8 @@ def get_volume():
     path = image_path + "ipaint_{}.png".format(video_name)
     # imread 的filename 长度有限制。
     print(path)
-    s = cv2.imread(path.strip())  # ipaint 是直接减去的图像
+    # s = cv2.imread(path.strip())  # ipaint 是直接减去的图像
+    s = cv2.imdecode(np.fromfile(path, dtype=np.uint8), -1)
     print(s)
     sub = PictureSub()
     t = sub.iblack(s, 220)  # 图像变为黑白两种
@@ -77,10 +79,11 @@ def mosaicarea():
             a = f.readlines()
             print(a)
             frame_location = Site(int(a[0]), int(a[1]), int(a[2]), int(a[3]))
-        frame_area = areaRect.get_frame_area(frame_location.locate_x,
-                                             frame_location.locate_y,
-                                             frame_location.locate_x + frame_location.move_x,
-                                             frame_location.locate_y + frame_location.move_y)
+        # frame_area = areaRect.get_frame_area(frame_location.locate_x,
+        #                                      frame_location.locate_y,
+        #                                      frame_location.locate_x + frame_location.move_x,
+        #                                      frame_location.locate_y + frame_location.move_y)
+        frame_area=1300*800
         Frame_areaS += frame_area
         img = t
         sand_area = ostu(img, frame_location.locate_x,
