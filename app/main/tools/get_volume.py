@@ -1,8 +1,9 @@
 import json
 
 import cv2
+import numpy as np
 from flask import request
-import os
+
 from app.main import main
 from app.utils.areas_height import areaRect
 from app.utils.areas_height.areaS import ostu
@@ -10,8 +11,7 @@ from app.utils.frame.site import Site
 from app.utils.frame.sub import PictureSub
 from app.utils.ipc.ipc_read import read_video_names
 from config import Config
-import numpy as np
-from app.utils.frame.frame import base64_to_png
+
 
 @main.route("/area/", methods=['POST'])
 def get_volume():
@@ -61,7 +61,6 @@ def mosaicarea():
     document_path = Config.SAVE_DOCUMENT_PATH
     data = json.loads(request.get_data(as_text=True))
     location = data.get('location')
-    video_names = []
     FrontVideo_names = read_video_names(location)
     Frame_areaS = 0
     Sand_areaS = 0

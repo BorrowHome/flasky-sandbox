@@ -13,7 +13,7 @@ from app.utils.FormutaCount import formuta
 from app.utils.frame.frame import base64_to_png
 from app.utils.frame.site import Site
 from app.utils.frame.sub import PictureSub
-from app.utils.ipc.ipc_read import read_video_names
+from app.utils.ipc.ipc_read import read_video_names, read_video_names_with_MP4
 from config import Config
 from app.utils.image import image_crop, image_split
 
@@ -22,17 +22,8 @@ from app.utils.image import image_crop, image_split
 def index():
     # 这里的主入口是我们函数的dir 最好用绝对路径，临时用相对路径
     # 使用url_for的时候使用的是函数名（路由名和函数名应一样。）
-    video_names = []
-    path_in = './app/static/video/'
     document_path = Config.SAVE_DOCUMENT_PATH
-    for dirpath, dirnames, filenames in os.walk(path_in):
-        for filename in filenames:
-            # dir_file_name = os.path.join(dirpath, filename)
-            dir_file_name = filename
-            if os.path.splitext(dir_file_name)[1] == '.mp4' or '.avi':  # (('./app/static/movie', '.mp4'))
-                print(dir_file_name)
-                video_names.append(dir_file_name)
-
+    video_names = read_video_names_with_MP4()
     if len(video_names):
         video_name = video_names[0].split('.mp4')[0]
     else:
@@ -134,13 +125,11 @@ def site():
     return "done"
 
 
-# TODO 2020/6/12 15:50 liliangbin 代码可以优化一波
 @main.route('/change_datas/', methods=['GET', 'POST'])
 def change_datas():
     # 输入的base64编码字符串必须符合base64的padding规则。“当原数据长度不是3的整数倍时, 如果最后剩下两个输入数据，在编码结果后加1个“=”；
     # 如果最后剩下一个输入数据，编码结果后加2个“=”；如果没有剩下任何数据，就什么都不要加，这样才可以保证资料还原的正确性。”
     s = []
-    image_path = Config.UPLOAD_IMAGE_PATH
     document_path = Config.SAVE_DOCUMENT_PATH
 
     if request.method == 'POST':
@@ -224,23 +213,12 @@ def formuta_count():
 #
 @main.route('/mosaicpicture/', methods=['POST'])
 def mosaicpicture():
-    video_names = []
-    image_path = Config.UPLOAD_IMAGE_PATH
-    path_in = './app/static/video/'
-    document_path = Config.SAVE_DOCUMENT_PATH
-    for dirpath, dirnames, filenames in os.walk(path_in):
-        for filename in filenames:
-            dir_file_name = filename
-            if os.path.splitext(dir_file_name)[1] == '.mp4' or '.avi':  # (('./app/static/movie', '.mp4'))
-                print(dir_file_name)
-                video_names.append(dir_file_name)
     data = json.loads(request.get_data(as_text=True))
+    location = data.get('location')
     strqwe = data.get('current_frame')
     video_name = data.get('video_name').strip()
-    print(video_names)
-    print(video_name)
-    for i in range(len(video_names)):
-        video_names[i] = video_names[i].split('.mp4')[0]
+    document_path = Config.SAVE_DOCUMENT_PATH
+    video_names = read_video_names(location)
     videoOrder = video_names.index(video_name)
     CoordinateAddNumb = 0
     # 将超过总的 move_x 的坐标点删除 保证不会出现上次实验留下的多余点
@@ -253,11 +231,6 @@ def mosaicpicture():
             MaxY = frame_location.move_y
 
     CoordinateAddNumb = 0
-    for i in video_names[0:videoOrder]:
-        frame_location = Site.read_site(document_path + "site_{}.txt".format(i))
-        # CoordinateAddNumb += frame_location.move_x
-        # CoordinateAddNumb += 800
-    frame_location = Site.read_site(document_path + "site_{}.txt".format(video_name))
     image_path = Config.UPLOAD_IMAGE_PATH
     document_path = Config.SAVE_DOCUMENT_PATH
     # 传入的当前的帧保存
@@ -291,7 +264,7 @@ def mosaicpicture():
         # print(qwe)
         print(len(res['list_x']), len(res['list_y']))
         for i in range(len(res['list_x'])):
-            qwe.append('{},{}'.format(CoordinateAddNumb + i+1,res['list_y'][i]))
+            qwe.append('{},{}'.format(CoordinateAddNumb + i + 1, res['list_y'][i]))
         f.writelines('\n'.join(qwe))
 
     listx = []
@@ -300,7 +273,7 @@ def mosaicpicture():
     with open(document_path + "sand_VideoMosaic.csv", "r+") as  f:
         wadad = f.read().strip().split('\n')
         for i in wadad:
-            if i!='':
+            if i != '':
                 listx.append(int(i.split(',')[0]))
                 listy.append(int(i.split(',')[1]))
     res = {
@@ -314,14 +287,14 @@ def mosaicpicture():
     imagenames = []
     print(video_names)
     if videoOrder == len(video_names) - 1:
-        qwe=[]
-        tempx=0
+        qwe = []
+        tempx = 0
         for video_name in video_names:
             with open(document_path + "sand_VideoMosaic_{}.csv".format(video_name), "r+") as f:
-                tempCsv=f.read().strip().split('\n')
+                tempCsv = f.read().strip().split('\n')
                 for i in tempCsv:
-                    qwe.append('{},{}'.format(tempx,i.split(',')[1]))
-                    tempx+=1
+                    qwe.append('{},{}'.format(tempx, i.split(',')[1]))
+                    tempx += 1
                 # qwe=qwe+tempCsv
         with open(document_path + "sand_VideoMosaic.csv", "w+") as  f:
             f.writelines('\n'.join(qwe))

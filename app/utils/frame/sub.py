@@ -85,17 +85,17 @@ class PictureSub(object):
         bottom_y = move_y + locate_y
         with open(document_path + "sand_" + name + ".csv", "w", newline="")as f:
             writer = csv.writer(f)
-            writerList=[]
+            writerList = []
             for i in range(locate_x, locate_x + move_x, 1):
                 flag = True
                 for j in range(locate_y, move_y + locate_y, 1):
-                    if (image[j, i,2] > 10):
+                    if (image[j, i, 2] > 10):
                         # with open(r"E:sand.csv", "w", newline="")as f:
                         #  writer = csv.writer(f)
                         x = i - locate_x
                         y = bottom_y - j
-                        x=int(x*800/move_x)
-                        y=int(y*1300/move_y)
+                        x = int(x * 800 / move_x)
+                        y = int(y * 1300 / move_y)
                         writerList.append('{},{}'.format(x, y))
                         # writer.writerow([x, y])
                         # list1.append(x)
@@ -105,17 +105,17 @@ class PictureSub(object):
                     # m = m + 1
                 if flag:
                     # writer.writerow([int((i - locate_x)*800/move_x), 0])
-                    writerList.append('{},{}'.format(int((i - locate_x)*800/move_x), 0))
+                    writerList.append('{},{}'.format(int((i - locate_x) * 800 / move_x), 0))
                     # list1.append(i - locate_x)
                     # list2.append(0)
-            tempx=int(writerList[0].split(',')[0])-1
-            tempy=0
-            if writerList[-1].split(',')[1]!='799':writerList.append('799,{}'.format(writerList[-1].split(',')[1]))
+            tempx = int(writerList[0].split(',')[0]) - 1
+            tempy = 0
+            if writerList[-1].split(',')[1] != '799': writerList.append('799,{}'.format(writerList[-1].split(',')[1]))
             for writerOne in writerList:
-                if int(writerOne.split(',')[0])==tempx:continue
-                while int(writerOne.split(',')[0])!= tempx+1:
+                if int(writerOne.split(',')[0]) == tempx: continue
+                while int(writerOne.split(',')[0]) != tempx + 1:
                     tempx += 1
-                    writer.writerow('{},{}'.format(tempx,tempy))
+                    writer.writerow('{},{}'.format(tempx, tempy))
                     list1.append(tempx)
                     list2.append(int(tempy))
                 writer.writerow(writerOne)
