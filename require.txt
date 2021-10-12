@@ -35,7 +35,7 @@ mkl-service==2.3.0
 netifaces==0.10.9
 numpy==1.18.0
 onvif-zeep==0.2.12
-opencv-python==4.1.1.26
+opencv-python==4.2.0.32
 pandas==1.0.1
 Pillow==6.2.1
 prettytable==0.7.2
